@@ -1,0 +1,45 @@
+{
+  "name": "WURTH ISRAEL LTD",
+  "company_id": "",
+  "emails": [
+    "maorfl14@gmail.com"
+  ],
+  "address": "",
+  "notes": "",
+  "department": "cus1",
+  "service_rep": "משה רוסו",
+  "type": "unknown",
+  "dangerous_rule": false,
+  "cont_general": "",
+  "cont_general_emails": [],
+  "cont_dangerous_emails": [],
+  "aliases": [],
+  "seen_stations": [
+    "1",
+    "2",
+    "4"
+  ],
+  "files": [
+    "6177518",
+    "6177624",
+    "6177831",
+    "6178130",
+    "6178560",
+    "6178787",
+    "6178881",
+    "6178913",
+    "6179002",
+    "6179017",
+    "6179032",
+    "6179219",
+    "6179509",
+    "6179562",
+    "6179666",
+    "6179754",
+    "6179958",
+    "6179965",
+    "6179987",
+    "6180007",
+    "6180083"
+  ]
+}

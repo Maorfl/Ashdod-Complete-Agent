@@ -1,0 +1,629 @@
+{
+  "department": "cus3",
+  "clients": {
+    "BACCARA GEVA A.C.S. LTD.": {
+      "customer_name": "BACCARA GEVA A.C.S. LTD.",
+      "service_rep": "אביהוא עבדי",
+      "department": "cus3",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 8
+    },
+    "MTI WIRELESS EDGE LTD": {
+      "customer_name": "MTI WIRELESS EDGE LTD",
+      "service_rep": "אביהוא עבדי",
+      "department": "cus3",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 7
+    },
+    "B.G (ISRAEL)TECNOLOGIES LTD": {
+      "customer_name": "B.G (ISRAEL)TECNOLOGIES LTD",
+      "service_rep": "אביהוא עבדי",
+      "department": "cus3",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 7
+    },
+    "I.GIL CARMEL AGENCEIES": {
+      "customer_name": "I.GIL CARMEL AGENCEIES",
+      "service_rep": "אביהוא עבדי",
+      "department": "cus3",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 2
+    },
+    "RIVULIS PLASTRO LTD": {
+      "customer_name": "RIVULIS PLASTRO LTD",
+      "service_rep": "אביהוא עבדי",
+      "department": "cus3",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 16
+    },
+    "GLOBAL BRANDS GALLERY LTD": {
+      "customer_name": "GLOBAL BRANDS GALLERY LTD",
+      "service_rep": "אביהוא עבדי",
+      "department": "cus3",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 10
+    },
+    "SHALAM PACKAGING SOLUTIONS LTD": {
+      "customer_name": "SHALAM PACKAGING SOLUTIONS LTD",
+      "service_rep": "אביהוא עבדי",
+      "department": "cus3",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 20
+    },
+    "ARBEL -  STRAUSS LTD": {
+      "customer_name": "ARBEL -  STRAUSS LTD",
+      "service_rep": "אביהוא עבדי",
+      "department": "cus3",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 4
+    },
+    "HAKOHAV VALVES INDUSTRIES METAL": {
+      "customer_name": "HAKOHAV VALVES INDUSTRIES METAL",
+      "service_rep": "אביהוא עבדי",
+      "department": "cus3",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 4
+    },
+    "NAHUM BROTHERS": {
+      "customer_name": "NAHUM BROTHERS",
+      "service_rep": "אביהוא עבדי",
+      "department": "cus3",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 5
+    },
+    "SUPERGUM INDUSTRIES (1969) LTD": {
+      "customer_name": "SUPERGUM INDUSTRIES (1969) LTD",
+      "service_rep": "אביהוא עבדי",
+      "department": "cus3",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 1
+    },
+    "A S R GRAPHICS LTD": {
+      "customer_name": "A S R GRAPHICS LTD",
+      "service_rep": "אביהוא עבדי",
+      "department": "cus3",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 1
+    },
+    "A.O. EZRA ELECTRONICS 2002 LTD.": {
+      "customer_name": "A.O. EZRA ELECTRONICS 2002 LTD.",
+      "service_rep": "אביהוא עבדי",
+      "department": "cus3",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 4
+    },
+    "S.Z.P. ADVANCED PACKAGING PRODUCTS": {
+      "customer_name": "S.Z.P. ADVANCED PACKAGING PRODUCTS",
+      "service_rep": "אביהוא עבדי",
+      "department": "cus3",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 5
+    },
+    "AMIR MARKETING AND INVESTMENTS": {
+      "customer_name": "AMIR MARKETING AND INVESTMENTS",
+      "service_rep": "אביהוא עבדי",
+      "department": "cus3",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 21
+    },
+    "SP ADVANCED INDUSTRIES LTD": {
+      "customer_name": "SP ADVANCED INDUSTRIES LTD",
+      "service_rep": "אביהוא עבדי",
+      "department": "cus3",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 6
+    },
+    "CLASSERICA LTD.": {
+      "customer_name": "CLASSERICA LTD.",
+      "service_rep": "אביהוא עבדי",
+      "department": "cus3",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 2
+    },
+    "KANT-LY(1997) LTD": {
+      "customer_name": "KANT-LY(1997) LTD",
+      "service_rep": "אביהוא עבדי",
+      "department": "cus3",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 4
+    },
+    "HAMESHAVEK SAHAR": {
+      "customer_name": "HAMESHAVEK SAHAR",
+      "service_rep": "אביהוא עבדי",
+      "department": "cus3",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 8
+    },
+    "CHABAN  MEDICAL LTD": {
+      "customer_name": "CHABAN  MEDICAL LTD",
+      "service_rep": "אביהוא עבדי",
+      "department": "cus3",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 1
+    },
+    "HAMADIA DOORS LTD.": {
+      "customer_name": "HAMADIA DOORS LTD.",
+      "service_rep": "אביהוא עבדי",
+      "department": "cus3",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 7
+    },
+    "NOGA-EINAT SHOE INDUSTRIES": {
+      "customer_name": "NOGA-EINAT SHOE INDUSTRIES",
+      "service_rep": "אביהוא עבדי",
+      "department": "cus3",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 8
+    },
+    "CIET BIO DIAGNOSTICS LTD": {
+      "customer_name": "CIET BIO DIAGNOSTICS LTD",
+      "service_rep": "אביהוא עבדי",
+      "department": "cus3",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 5
+    },
+    "ISRAEL BARTER TRADING CO LTD.": {
+      "customer_name": "ISRAEL BARTER TRADING CO LTD.",
+      "service_rep": "אביהוא עבדי",
+      "department": "cus3",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 2
+    },
+    "VANGUARD SYSTEMS LTD": {
+      "customer_name": "VANGUARD SYSTEMS LTD",
+      "service_rep": "אביהוא עבדי",
+      "department": "cus3",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 2
+    },
+    "H.E. CHEN FASHION LTD": {
+      "customer_name": "H.E. CHEN FASHION LTD",
+      "service_rep": "אביהוא עבדי",
+      "department": "cus3",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 1
+    },
+    "B.KERSTEIN PACKAGING LTD": {
+      "customer_name": "B.KERSTEIN PACKAGING LTD",
+      "service_rep": "אביהוא עבדי",
+      "department": "cus3",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 5
+    },
+    "ETZMALEH": {
+      "customer_name": "ETZMALEH",
+      "service_rep": "אביהוא עבדי",
+      "department": "cus3",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 20
+    },
+    "P.S.D.S ENTERPRISES LTD": {
+      "customer_name": "P.S.D.S ENTERPRISES LTD",
+      "service_rep": "אביהוא עבדי",
+      "department": "cus3",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 5
+    },
+    "A.I.NISIM IMPORT MARKETING DISTRIBU": {
+      "customer_name": "A.I.NISIM IMPORT MARKETING DISTRIBU",
+      "service_rep": "אביהוא עבדי",
+      "department": "cus3",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 1
+    },
+    "TIV - TIRAT TZVI": {
+      "customer_name": "TIV - TIRAT TZVI",
+      "service_rep": "אביהוא עבדי",
+      "department": "cus3",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 2
+    },
+    "PLASSIM INFRASTRUCTURES LTD.": {
+      "customer_name": "PLASSIM INFRASTRUCTURES LTD.",
+      "service_rep": "אביהוא עבדי",
+      "department": "cus3",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 23
+    },
+    "MEGIDO AVIATION LTD": {
+      "customer_name": "MEGIDO AVIATION LTD",
+      "service_rep": "אביהוא עבדי",
+      "department": "cus3",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 2
+    },
+    "NANO CLEAR SLM LTD": {
+      "customer_name": "NANO CLEAR SLM LTD",
+      "service_rep": "אביהוא עבדי",
+      "department": "cus3",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 1
+    },
+    "TOTEM PLUS LTD.": {
+      "customer_name": "TOTEM PLUS LTD.",
+      "service_rep": "אביהוא עבדי",
+      "department": "cus3",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 1
+    },
+    "GUMAT CONSULTING & MARKETING LTD": {
+      "customer_name": "GUMAT CONSULTING & MARKETING LTD",
+      "service_rep": "אביהוא עבדי",
+      "department": "cus3",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 1
+    },
+    "YACHTIME LTD": {
+      "customer_name": "YACHTIME LTD",
+      "service_rep": "אביהוא עבדי",
+      "department": "cus3",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 1
+    },
+    "ROOMI SLEEP PRODUCTS LTD": {
+      "customer_name": "ROOMI SLEEP PRODUCTS LTD",
+      "service_rep": "אביהוא עבדי",
+      "department": "cus3",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 1
+    },
+    "HAMADIA DOORS C/O TOAM": {
+      "customer_name": "HAMADIA DOORS C/O TOAM",
+      "service_rep": "אביהוא עבדי",
+      "department": "cus3",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 1
+    },
+    "MARINE - MARINE EQUIPMENT LTD": {
+      "customer_name": "MARINE - MARINE EQUIPMENT LTD",
+      "service_rep": "אביהוא עבדי",
+      "department": "cus3",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 2
+    },
+    "ROSENFELD INDUSTRIAL PACKAING LTD": {
+      "customer_name": "ROSENFELD INDUSTRIAL PACKAING LTD",
+      "service_rep": "אביהוא עבדי",
+      "department": "cus3",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 23
+    },
+    "DAN MERCHANDISE": {
+      "customer_name": "DAN MERCHANDISE",
+      "service_rep": "אביהוא עבדי",
+      "department": "cus3",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 2
+    },
+    "MORAZ MEDICAL HERBS (1989) LIMITED": {
+      "customer_name": "MORAZ MEDICAL HERBS (1989) LIMITED",
+      "service_rep": "אביהוא עבדי",
+      "department": "cus3",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 2
+    },
+    "VIEWPARK SOLUTIONS LTD": {
+      "customer_name": "VIEWPARK SOLUTIONS LTD",
+      "service_rep": "אביהוא עבדי",
+      "department": "cus3",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 1
+    },
+    "ISBIR BULK BAG ISRAEL., LTD": {
+      "customer_name": "ISBIR BULK BAG ISRAEL., LTD",
+      "service_rep": "אביהוא עבדי",
+      "department": "cus3",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 1
+    },
+    "PERFUMECLEAN LTD": {
+      "customer_name": "PERFUMECLEAN LTD",
+      "service_rep": "אביהוא עבדי",
+      "department": "cus3",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 2
+    },
+    "HAGUS AVRAHAM": {
+      "customer_name": "HAGUS AVRAHAM",
+      "service_rep": "אביהוא עבדי",
+      "department": "cus3",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 1
+    },
+    "GIL PLASTIC PRODUCTS LTD": {
+      "customer_name": "GIL PLASTIC PRODUCTS LTD",
+      "service_rep": "אביהוא עבדי",
+      "department": "cus3",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 3
+    },
+    "RION LTD": {
+      "customer_name": "RION LTD",
+      "service_rep": "אביהוא עבדי",
+      "department": "cus3",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 2
+    },
+    "RUDOLF MEIR LTD": {
+      "customer_name": "RUDOLF MEIR LTD",
+      "service_rep": "אביהוא עבדי",
+      "department": "cus3",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 2
+    },
+    "LIPOGEN PRODAK": {
+      "customer_name": "LIPOGEN PRODAK",
+      "service_rep": "אביהוא עבדי",
+      "department": "cus3",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 1
+    },
+    "LA SPOSA": {
+      "customer_name": "LA SPOSA",
+      "service_rep": "אביהוא עבדי",
+      "department": "cus3",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 6
+    },
+    "STIHAROV DAVID": {
+      "customer_name": "STIHAROV DAVID",
+      "service_rep": "אביהוא עבדי",
+      "department": "cus3",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 1
+    },
+    "PAR 4 GOLF": {
+      "customer_name": "PAR 4 GOLF",
+      "service_rep": "אביהוא עבדי",
+      "department": "cus3",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 1
+    },
+    "POLYRAZ INDUSTRIES": {
+      "customer_name": "POLYRAZ INDUSTRIES",
+      "service_rep": "אביהוא עבדי",
+      "department": "cus3",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 2
+    },
+    "HAYOT BAMOSHAVA": {
+      "customer_name": "HAYOT BAMOSHAVA",
+      "service_rep": "אביהוא עבדי",
+      "department": "cus3",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 1
+    },
+    "TAMOR S.M.R. LTD": {
+      "customer_name": "TAMOR S.M.R. LTD",
+      "service_rep": "אביהוא עבדי",
+      "department": "cus3",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 2
+    },
+    "UNIFLEX PVC PRODUCTS (1988) LTD": {
+      "customer_name": "UNIFLEX PVC PRODUCTS (1988) LTD",
+      "service_rep": "אביהוא עבדי",
+      "department": "cus3",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 4
+    },
+    "DAHER DENTAL DEPOT LTD": {
+      "customer_name": "DAHER DENTAL DEPOT LTD",
+      "service_rep": "אביהוא עבדי",
+      "department": "cus3",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 3
+    },
+    "I.P.E. INTL PROCESS EQUIPMENT": {
+      "customer_name": "I.P.E. INTL PROCESS EQUIPMENT",
+      "service_rep": "אביהוא עבדי",
+      "department": "cus3",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 4
+    },
+    "SONS OF HANNA SHAMSHOUM CO LTD": {
+      "customer_name": "SONS OF HANNA SHAMSHOUM CO LTD",
+      "service_rep": "אביהוא עבדי",
+      "department": "cus3",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 1
+    },
+    "ONEG BESHEFA LTD": {
+      "customer_name": "ONEG BESHEFA LTD",
+      "service_rep": "אביהוא עבדי",
+      "department": "cus3",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 1
+    },
+    "AVIV SERGAY (ATMOSPHERA)": {
+      "customer_name": "AVIV SERGAY (ATMOSPHERA)",
+      "service_rep": "אביהוא עבדי",
+      "department": "cus3",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 1
+    },
+    "ELHATONA LTD": {
+      "customer_name": "ELHATONA LTD",
+      "service_rep": "אביהוא עבדי",
+      "department": "cus3",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 2
+    },
+    "LDD-WJ GROUNDWATER LTD": {
+      "customer_name": "LDD-WJ GROUNDWATER LTD",
+      "service_rep": "אביהוא עבדי",
+      "department": "cus3",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 1
+    },
+    "RONIT DIGLAI UMOT LTD": {
+      "customer_name": "RONIT DIGLAI UMOT LTD",
+      "service_rep": "אביהוא עבדי",
+      "department": "cus3",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 1
+    },
+    "A. SULTAN-EARTHWORKS LTD.": {
+      "customer_name": "A. SULTAN-EARTHWORKS LTD.",
+      "service_rep": "אביהוא עבדי",
+      "department": "cus3",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 1
+    },
+    "M.E. HEALTH AND NATURE PRODUCTS LTD": {
+      "customer_name": "M.E. HEALTH AND NATURE PRODUCTS LTD",
+      "service_rep": "אביהוא עבדי",
+      "department": "cus3",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 1
+    },
+    "SKYEYES - REUT CASTRO": {
+      "customer_name": "SKYEYES - REUT CASTRO",
+      "service_rep": "אביהוא עבדי",
+      "department": "cus3",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 1
+    },
+    "BAWACO IL LTD": {
+      "customer_name": "BAWACO IL LTD",
+      "service_rep": "אביהוא עבדי",
+      "department": "cus3",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 2
+    },
+    "AYALA TAL CASPI": {
+      "customer_name": "AYALA TAL CASPI",
+      "service_rep": "אביהוא עבדי",
+      "department": "cus3",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 1
+    },
+    "METZERPLAS INDUSTRIES LTD": {
+      "customer_name": "METZERPLAS INDUSTRIES LTD",
+      "service_rep": "אביהוא עבדי",
+      "department": "cus3",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 1
+    },
+    "LIOR TEXTILE INDUSTRIES LTD.": {
+      "customer_name": "LIOR TEXTILE INDUSTRIES LTD.",
+      "service_rep": "אביהוא עבדי",
+      "department": "cus3",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 1
+    },
+    "DAHAN NAOR- HOME DECORE": {
+      "customer_name": "DAHAN NAOR- HOME DECORE",
+      "service_rep": "אביהוא עבדי",
+      "department": "cus3",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 1
+    },
+    "BETTER-SOLI SEEDS LTD": {
+      "customer_name": "BETTER-SOLI SEEDS LTD",
+      "service_rep": "אביהוא עבדי",
+      "department": "cus3",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 1
+    },
+    "THE COMPANY FOR TRADE INVESTMENTS &": {
+      "customer_name": "THE COMPANY FOR TRADE INVESTMENTS &",
+      "service_rep": "אביהוא עבדי",
+      "department": "cus3",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 1
+    },
+    "KANDU": {
+      "customer_name": "KANDU",
+      "service_rep": "אביהוא עבדי",
+      "department": "cus3",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 1
+    },
+    "GOLDMARK AGENCIES LTD": {
+      "customer_name": "GOLDMARK AGENCIES LTD",
+      "service_rep": "אביהוא עבדי",
+      "department": "cus3",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 2
+    }
+  }
+}

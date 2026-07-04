@@ -1,0 +1,31 @@
+{
+  "name": "HAMADIA DOORS LTD.",
+  "company_id": "",
+  "emails": [
+    "maorfl14@gmail.com"
+  ],
+  "address": "",
+  "notes": "",
+  "department": "cus3",
+  "service_rep": "אביהוא עבדי",
+  "type": "unknown",
+  "dangerous_rule": false,
+  "cont_general": "",
+  "cont_general_emails": [],
+  "cont_dangerous_emails": [],
+  "aliases": [],
+  "seen_stations": [
+    "1",
+    "2",
+    "4"
+  ],
+  "files": [
+    "6178147",
+    "6179914",
+    "6180159",
+    "6180231",
+    "6180354",
+    "6180355",
+    "6180442"
+  ]
+}

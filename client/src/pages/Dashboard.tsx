@@ -1,0 +1,227 @@
+/**
+ * Dashboard — טבלת תיקים מלאה בהשראת דשבורד ה-Python, בשפת העיצוב של הנמל.
+ * כרטיסי סטטוס לחיצים + שורת פילטרים + טבלה עם פעולות + כרטיס תיק (מודאל).
+ * רענון אוטומטי כל 60 שניות. מכבד את מסנן הסוכן הגלובלי.
+ */
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { api, Shipment, DashboardCounts } from '../api';
+import { useAgentFilter, matchesAgent } from '../context/AgentFilterContext';
+import { useToast } from '../components/Toasts';
+import FileModal from '../components/FileModal';
+import {
+  STATUS_META, STATUS_ORDER, statusKeyOf, statusLabel, MANUAL_STATUSES,
+  formatDateHe, formatDuration, timeSeverity, StatusKey,
+} from '../status';
+
+export default function Dashboard() {
+  const { agent } = useAgentFilter();
+  const toast = useToast();
+  const [items, setItems] = useState<Shipment[] | null>(null);
+  const [err, setErr] = useState('');
+  const [busy, setBusy] = useState(false);
+  const [filter, setFilter] = useState<StatusKey | 'all'>('all');
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+  const [openFile, setOpenFile] = useState<string | null>(null);
+  const [statusPick, setStatusPick] = useState<Record<string, string>>({});
+  const timerRef = useRef<number | null>(null);
+
+  const load = useCallback((manual = false) => {
+    api.dashboard()
+      .then((d) => {
+        setItems(d.items);
+        setErr('');
+        setLastUpdated(new Date());
+        if (manual) toast('הנתונים עודכנו ✓', 'success');
+      })
+      .catch((e) => { setErr(e.message); if (manual) toast('שגיאה בטעינת נתונים', 'error'); });
+  }, [toast]);
+
+  useEffect(() => {
+    load();
+    timerRef.current = window.setInterval(load, 60000);
+    return () => { if (timerRef.current) window.clearInterval(timerRef.current); };
+  }, [load]);
+
+  // מסנן הסוכן חל על הכל — מונים, טבלה ומודאל
+  const agentItems = useMemo(() => (items || []).filter((s) => matchesAgent(s, agent)), [items, agent]);
+
+  const counts = useMemo(() => {
+    const c: DashboardCounts = { pending_approval: 0, released_ashdod: 0, to_haifa: 0, delivered: 0, alert: 0 };
+    for (const s of agentItems) {
+      const k = statusKeyOf(s);
+      if (k !== 'other') c[k] += 1;
+    }
+    return c;
+  }, [agentItems]);
+
+  const visible = useMemo(() => {
+    const list = filter === 'all' ? agentItems : agentItems.filter((s) => statusKeyOf(s) === filter);
+    return [...list].sort((a, b) => {
+      const ai = STATUS_ORDER.indexOf(statusKeyOf(a));
+      const bi = STATUS_ORDER.indexOf(statusKeyOf(b));
+      if (ai !== bi) return ai - bi;
+      return new Date(b.status_updated_at || 0).getTime() - new Date(a.status_updated_at || 0).getTime();
+    });
+  }, [agentItems, filter]);
+
+  const openItem = useMemo(() => visible.find((s) => s.file_number === openFile) || null, [visible, openFile]);
+
+  function toggleFilter(k: StatusKey | 'all') {
+    setFilter((f) => (f === k ? 'all' : k));
+  }
+
+  async function runNow() {
+    setErr(''); setBusy(true);
+    try { await api.runWatcher(); load(); toast('סריקת הדוח הושלמה ✓', 'success'); }
+    catch (e: any) { setErr(e.message); }
+    finally { setBusy(false); }
+  }
+
+  async function deliver(s: Shipment) {
+    if (!confirm(`לסמן תיק ${s.file_number} כנמסר ללקוח?`)) return;
+    try { await api.updateStatus(s.file_number, 'נמסר ללקוח'); toast(`תיק ${s.file_number} סומן כנמסר ✓`, 'success'); load(); }
+    catch (e: any) { toast(e.message, 'error'); }
+  }
+
+  async function changeStatus(s: Shipment, status: string) {
+    if (!status) return;
+    if (!confirm(`לעדכן את תיק ${s.file_number} לסטטוס "${status}"?`)) {
+      setStatusPick((p) => ({ ...p, [s.file_number]: '' }));
+      return;
+    }
+    try {
+      await api.updateStatus(s.file_number, status);
+      toast(`הסטטוס עודכן ל"${status}" ✓`, 'success');
+      setStatusPick((p) => ({ ...p, [s.file_number]: '' }));
+      load();
+    } catch (e: any) { toast(e.message, 'error'); }
+  }
+
+  async function remind(s: Shipment) {
+    if (!confirm(`ליצור תזכורת לתיק ${s.file_number}? הטיוטה תמתין לאישור — לא יישלח מייל.`)) return;
+    try { await api.createReminder(s.file_number); toast('טיוטת תזכורת נוצרה וממתינה לאישור ✓', 'success'); load(); }
+    catch (e: any) { toast(e.message, 'error'); }
+  }
+
+  const clock = lastUpdated
+    ? lastUpdated.toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
+    : '—';
+
+  return (
+    <>
+      <div className="page-head" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', gap: 16, flexWrap: 'wrap' }}>
+        <div>
+          <h1>דשבורד מטענים</h1>
+          <p>מצבת תיקים — שחרור באשדוד והעברה לחיפה. {agentItems.length} תיקים במעקב.</p>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <span className="refresh-info mono">עדכון אחרון: {clock}</span>
+          <button className="btn" onClick={() => load(true)}>🔄 רענון</button>
+          <button className="btn primary" onClick={runNow} disabled={busy}>{busy ? 'סורק…' : 'סרוק דוח עכשיו'}</button>
+        </div>
+      </div>
+
+      {err && <div className="flash err">{err} — ודאו שהשרת פעיל (npm start).</div>}
+
+      <div className="strip">
+        {STATUS_META.map((m) => (
+          <button
+            className={'stat clickable' + (filter === m.key ? ' active' : '')}
+            key={m.key}
+            style={{ ['--c' as any]: m.cssVar }}
+            onClick={() => toggleFilter(m.key)}
+            aria-pressed={filter === m.key}
+          >
+            <div className="n">{counts[m.key]}</div>
+            <div className="l">{m.label}</div>
+          </button>
+        ))}
+      </div>
+
+      <div className="filter-bar">
+        <button className={'pill' + (filter === 'all' ? ' active' : '')} onClick={() => setFilter('all')}>הכל</button>
+        {STATUS_META.map((m) => (
+          <button
+            key={m.key}
+            className={'pill' + (filter === m.key ? ' active' : '')}
+            style={{ ['--c' as any]: m.cssVar }}
+            onClick={() => toggleFilter(m.key)}
+          >
+            {m.label}
+          </button>
+        ))}
+      </div>
+
+      <div className="card table-card">
+        {items === null && (
+          <div className="empty"><div className="big">⏳</div>טוען נתונים…</div>
+        )}
+        {items !== null && agentItems.length === 0 && (
+          <div className="empty">
+            <div className="big">⚓</div>
+            אין תיקים במעקב{agent !== 'all' ? ' עבור הסוכן שנבחר' : ''}. לחצו "סרוק דוח עכשיו" כדי לעבד את דוח ה-Focus.
+          </div>
+        )}
+        {items !== null && agentItems.length > 0 && visible.length === 0 && (
+          <div className="empty"><div className="big">📭</div>אין תיקים בסינון הנוכחי.</div>
+        )}
+        {visible.length > 0 && (
+          <div className="table-scroll">
+            <table className="ship-table">
+              <thead>
+                <tr>
+                  <th>תיק</th><th>לקוח</th><th>תאריך שחרור</th><th>סטטוס</th>
+                  <th>מוביל / מסוף</th><th>מחלקה</th><th>זמן בסטטוס</th><th>פעולות</th>
+                </tr>
+              </thead>
+              <tbody>
+                {visible.map((s) => {
+                  const k = statusKeyOf(s);
+                  const meta = STATUS_META.find((m) => m.key === k);
+                  const sev = timeSeverity(s);
+                  return (
+                    <tr key={s.file_number} className="ship-row" onClick={() => setOpenFile(s.file_number)}>
+                      <td className="mono file-cell" style={{ ['--c' as any]: meta?.cssVar || 'var(--line)' }}>
+                        {s.file_number}{s.hazardous === 'Yes' && <span title="חומר מסוכן"> ⚠</span>}
+                      </td>
+                      <td className="cust-cell">{s.customer_name || '—'}</td>
+                      <td className="mono">{formatDateHe(s.release_date)}</td>
+                      <td>
+                        <span className="st-badge" style={{ ['--c' as any]: meta?.cssVar || 'var(--muted)' }}>{statusLabel(s.status)}</span>
+                      </td>
+                      <td>{s.continuation || '—'}</td>
+                      <td>{s.department ? s.department.toUpperCase() : '—'}</td>
+                      <td className={'mono time-cell' + (sev ? ' time-' + sev : '')}>{formatDuration(s.status_updated_at)}</td>
+                      <td className="actions-cell" onClick={(e) => e.stopPropagation()}>
+                        <div className="row-actions">
+                          {s.status !== 'נמסר ללקוח' && (
+                            <button className="btn icon" title="סימון כנמסר" aria-label="סימון כנמסר" onClick={() => deliver(s)}>✅</button>
+                          )}
+                          <select
+                            className="status-pick sm"
+                            value={statusPick[s.file_number] || ''}
+                            onChange={(e) => changeStatus(s, e.target.value)}
+                            title="עדכון סטטוס" aria-label="עדכון סטטוס"
+                          >
+                            <option value="">🔄</option>
+                            {MANUAL_STATUSES.map((st) => <option key={st} value={st}>{st}</option>)}
+                          </select>
+                          <button className="btn icon" title="יצירת תזכורת" aria-label="יצירת תזכורת" onClick={() => remind(s)}>📧</button>
+                          <button className="btn icon" title="כרטיס תיק" aria-label="כרטיס תיק" onClick={() => setOpenFile(s.file_number)}>👁</button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+
+      {openItem && (
+        <FileModal item={openItem} onClose={() => setOpenFile(null)} onChanged={() => load()} />
+      )}
+    </>
+  );
+}

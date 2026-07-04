@@ -1,0 +1,421 @@
+{
+  "department": "cus2",
+  "clients": {
+    "AFIMILK AGRICULTURAL": {
+      "customer_name": "AFIMILK AGRICULTURAL",
+      "service_rep": "דורון רימה",
+      "department": "cus2",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 25
+    },
+    "PLASSON LTD": {
+      "customer_name": "PLASSON LTD",
+      "service_rep": "דורון רימה",
+      "department": "cus2",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 18
+    },
+    "SAPIR AKRAI": {
+      "customer_name": "SAPIR AKRAI",
+      "service_rep": "דורון רימה",
+      "department": "cus2",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 1
+    },
+    "PLASGAD PLASTIC PRODUCTS A.C.S. LTD": {
+      "customer_name": "PLASGAD PLASTIC PRODUCTS A.C.S. LTD",
+      "service_rep": "דורון רימה",
+      "department": "cus2",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 3
+    },
+    "PLASKOLITE ISRAEL LTD": {
+      "customer_name": "PLASKOLITE ISRAEL LTD",
+      "service_rep": "דורון רימה",
+      "department": "cus2",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 17
+    },
+    "POLEG PLASTIC INDUSTRIES (1998) LTD": {
+      "customer_name": "POLEG PLASTIC INDUSTRIES (1998) LTD",
+      "service_rep": "דורון רימה",
+      "department": "cus2",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 13
+    },
+    "GRAZIANI INDUSTRIES LTD": {
+      "customer_name": "GRAZIANI INDUSTRIES LTD",
+      "service_rep": "דורון רימה",
+      "department": "cus2",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 7
+    },
+    "POLYCAD PLASTIC PRODUCTS SHEFAYIM": {
+      "customer_name": "POLYCAD PLASTIC PRODUCTS SHEFAYIM",
+      "service_rep": "דורון רימה",
+      "department": "cus2",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 18
+    },
+    "NOURIEL CHOEN": {
+      "customer_name": "NOURIEL CHOEN",
+      "service_rep": "דורון רימה",
+      "department": "cus2",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 11
+    },
+    "ELCAM MEDICAL A.C.A.L": {
+      "customer_name": "ELCAM MEDICAL A.C.A.L",
+      "service_rep": "דורון רימה",
+      "department": "cus2",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 11
+    },
+    "PALZIV GROUP": {
+      "customer_name": "PALZIV GROUP",
+      "service_rep": "דורון רימה",
+      "department": "cus2",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 27
+    },
+    "WEISMAN-FRIEDMAN": {
+      "customer_name": "WEISMAN-FRIEDMAN",
+      "service_rep": "דורון רימה",
+      "department": "cus2",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 5
+    },
+    "SWING-AND-PLAY LTD": {
+      "customer_name": "SWING-AND-PLAY LTD",
+      "service_rep": "דורון רימה",
+      "department": "cus2",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 4
+    },
+    "ORAN P.TZOBA C/O TOAM VAT 570038554": {
+      "customer_name": "ORAN P.TZOBA C/O TOAM VAT 570038554",
+      "service_rep": "דורון רימה",
+      "department": "cus2",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 9
+    },
+    "DANAN EDEN PROPERTY": {
+      "customer_name": "DANAN EDEN PROPERTY",
+      "service_rep": "דורון רימה",
+      "department": "cus2",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 4
+    },
+    "AMERICAN ISRAELI GAS CORPORATION": {
+      "customer_name": "AMERICAN ISRAELI GAS CORPORATION",
+      "service_rep": "דורון רימה",
+      "department": "cus2",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 11
+    },
+    "EREZ TERMOPLASTIC PRODUCTS": {
+      "customer_name": "EREZ TERMOPLASTIC PRODUCTS",
+      "service_rep": "דורון רימה",
+      "department": "cus2",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 7
+    },
+    "HULIOT (A.C.S) LTD.": {
+      "customer_name": "HULIOT (A.C.S) LTD.",
+      "service_rep": "דורון רימה",
+      "department": "cus2",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 21
+    },
+    "ARAN POLYMERS LTD": {
+      "customer_name": "ARAN POLYMERS LTD",
+      "service_rep": "דורון רימה",
+      "department": "cus2",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 31
+    },
+    "ORAN PALMACH TZUBA": {
+      "customer_name": "ORAN PALMACH TZUBA",
+      "service_rep": "דורון רימה",
+      "department": "cus2",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 24
+    },
+    "POLIVA LTD": {
+      "customer_name": "POLIVA LTD",
+      "service_rep": "דורון רימה",
+      "department": "cus2",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 33
+    },
+    "EVEREST PAPER PRODUCTS": {
+      "customer_name": "EVEREST PAPER PRODUCTS",
+      "service_rep": "דורון רימה",
+      "department": "cus2",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 2
+    },
+    "SAPIR - PLASTIC INDUSTRIES LTD": {
+      "customer_name": "SAPIR - PLASTIC INDUSTRIES LTD",
+      "service_rep": "דורון רימה",
+      "department": "cus2",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 9
+    },
+    "MOKED PRECISION INSTRUMENTS LTD": {
+      "customer_name": "MOKED PRECISION INSTRUMENTS LTD",
+      "service_rep": "דורון רימה",
+      "department": "cus2",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 1
+    },
+    "SAGIV SOLUTION LTD": {
+      "customer_name": "SAGIV SOLUTION LTD",
+      "service_rep": "דורון רימה",
+      "department": "cus2",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 1
+    },
+    "IIB ENERGY STORAGE SYSTEMS LTD": {
+      "customer_name": "IIB ENERGY STORAGE SYSTEMS LTD",
+      "service_rep": "דורון רימה",
+      "department": "cus2",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 11
+    },
+    "PLASSON ISRAEL MARKETING &": {
+      "customer_name": "PLASSON ISRAEL MARKETING &",
+      "service_rep": "דורון רימה",
+      "department": "cus2",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 19
+    },
+    "EREZ THERMOPLASTIC PRODUCTS": {
+      "customer_name": "EREZ THERMOPLASTIC PRODUCTS",
+      "service_rep": "דורון רימה",
+      "department": "cus2",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 4
+    },
+    "A.S. PLAST": {
+      "customer_name": "A.S. PLAST",
+      "service_rep": "דורון רימה",
+      "department": "cus2",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 9
+    },
+    "AVSHALOM COHEN MACHINERY & TOOLS": {
+      "customer_name": "AVSHALOM COHEN MACHINERY & TOOLS",
+      "service_rep": "דורון רימה",
+      "department": "cus2",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 2
+    },
+    "GILGAL LTD": {
+      "customer_name": "GILGAL LTD",
+      "service_rep": "דורון רימה",
+      "department": "cus2",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 2
+    },
+    "EILOR MAGNETIC CORES": {
+      "customer_name": "EILOR MAGNETIC CORES",
+      "service_rep": "דורון רימה",
+      "department": "cus2",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 4
+    },
+    "AGRICULTURE-EIN HAROD CO-OPERATIVE": {
+      "customer_name": "AGRICULTURE-EIN HAROD CO-OPERATIVE",
+      "service_rep": "דורון רימה",
+      "department": "cus2",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 2
+    },
+    "NUFILTRATION LTD.": {
+      "customer_name": "NUFILTRATION LTD.",
+      "service_rep": "דורון רימה",
+      "department": "cus2",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 1
+    },
+    "APRIL DINNING LTD": {
+      "customer_name": "APRIL DINNING LTD",
+      "service_rep": "דורון רימה",
+      "department": "cus2",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 1
+    },
+    "METZERPLAS INDUSTRIES LTD": {
+      "customer_name": "METZERPLAS INDUSTRIES LTD",
+      "service_rep": "דורון רימה",
+      "department": "cus2",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 4
+    },
+    "GALIL FLAVOR LTD.": {
+      "customer_name": "GALIL FLAVOR LTD.",
+      "service_rep": "דורון רימה",
+      "department": "cus2",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 4
+    },
+    "MICRO ZEVA LTD": {
+      "customer_name": "MICRO ZEVA LTD",
+      "service_rep": "דורון רימה",
+      "department": "cus2",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 1
+    },
+    "HALORA LTD": {
+      "customer_name": "HALORA LTD",
+      "service_rep": "דורון רימה",
+      "department": "cus2",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 1
+    },
+    "MAHAL PUMPS 2000 (1993) LTD": {
+      "customer_name": "MAHAL PUMPS 2000 (1993) LTD",
+      "service_rep": "דורון רימה",
+      "department": "cus2",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 1
+    },
+    "HOFFIT - KIBBUTZ KINNERET (2010)LTD": {
+      "customer_name": "HOFFIT - KIBBUTZ KINNERET (2010)LTD",
+      "service_rep": "דורון רימה",
+      "department": "cus2",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 3
+    },
+    "S. SHOKCHA SHOPS  LTD.": {
+      "customer_name": "S. SHOKCHA SHOPS  LTD.",
+      "service_rep": "דורון רימה",
+      "department": "cus2",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 3
+    },
+    "HARTMANN MAI LTD.": {
+      "customer_name": "HARTMANN MAI LTD.",
+      "service_rep": "דורון רימה",
+      "department": "cus2",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 4
+    },
+    "MINI SUN TANNINGS CLUBS LTD": {
+      "customer_name": "MINI SUN TANNINGS CLUBS LTD",
+      "service_rep": "דורון רימה",
+      "department": "cus2",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 2
+    },
+    "M.T.I. ENGINEERING LTD": {
+      "customer_name": "M.T.I. ENGINEERING LTD",
+      "service_rep": "דורון רימה",
+      "department": "cus2",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 1
+    },
+    "KARDOSH NAZARETH LTD": {
+      "customer_name": "KARDOSH NAZARETH LTD",
+      "service_rep": "דורון רימה",
+      "department": "cus2",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 1
+    },
+    "LIBERMAN LANDO LTD": {
+      "customer_name": "LIBERMAN LANDO LTD",
+      "service_rep": "דורון רימה",
+      "department": "cus2",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 2
+    },
+    "HOROWITZ MANAGEMENT & CONSULTING": {
+      "customer_name": "HOROWITZ MANAGEMENT & CONSULTING",
+      "service_rep": "דורון רימה",
+      "department": "cus2",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 1
+    },
+    "AVRHAMI YOAV & SONS LTD": {
+      "customer_name": "AVRHAMI YOAV & SONS LTD",
+      "service_rep": "דורון רימה",
+      "department": "cus2",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 1
+    },
+    "ALMAZ TIRES LTD": {
+      "customer_name": "ALMAZ TIRES LTD",
+      "service_rep": "דורון רימה",
+      "department": "cus2",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 3
+    },
+    "GLOBIZ FARAN LTD": {
+      "customer_name": "GLOBIZ FARAN LTD",
+      "service_rep": "דורון רימה",
+      "department": "cus2",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 1
+    },
+    "A.A. POLITIV (1999) LTD": {
+      "customer_name": "A.A. POLITIV (1999) LTD",
+      "service_rep": "דורון רימה",
+      "department": "cus2",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 2
+    }
+  }
+}

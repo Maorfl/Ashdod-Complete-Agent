@@ -1,0 +1,31 @@
+{
+  "name": "MARKETING & SUPPLY WIRTHEIM LTD",
+  "company_id": "",
+  "emails": [
+    "maorfl14@gmail.com"
+  ],
+  "address": "",
+  "notes": "",
+  "department": "cus1",
+  "service_rep": "משה רוסו",
+  "type": "unknown",
+  "dangerous_rule": false,
+  "cont_general": "",
+  "cont_general_emails": [],
+  "cont_dangerous_emails": [],
+  "aliases": [],
+  "seen_stations": [
+    "1",
+    "2",
+    "4"
+  ],
+  "files": [
+    "6177950",
+    "6178104",
+    "6178673",
+    "6178877",
+    "6179486",
+    "6179504",
+    "6180436"
+  ]
+}

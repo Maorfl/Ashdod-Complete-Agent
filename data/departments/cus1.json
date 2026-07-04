@@ -1,0 +1,389 @@
+{
+  "department": "cus1",
+  "clients": {
+    "MUSACH START I.M. LTD": {
+      "customer_name": "MUSACH START I.M. LTD",
+      "service_rep": "משה רוסו",
+      "department": "cus1",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 1
+    },
+    "CHEMICOL": {
+      "customer_name": "CHEMICOL",
+      "service_rep": "משה רוסו",
+      "department": "cus1",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 5
+    },
+    "BRENNTAG ISRAEL LTD": {
+      "customer_name": "BRENNTAG ISRAEL LTD",
+      "service_rep": "משה רוסו",
+      "department": "cus1",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 73
+    },
+    "JOLYBAR FILMTECHNIC CO. LTD": {
+      "customer_name": "JOLYBAR FILMTECHNIC CO. LTD",
+      "service_rep": "משה רוסו",
+      "department": "cus1",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 19
+    },
+    "HAIFA MEDICAL C.A.S": {
+      "customer_name": "HAIFA MEDICAL C.A.S",
+      "service_rep": "משה רוסו",
+      "department": "cus1",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 2
+    },
+    "WURTH ISRAEL LTD": {
+      "customer_name": "WURTH ISRAEL LTD",
+      "service_rep": "משה רוסו",
+      "department": "cus1",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 21
+    },
+    "FIBERNET LTD.": {
+      "customer_name": "FIBERNET LTD.",
+      "service_rep": "משה רוסו",
+      "department": "cus1",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 1
+    },
+    "TELDOR CABLES AND SYSTEMS LTD": {
+      "customer_name": "TELDOR CABLES AND SYSTEMS LTD",
+      "service_rep": "משה רוסו",
+      "department": "cus1",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 28
+    },
+    "B CONNECT TECHNOLOGIES LTD": {
+      "customer_name": "B CONNECT TECHNOLOGIES LTD",
+      "service_rep": "משה רוסו",
+      "department": "cus1",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 9
+    },
+    "GEVASOL INDUSTRIES LTD.": {
+      "customer_name": "GEVASOL INDUSTRIES LTD.",
+      "service_rep": "משה רוסו",
+      "department": "cus1",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 9
+    },
+    "NEW WAY  TRAFFIC LTD": {
+      "customer_name": "NEW WAY  TRAFFIC LTD",
+      "service_rep": "משה רוסו",
+      "department": "cus1",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 2
+    },
+    "TELDOR CABLES TELECOM LTD.": {
+      "customer_name": "TELDOR CABLES TELECOM LTD.",
+      "service_rep": "משה רוסו",
+      "department": "cus1",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 11
+    },
+    "SMITH TOOLS TRADE LTD": {
+      "customer_name": "SMITH TOOLS TRADE LTD",
+      "service_rep": "משה רוסו",
+      "department": "cus1",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 10
+    },
+    "MARKETING & SUPPLY WIRTHEIM LTD": {
+      "customer_name": "MARKETING & SUPPLY WIRTHEIM LTD",
+      "service_rep": "משה רוסו",
+      "department": "cus1",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 7
+    },
+    "BEERI PACKAGING LTD": {
+      "customer_name": "BEERI PACKAGING LTD",
+      "service_rep": "משה רוסו",
+      "department": "cus1",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 10
+    },
+    "UNILEVER ISRAEL HOME&PERSONAL CARE": {
+      "customer_name": "UNILEVER ISRAEL HOME&PERSONAL CARE",
+      "service_rep": "משה רוסו",
+      "department": "cus1",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 45
+    },
+    "G.T. GEVASOL TECHNOLOGIES LTD": {
+      "customer_name": "G.T. GEVASOL TECHNOLOGIES LTD",
+      "service_rep": "משה רוסו",
+      "department": "cus1",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 2
+    },
+    "GEREIS GALILEE CENTER IMPORT & MARK": {
+      "customer_name": "GEREIS GALILEE CENTER IMPORT & MARK",
+      "service_rep": "משה רוסו",
+      "department": "cus1",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 3
+    },
+    "BENI MAUDA": {
+      "customer_name": "BENI MAUDA",
+      "service_rep": "משה רוסו",
+      "department": "cus1",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 1
+    },
+    "RED ORCA GLOBAL LTD": {
+      "customer_name": "RED ORCA GLOBAL LTD",
+      "service_rep": "משה רוסו",
+      "department": "cus1",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 2
+    },
+    "FISCHER PHARMACEUTICALS IND. LTD": {
+      "customer_name": "FISCHER PHARMACEUTICALS IND. LTD",
+      "service_rep": "משה רוסו",
+      "department": "cus1",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 1
+    },
+    "WATER PARK SHEFAYM": {
+      "customer_name": "WATER PARK SHEFAYM",
+      "service_rep": "משה רוסו",
+      "department": "cus1",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 1
+    },
+    "IAM SHARFSTEIN LTD": {
+      "customer_name": "IAM SHARFSTEIN LTD",
+      "service_rep": "משה רוסו",
+      "department": "cus1",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 17
+    },
+    "M.SHOHAM TRADING CO.LTD": {
+      "customer_name": "M.SHOHAM TRADING CO.LTD",
+      "service_rep": "משה רוסו",
+      "department": "cus1",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 2
+    },
+    "SESAMY SYSTEMS LTD": {
+      "customer_name": "SESAMY SYSTEMS LTD",
+      "service_rep": "משה רוסו",
+      "department": "cus1",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 6
+    },
+    "ZOHAR DALIA ARIEL": {
+      "customer_name": "ZOHAR DALIA ARIEL",
+      "service_rep": "משה רוסו",
+      "department": "cus1",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 3
+    },
+    "EDOM LUBRICANTS": {
+      "customer_name": "EDOM LUBRICANTS",
+      "service_rep": "משה רוסו",
+      "department": "cus1",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 1
+    },
+    "SONOVA ISRAEL LTD": {
+      "customer_name": "SONOVA ISRAEL LTD",
+      "service_rep": "משה רוסו",
+      "department": "cus1",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 43
+    },
+    "PLADOT E.H.M. (2012) LTD.": {
+      "customer_name": "PLADOT E.H.M. (2012) LTD.",
+      "service_rep": "משה רוסו",
+      "department": "cus1",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 3
+    },
+    "SHERER JOSEF & SONS LTD": {
+      "customer_name": "SHERER JOSEF & SONS LTD",
+      "service_rep": "משה רוסו",
+      "department": "cus1",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 1
+    },
+    "BAZAK TIRES MARKETING 1996 LTD": {
+      "customer_name": "BAZAK TIRES MARKETING 1996 LTD",
+      "service_rep": "משה רוסו",
+      "department": "cus1",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 2
+    },
+    "ZOHAR DALIA PROFESSIONAL L.P.": {
+      "customer_name": "ZOHAR DALIA PROFESSIONAL L.P.",
+      "service_rep": "משה רוסו",
+      "department": "cus1",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 3
+    },
+    "TELEM OR L.D. LTD": {
+      "customer_name": "TELEM OR L.D. LTD",
+      "service_rep": "משה רוסו",
+      "department": "cus1",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 1
+    },
+    "INDUSTRIAL DEVELOPMENT COMPANY 1996": {
+      "customer_name": "INDUSTRIAL DEVELOPMENT COMPANY 1996",
+      "service_rep": "משה רוסו",
+      "department": "cus1",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 1
+    },
+    "LIDOR PUMPING EQUIPMENT": {
+      "customer_name": "LIDOR PUMPING EQUIPMENT",
+      "service_rep": "משה רוסו",
+      "department": "cus1",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 1
+    },
+    "BIRMAN WOOD & HARDWARE LTD": {
+      "customer_name": "BIRMAN WOOD & HARDWARE LTD",
+      "service_rep": "משה רוסו",
+      "department": "cus1",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 2
+    },
+    "ZIVEI HAKESHET LTD": {
+      "customer_name": "ZIVEI HAKESHET LTD",
+      "service_rep": "משה רוסו",
+      "department": "cus1",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 3
+    },
+    "BENTAL INDUSTRIES LTD.": {
+      "customer_name": "BENTAL INDUSTRIES LTD.",
+      "service_rep": "משה רוסו",
+      "department": "cus1",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 3
+    },
+    "ORANTEK GATHOR": {
+      "customer_name": "ORANTEK GATHOR",
+      "service_rep": "משה רוסו",
+      "department": "cus1",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 1
+    },
+    "A.R.N. OLAM HAMOSCHAKIM LTD": {
+      "customer_name": "A.R.N. OLAM HAMOSCHAKIM LTD",
+      "service_rep": "משה רוסו",
+      "department": "cus1",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 2
+    },
+    "ZAFRIR TOMER T.Z. MARKETING": {
+      "customer_name": "ZAFRIR TOMER T.Z. MARKETING",
+      "service_rep": "משה רוסו",
+      "department": "cus1",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 6
+    },
+    "RAS RETAIL SOLUTIONS LTD": {
+      "customer_name": "RAS RETAIL SOLUTIONS LTD",
+      "service_rep": "משה רוסו",
+      "department": "cus1",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 3
+    },
+    "RIGAKU SEMICONDUCTOR INSTRUMENTSLTD": {
+      "customer_name": "RIGAKU SEMICONDUCTOR INSTRUMENTSLTD",
+      "service_rep": "משה רוסו",
+      "department": "cus1",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 1
+    },
+    "PUSHIT REPLAYS": {
+      "customer_name": "PUSHIT REPLAYS",
+      "service_rep": "משה רוסו",
+      "department": "cus1",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 2
+    },
+    "NIMBO INDUSTRIAL VARIETIES AND ACCE": {
+      "customer_name": "NIMBO INDUSTRIAL VARIETIES AND ACCE",
+      "service_rep": "משה רוסו",
+      "department": "cus1",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 1
+    },
+    "GEVASOL ETTEM SEALING SOLUTIONS LTD": {
+      "customer_name": "GEVASOL ETTEM SEALING SOLUTIONS LTD",
+      "service_rep": "משה רוסו",
+      "department": "cus1",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 1
+    },
+    "E.T.V TECHNOLOGY LTD": {
+      "customer_name": "E.T.V TECHNOLOGY LTD",
+      "service_rep": "משה רוסו",
+      "department": "cus1",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 1
+    },
+    "HALED AZAZMMA": {
+      "customer_name": "HALED AZAZMMA",
+      "service_rep": "משה רוסו",
+      "department": "cus1",
+      "type": "unknown",
+      "dangerous_rule": false,
+      "files": 1
+    }
+  }
+}

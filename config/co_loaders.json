@@ -1,0 +1,18 @@
+{
+  "_comment": "טבלת קודי CO-LOADER. כל כתובות המייל הוחלפו ל-maorfl14@gmail.com (external_email_override). gender: m/f, number: s/p קובעים את הניסוח (טיפולך/טיפולכם/טיפולכן). קודים עם needs_review=true ממתינים לפרטי קשר אמיתיים (OPEN GAP).",
+  "co_loaders": {
+    "641": { "name": "אושן לינק", "name_en": "OCEAN LINK", "contact": "צוות אושן לינק", "gender": "f", "number": "p", "emails": ["maorfl14@gmail.com"] },
+    "415": { "name": "טוטל קארגו", "name_en": "TOTAL CARGO", "contact": "צוות טוטל", "gender": "f", "number": "p", "emails": ["maorfl14@gmail.com"] },
+    "232": { "name": "אלדן", "name_en": "Eldan Cargo", "contact": "אתי", "gender": "f", "number": "s", "emails": ["maorfl14@gmail.com"] },
+    "237": { "name": "אבירם", "name_en": "Aviram", "contact": "צוות אבירם", "gender": "m", "number": "p", "emails": ["maorfl14@gmail.com"] },
+    "238": { "name": "אושפיר", "name_en": "Oshfir", "contact": "צוות אושפיר", "gender": "m", "number": "p", "emails": ["maorfl14@gmail.com"] },
+    "484": { "name": "ישראל קארגו", "name_en": "ILCargo", "contact": "סנדרה", "gender": "f", "number": "s", "emails": ["maorfl14@gmail.com"] },
+    "958": { "name": "ישראל קארגו", "name_en": "ILCargo", "contact": "סנדרה", "gender": "f", "number": "s", "emails": ["maorfl14@gmail.com"] },
+    "997": { "name": "וריטס", "name_en": "Veritas", "contact": "יוסי", "gender": "m", "number": "s", "emails": ["maorfl14@gmail.com"] },
+    "307": { "name": "DSV", "name_en": "DSV", "contact": "אתי", "gender": "f", "number": "s", "emails": ["maorfl14@gmail.com"] },
+    "852": { "name": "תובלה משולבת", "name_en": "JOINT TRANSPORT", "contact": "אייל", "gender": "m", "number": "s", "emails": ["maorfl14@gmail.com"] },
+    "635": { "name": "EASY CONSOL", "name_en": "EASY CONSOL", "contact": "צוות איזי קונסול", "gender": "m", "number": "p", "emails": ["maorfl14@gmail.com"], "needs_review": true },
+    "674": { "name": "CONSOLA", "name_en": "CONSOLA", "contact": "צוות קונסולה", "gender": "m", "number": "p", "emails": ["maorfl14@gmail.com"], "needs_review": true },
+    "15373": { "name": "SPARTA CARGO", "name_en": "SPARTA CARGO", "contact": "צוות ספרטה", "gender": "m", "number": "p", "emails": ["maorfl14@gmail.com"], "needs_review": true }
+  }
+}

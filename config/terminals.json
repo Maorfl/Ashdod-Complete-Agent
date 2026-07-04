@@ -1,0 +1,25 @@
+{
+  "_comment": "מסופי אשדוד ומובילי המשך. כל המיילים החיצוניים הוחלפו ל-maorfl14@gmail.com (external_email_override). מסופים/מובילים עם needs_review=true ממתינים לפרטי קשר אמיתיים (OPEN GAP).",
+  "terminals": {
+    "אוברסיז אשדוד": { "key": "overseas", "downloader": "אוברסיז אשדוד", "emails": ["maorfl14@gmail.com"] },
+    "קונטרם אשדוד": { "key": "goldbond", "downloader": "גולד בונד אשדוד", "emails": ["maorfl14@gmail.com"] },
+    "מסוף 207 אשדוד בע\"מ": { "key": "masof207", "downloader": "תמיד מגיע עם CO-LOADER", "emails": [], "always_with_coloader": true },
+    "אשדוד בונדד מ.מטען ומחסן בע\"מ": { "key": "bonded", "downloader": "סמא חיפה", "emails": ["maorfl14@gmail.com"], "needs_review": true },
+    "סויספורט": { "key": "swissport", "downloader": "לאישור הסניף", "emails": ["maorfl14@gmail.com"], "needs_review": true }
+  },
+  "continuation_carriers": {
+    "גולד בונד": { "emails": ["maorfl14@gmail.com"], "gender": "m", "number": "p" },
+    "סמא": { "emails": ["maorfl14@gmail.com"], "gender": "f", "number": "s", "contact": "ילנה" },
+    "סדצקי": { "emails": ["maorfl14@gmail.com"], "gender": "m", "number": "p" }
+  },
+  "dangerous_goods": {
+    "default_carrier": "גולד בונד",
+    "override_when_hazardous": "סמא",
+    "_rule": "גולד בונד אינה מורידה חומר מסוכן. אם Hazardous=Yes -> המוביל הופך לסמא."
+  },
+  "haifa_arrival_senders": {
+    "goldbond": { "from": "server@conterm.co.il", "id_in": "body", "pattern": "מספר תיק" },
+    "sme": { "from": ["Yelena@sme.co.il", "sme-service4@sme.co.il", "storage@sme.co.il"], "id_in": "subject", "pattern": "//" },
+    "overseas": { "from": "root@mails.ovrs.co.il", "id_in": "subject", "pattern": "Resh", "lookup_by": "wg_reshimon_no" }
+  }
+}

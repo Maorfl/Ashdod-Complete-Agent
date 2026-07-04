@@ -1,0 +1,40 @@
+{
+  "name": "RIVULIS PLASTRO LTD",
+  "company_id": "",
+  "emails": [
+    "maorfl14@gmail.com"
+  ],
+  "address": "",
+  "notes": "",
+  "department": "cus3",
+  "service_rep": "אביהוא עבדי",
+  "type": "unknown",
+  "dangerous_rule": false,
+  "cont_general": "",
+  "cont_general_emails": [],
+  "cont_dangerous_emails": [],
+  "aliases": [],
+  "seen_stations": [
+    "1",
+    "2",
+    "4"
+  ],
+  "files": [
+    "6177504",
+    "6177628",
+    "6177960",
+    "6178067",
+    "6178469",
+    "6179057",
+    "6179080",
+    "6179111",
+    "6179193",
+    "6179337",
+    "6179695",
+    "6180090",
+    "6180092",
+    "6180131",
+    "6180347",
+    "6180576"
+  ]
+}

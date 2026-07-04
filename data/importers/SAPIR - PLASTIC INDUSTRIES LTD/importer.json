@@ -1,0 +1,31 @@
+{
+  "name": "SAPIR - PLASTIC INDUSTRIES LTD",
+  "company_id": "",
+  "emails": [
+    "maorfl14@gmail.com"
+  ],
+  "address": "",
+  "notes": "",
+  "department": "cus2",
+  "service_rep": "דורון רימה",
+  "type": "unknown",
+  "dangerous_rule": false,
+  "cont_general": "",
+  "cont_general_emails": [],
+  "cont_dangerous_emails": [],
+  "aliases": [],
+  "seen_stations": [
+    "1"
+  ],
+  "files": [
+    "6178182",
+    "6178661",
+    "6178756",
+    "6178758",
+    "6178776",
+    "6179493",
+    "6179585",
+    "6179922",
+    "6180511"
+  ]
+}

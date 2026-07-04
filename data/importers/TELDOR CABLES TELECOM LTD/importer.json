@@ -1,0 +1,35 @@
+{
+  "name": "TELDOR CABLES TELECOM LTD.",
+  "company_id": "",
+  "emails": [
+    "maorfl14@gmail.com"
+  ],
+  "address": "",
+  "notes": "",
+  "department": "cus1",
+  "service_rep": "משה רוסו",
+  "type": "unknown",
+  "dangerous_rule": false,
+  "cont_general": "",
+  "cont_general_emails": [],
+  "cont_dangerous_emails": [],
+  "aliases": [],
+  "seen_stations": [
+    "2",
+    "1",
+    "4"
+  ],
+  "files": [
+    "6177830",
+    "6179262",
+    "6179290",
+    "6179296",
+    "6179399",
+    "6179402",
+    "6179458",
+    "6179614",
+    "6179784",
+    "6179807",
+    "6180536"
+  ]
+}

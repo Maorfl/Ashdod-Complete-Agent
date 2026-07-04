@@ -1,0 +1,48 @@
+{
+  "name": "ORAN PALMACH TZUBA",
+  "company_id": "",
+  "emails": [
+    "maorfl14@gmail.com"
+  ],
+  "address": "",
+  "notes": "",
+  "department": "cus2",
+  "service_rep": "דורון רימה",
+  "type": "unknown",
+  "dangerous_rule": false,
+  "cont_general": "",
+  "cont_general_emails": [],
+  "cont_dangerous_emails": [],
+  "aliases": [],
+  "seen_stations": [
+    "2",
+    "1",
+    "4"
+  ],
+  "files": [
+    "6178097",
+    "6178216",
+    "6178390",
+    "6178833",
+    "6179059",
+    "6179107",
+    "6179210",
+    "6179272",
+    "6179275",
+    "6179286",
+    "6179297",
+    "6179308",
+    "6179449",
+    "6179554",
+    "6179658",
+    "6179748",
+    "6179787",
+    "6179803",
+    "6179912",
+    "6179920",
+    "6179954",
+    "6180106",
+    "6180189",
+    "6180340"
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "name": "ARBEL -  STRAUSS LTD",
+  "company_id": "",
+  "emails": [
+    "maorfl14@gmail.com"
+  ],
+  "address": "",
+  "notes": "",
+  "department": "cus3",
+  "service_rep": "אביהוא עבדי",
+  "type": "unknown",
+  "dangerous_rule": false,
+  "cont_general": "",
+  "cont_general_emails": [],
+  "cont_dangerous_emails": [],
+  "aliases": [],
+  "seen_stations": [
+    "1",
+    "2"
+  ],
+  "files": [
+    "6177720",
+    "6178044",
+    "6178059",
+    "6178604"
+  ]
+}

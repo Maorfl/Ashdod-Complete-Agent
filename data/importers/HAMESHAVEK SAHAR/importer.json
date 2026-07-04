@@ -1,0 +1,31 @@
+{
+  "name": "HAMESHAVEK SAHAR",
+  "company_id": "",
+  "emails": [
+    "maorfl14@gmail.com"
+  ],
+  "address": "",
+  "notes": "",
+  "department": "cus3",
+  "service_rep": "אביהוא עבדי",
+  "type": "unknown",
+  "dangerous_rule": false,
+  "cont_general": "",
+  "cont_general_emails": [],
+  "cont_dangerous_emails": [],
+  "aliases": [],
+  "seen_stations": [
+    "2",
+    "4"
+  ],
+  "files": [
+    "6178122",
+    "6178134",
+    "6178622",
+    "6179550",
+    "6180199",
+    "6180430",
+    "6180432",
+    "6180458"
+  ]
+}

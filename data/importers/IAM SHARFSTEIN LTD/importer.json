@@ -1,0 +1,39 @@
+{
+  "name": "IAM SHARFSTEIN LTD",
+  "company_id": "",
+  "emails": [
+    "maorfl14@gmail.com"
+  ],
+  "address": "",
+  "notes": "",
+  "department": "cus1",
+  "service_rep": "משה רוסו",
+  "type": "unknown",
+  "dangerous_rule": false,
+  "cont_general": "",
+  "cont_general_emails": [],
+  "cont_dangerous_emails": [],
+  "aliases": [],
+  "seen_stations": [
+    "2"
+  ],
+  "files": [
+    "6178963",
+    "6179260",
+    "6179517",
+    "6179518",
+    "6179544",
+    "6179644",
+    "6179646",
+    "6179647",
+    "6179685",
+    "6179691",
+    "6179698",
+    "6179714",
+    "6179829",
+    "6180122",
+    "6180175",
+    "6180216",
+    "6180290"
+  ]
+}

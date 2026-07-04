@@ -1,0 +1,31 @@
+{
+  "name": "MTI WIRELESS EDGE LTD",
+  "company_id": "",
+  "emails": [
+    "maorfl14@gmail.com"
+  ],
+  "address": "",
+  "notes": "",
+  "department": "cus3",
+  "service_rep": "אביהוא עבדי",
+  "type": "unknown",
+  "dangerous_rule": false,
+  "cont_general": "",
+  "cont_general_emails": [],
+  "cont_dangerous_emails": [],
+  "aliases": [],
+  "seen_stations": [
+    "1",
+    "2",
+    "4"
+  ],
+  "files": [
+    "6177422",
+    "6179149",
+    "6179223",
+    "6179346",
+    "6179513",
+    "6180298",
+    "6180344"
+  ]
+}

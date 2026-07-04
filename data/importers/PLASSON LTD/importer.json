@@ -1,0 +1,42 @@
+{
+  "name": "PLASSON LTD",
+  "company_id": "",
+  "emails": [
+    "maorfl14@gmail.com"
+  ],
+  "address": "",
+  "notes": "",
+  "department": "cus2",
+  "service_rep": "דורון רימה",
+  "type": "unknown",
+  "dangerous_rule": false,
+  "cont_general": "",
+  "cont_general_emails": [],
+  "cont_dangerous_emails": [],
+  "aliases": [],
+  "seen_stations": [
+    "1",
+    "2",
+    "4"
+  ],
+  "files": [
+    "6177070",
+    "6177430",
+    "6177980",
+    "6178003",
+    "6178250",
+    "6178633",
+    "6178916",
+    "6178960",
+    "6179353",
+    "6179437",
+    "6179615",
+    "6179753",
+    "6179837",
+    "6179886",
+    "6179906",
+    "6179907",
+    "6179917",
+    "6180214"
+  ]
+}

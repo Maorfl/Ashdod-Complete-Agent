@@ -1,0 +1,32 @@
+{
+  "name": "ORAN P.TZOBA C/O TOAM VAT 570038554",
+  "company_id": "",
+  "emails": [
+    "maorfl14@gmail.com"
+  ],
+  "address": "",
+  "notes": "",
+  "department": "cus2",
+  "service_rep": "דורון רימה",
+  "type": "unknown",
+  "dangerous_rule": false,
+  "cont_general": "",
+  "cont_general_emails": [],
+  "cont_dangerous_emails": [],
+  "aliases": [],
+  "seen_stations": [
+    "2",
+    "1"
+  ],
+  "files": [
+    "6177656",
+    "6178155",
+    "6178619",
+    "6178907",
+    "6179233",
+    "6179356",
+    "6179750",
+    "6179765",
+    "6180011"
+  ]
+}

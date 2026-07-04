@@ -1,0 +1,35 @@
+{
+  "name": "AMERICAN ISRAELI GAS CORPORATION",
+  "company_id": "",
+  "emails": [
+    "maorfl14@gmail.com"
+  ],
+  "address": "",
+  "notes": "",
+  "department": "cus2",
+  "service_rep": "דורון רימה",
+  "type": "unknown",
+  "dangerous_rule": false,
+  "cont_general": "",
+  "cont_general_emails": [],
+  "cont_dangerous_emails": [],
+  "aliases": [],
+  "seen_stations": [
+    "2",
+    "1",
+    "4"
+  ],
+  "files": [
+    "6177715",
+    "6178921",
+    "6178934",
+    "6179100",
+    "6179255",
+    "6179525",
+    "6179720",
+    "6179931",
+    "6179949",
+    "6180114",
+    "6180376"
+  ]
+}

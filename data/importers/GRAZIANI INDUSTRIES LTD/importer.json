@@ -1,0 +1,30 @@
+{
+  "name": "GRAZIANI INDUSTRIES LTD",
+  "company_id": "",
+  "emails": [
+    "maorfl14@gmail.com"
+  ],
+  "address": "",
+  "notes": "",
+  "department": "cus2",
+  "service_rep": "דורון רימה",
+  "type": "unknown",
+  "dangerous_rule": false,
+  "cont_general": "",
+  "cont_general_emails": [],
+  "cont_dangerous_emails": [],
+  "aliases": [],
+  "seen_stations": [
+    "1",
+    "2"
+  ],
+  "files": [
+    "6177428",
+    "6177612",
+    "6178137",
+    "6178521",
+    "6178928",
+    "6179929",
+    "6179934"
+  ]
+}
