@@ -45,7 +45,7 @@ button { font-family: var(--font); cursor: pointer; }
 
 /* ---------- shell ---------- */
 .shell { display: grid; grid-template-columns: 1fr 232px; }
-.main { padding: 28px 34px 60px; max-width: 1180px; }
+.main { padding: 28px 34px 60px; max-width: 100%; }
 
 .topbar {
   grid-column: 1 / -1;

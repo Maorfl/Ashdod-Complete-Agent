@@ -100,7 +100,6 @@ function composeRelease(rec, decision, importer) {
     continuationLine,
     availabilityLine,
     'מצ"ב ניירת.',
-    '',
     'בברכה,',
     'צוות כספי',
   ].join('\n');
