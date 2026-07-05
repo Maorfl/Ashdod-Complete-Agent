@@ -12,6 +12,7 @@
   --accent: #B07A2E;       /* ליטוש פליז — אקצנט חתימה */
   --accent-soft: #f4e8d6;
   --sea: #1f6f78;
+  --row-noted: #f2ede3;    /* רקע שורה עם הערה — בז' עדין ממשפחת הפליז */
 
   /* status */
   --st-transit: #2f6fc4;
@@ -29,6 +30,8 @@
 
 * { box-sizing: border-box; }
 html, body, #root { height: 100%; }
+/* שומר מקום קבוע לפס הגלילה — מונע קפיצה אופקית כשעמוד קצר/ארוך מתחלף */
+html { scrollbar-gutter: stable; }
 body {
   margin: 0;
   font-family: var(--font);
@@ -41,7 +44,7 @@ a { color: inherit; text-decoration: none; }
 button { font-family: var(--font); cursor: pointer; }
 
 /* ---------- shell ---------- */
-.shell { display: grid; grid-template-columns: 1fr 232px; min-height: 100vh; }
+.shell { display: grid; grid-template-columns: 1fr 232px; }
 .main { padding: 28px 34px 60px; max-width: 1180px; }
 
 .topbar {
@@ -188,7 +191,13 @@ td.mono, .mono { font-family: var(--mono); }
 .email-preview .k { color: var(--muted); font-weight: 700; }
 .email-preview pre { font-family: var(--font); white-space: pre-wrap; margin: 8px 0 0; line-height: 1.7; }
 .email-preview textarea { font-family: var(--font); line-height: 1.7; margin-top: 8px; }
+/* גוף טיוטה במצב קריאה-בלבד — מעומעם ולא אינטראקטיבי (לפני עריכה) */
+.email-body-preview { color: var(--muted); cursor: default; user-select: text; }
+.draft-edit-actions { display: flex; gap: 8px; margin-top: 10px; }
 .review-flag { background: var(--accent-soft); color: #8a5a16; font-weight: 700; font-size: 12px; padding: 3px 10px; border-radius: 20px; }
+.gatepass-tag { font-weight: 700; font-size: 12px; padding: 3px 10px; border-radius: 20px; white-space: nowrap; }
+.gatepass-tag.ok { background: #e6f4ec; color: #245d39; }
+.gatepass-tag.pending { background: #fbecdc; color: #8a4e16; }
 
 .empty { text-align: center; color: var(--muted); padding: 60px 20px; }
 .empty .big { font-size: 40px; margin-bottom: 8px; opacity: .5; }
@@ -250,6 +259,16 @@ td.mono, .mono { font-family: var(--mono); }
 .ship-table thead th { background: var(--ink); color: #dbe6f0; border-bottom: 0; text-transform: none; letter-spacing: .02em; font-size: 12.5px; }
 .ship-row { cursor: pointer; transition: background .12s; }
 .ship-row:hover { background: #f4f7fa; }
+/* שורה עם הערה — רקע מובחן שאינו מתנגש עם פס הסטטוס בתא התיק */
+.ship-row.has-notes { background: var(--row-noted); }
+.ship-row.has-notes:hover { background: #ece5d6; }
+/* נקודת חיווי על כפתור ההערות כשקיימת הערה */
+.btn.icon { position: relative; }
+.btn.icon.noted::after {
+  content: ''; position: absolute; top: -3px; inset-inline-end: -3px;
+  width: 9px; height: 9px; border-radius: 50%;
+  background: var(--accent); border: 2px solid var(--panel);
+}
 .ship-row .file-cell {
   font-weight: 700; font-size: 13.5px; white-space: nowrap;
   border-inline-start: 3px solid var(--c, var(--line));
@@ -275,6 +294,26 @@ td.mono, .mono { font-family: var(--mono); }
 
 .refresh-info { font-size: 12px; color: var(--muted); white-space: nowrap; }
 .empty.small { padding: 18px; font-size: 13px; }
+/* גובה יציב למצבי טעינה/ריק בטבלה — מפחית קפיצת ציור כשהנתונים מגיעים */
+.table-card .empty { min-height: 280px; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+
+/* ---------- email chips editor (יבואנים) ---------- */
+.email-editor .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+.email-chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--bg-2); border: 1px solid var(--line); border-radius: 16px;
+  padding: 3px 6px 3px 10px; font-size: 12px; font-family: var(--mono); direction: ltr;
+}
+.email-chip .rm {
+  border: 0; background: transparent; cursor: pointer; line-height: 1;
+  font-size: 13px; color: var(--muted); padding: 1px 4px; border-radius: 50%;
+  transition: color .15s, background .15s;
+}
+.email-chip .rm:hover { color: #9c3318; background: #fbeee9; }
+.email-chip .rm:focus-visible { outline: none; box-shadow: 0 0 0 2px var(--accent); }
+.email-editor .add-row { display: flex; gap: 8px; }
+.email-editor .add-row input { flex: 1; direction: ltr; text-align: left; }
+.email-editor .err-line { color: #9c3318; font-size: 12px; font-weight: 600; margin: 6px 0 0; }
 
 /* ---------- toasts (RTL, פינה שמאלית-תחתונה) ---------- */
 .toast-area { position: fixed; bottom: 20px; left: 20px; z-index: 100; display: flex; flex-direction: column; gap: 8px; direction: rtl; }
@@ -348,3 +387,76 @@ td.mono, .mono { font-family: var(--mono); }
   .agent-switch .seg { flex: 1; justify-content: center; }
 }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+
+/* ---------- confirm modal & dialogs ---------- */
+.confirm-overlay {
+  z-index: 80;
+}
+.confirm-modal {
+  background: var(--bg);
+  border-radius: 12px;
+  width: 480px;
+  max-width: 90vw;
+  box-shadow: 0 15px 45px rgba(0,0,0,.3);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: confirm-modal-in 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+@keyframes confirm-modal-in {
+  from { opacity: 0; transform: scale(0.96) translateY(8px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+.confirm-head {
+  background: var(--ink);
+  color: #fff;
+  padding: 14px 20px;
+  font-size: 16px;
+  font-weight: 700;
+}
+.confirm-body {
+  padding: 20px;
+  font-size: 14.5px;
+  line-height: 1.6;
+  color: var(--text);
+}
+.confirm-foot {
+  padding: 12px 20px;
+  display: flex;
+  gap: 10px;
+  border-top: 1px solid var(--line);
+  background: var(--panel);
+  justify-content: flex-start;
+}
+
+.btn.danger.solid {
+  background: #c4502f;
+  border-color: #b04324;
+  color: #fff;
+}
+.btn.danger.solid:hover {
+  background: #a93f21;
+  border-color: #a93f21;
+}
+.btn.danger.solid:disabled {
+  background: #d4826b;
+}
+
+/* details-table inside confirm / reminder modals */
+.confirm-body .details-table {
+  width: 100%;
+  margin-bottom: 14px;
+}
+.confirm-body label {
+  margin-top: 12px;
+}
+.confirm-body textarea {
+  resize: vertical;
+}
+.hint-line {
+  font-size: 12.5px;
+  color: var(--muted);
+  margin-top: 8px;
+  margin-bottom: 0;
+}
+

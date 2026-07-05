@@ -6,6 +6,7 @@ const express = require('express');
 const shipments = require('../db/shipments');
 const departments = require('../db/departments');
 const { composeReminder } = require('../email/composer');
+const gatepassFetcher = require('../services/gatepassFetcher');
 const router = express.Router();
 
 // סטטוסים מותרים לעדכון ידני מהדשבורד (whitelist)
@@ -64,14 +65,39 @@ router.post('/:file/status', (req, res) => {
 router.post('/:file/reminder', (req, res) => {
   const rec = shipments.get(req.params.file);
   if (!rec) return res.status(404).json({ error: 'תיק לא נמצא' });
-  const email = composeReminder(rec);
+  const { notes } = req.body || {};
+  const email = composeReminder(rec, notes);
   shipments.upsert({
     file_number: rec.file_number,
     status: 'pending_approval',
-    notes: 'תזכורת ידנית — ממתינה לאישור',
+    notes: notes || 'תזכורת ידנית — ממתינה לאישור',
     draft_payload: { route: rec.route || 'reminder', reminder: true, email },
   });
   res.json({ ok: true, status: 'pending_approval', email });
+});
+
+// עדכון הערות לתיק בלבד
+router.post('/:file/notes', (req, res) => {
+  const { notes } = req.body || {};
+  const rec = shipments.get(req.params.file);
+  if (!rec) return res.status(404).json({ error: 'תיק לא נמצא' });
+  const updated = shipments.upsert({
+    file_number: rec.file_number,
+    notes: notes ?? '',
+  });
+  res.json({ ok: true, notes: updated.notes });
+});
+
+// איתור ידני של ה-gatepass PDF עבור תיק (Task 6) — לא חוסם אישור
+router.post('/:file/gatepass', async (req, res) => {
+  const rec = shipments.get(req.params.file);
+  if (!rec) return res.status(404).json({ error: 'תיק לא נמצא' });
+  try {
+    const r = await gatepassFetcher.fetchForFile(rec.file_number);
+    res.json({ ok: !!r.path, ...r });
+  } catch (e) {
+    res.status(502).json({ error: `איתור PDF נכשל: ${e.message}` });
+  }
 });
 
 // תיק בודד

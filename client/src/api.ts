@@ -61,6 +61,7 @@ export interface Shipment {
   continuation: string;
   hazardous: string;
   type: string;
+  gatepass_pdf_path?: string | null;
   draft?: Draft | null;
 }
 
@@ -106,8 +107,18 @@ export const api = {
       method: 'POST',
       body: JSON.stringify({ status, notes }),
     }),
-  createReminder: (file: string) =>
+  createReminder: (file: string, notes?: string) =>
     req<{ ok: boolean; status: string; email: DraftEmail }>('/shipments/' + encodeURIComponent(file) + '/reminder', {
+      method: 'POST',
+      body: JSON.stringify({ notes }),
+    }),
+  updateShipmentNotes: (file: string, notes: string) =>
+    req<{ ok: boolean; notes: string }>('/shipments/' + encodeURIComponent(file) + '/notes', {
+      method: 'POST',
+      body: JSON.stringify({ notes }),
+    }),
+  fetchGatepass: (file: string) =>
+    req<{ ok: boolean; path?: string; skipped?: string }>('/shipments/' + encodeURIComponent(file) + '/gatepass', {
       method: 'POST',
     }),
 };

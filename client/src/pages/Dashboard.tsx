@@ -8,6 +8,8 @@ import { api, Shipment, DashboardCounts } from '../api';
 import { useAgentFilter, matchesAgent } from '../context/AgentFilterContext';
 import { useToast } from '../components/Toasts';
 import FileModal from '../components/FileModal';
+import ConfirmModal from '../components/ConfirmModal';
+import ShipmentNotesModal from '../components/ShipmentNotesModal';
 import {
   STATUS_META, STATUS_ORDER, statusKeyOf, statusLabel, MANUAL_STATUSES,
   formatDateHe, formatDuration, timeSeverity, StatusKey,
@@ -23,6 +25,9 @@ export default function Dashboard() {
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const [openFile, setOpenFile] = useState<string | null>(null);
   const [statusPick, setStatusPick] = useState<Record<string, string>>({});
+  const [activeDeliverItem, setActiveDeliverItem] = useState<Shipment | null>(null);
+  const [activeStatusUpdate, setActiveStatusUpdate] = useState<{ item: Shipment; nextStatus: string } | null>(null);
+  const [activeNotesItem, setActiveNotesItem] = useState<Shipment | null>(null);
   const timerRef = useRef<number | null>(null);
 
   const load = useCallback((manual = false) => {
@@ -55,7 +60,9 @@ export default function Dashboard() {
   }, [agentItems]);
 
   const visible = useMemo(() => {
-    const list = filter === 'all' ? agentItems : agentItems.filter((s) => statusKeyOf(s) === filter);
+    const list = filter === 'all'
+      ? agentItems.filter((s) => statusKeyOf(s) !== 'delivered')
+      : agentItems.filter((s) => statusKeyOf(s) === filter);
     return [...list].sort((a, b) => {
       const ai = STATUS_ORDER.indexOf(statusKeyOf(a));
       const bi = STATUS_ORDER.indexOf(statusKeyOf(b));
@@ -77,30 +84,42 @@ export default function Dashboard() {
     finally { setBusy(false); }
   }
 
-  async function deliver(s: Shipment) {
-    if (!confirm(`לסמן תיק ${s.file_number} כנמסר ללקוח?`)) return;
-    try { await api.updateStatus(s.file_number, 'נמסר ללקוח'); toast(`תיק ${s.file_number} סומן כנמסר ✓`, 'success'); load(); }
-    catch (e: any) { toast(e.message, 'error'); }
+  async function performDeliver(s: Shipment) {
+    try {
+      await api.updateStatus(s.file_number, 'נמסר ללקוח');
+      toast('התיק הועבר ללשונית נמסר ללקוח ✓', 'success');
+      load();
+    } catch (e: any) {
+      toast(e.message, 'error');
+    } finally {
+      setActiveDeliverItem(null);
+    }
   }
 
-  async function changeStatus(s: Shipment, status: string) {
-    if (!status) return;
-    if (!confirm(`לעדכן את תיק ${s.file_number} לסטטוס "${status}"?`)) {
-      setStatusPick((p) => ({ ...p, [s.file_number]: '' }));
-      return;
-    }
+  async function performStatusUpdate(s: Shipment, status: string) {
     try {
       await api.updateStatus(s.file_number, status);
       toast(`הסטטוס עודכן ל"${status}" ✓`, 'success');
-      setStatusPick((p) => ({ ...p, [s.file_number]: '' }));
       load();
-    } catch (e: any) { toast(e.message, 'error'); }
+    } catch (e: any) {
+      toast(e.message, 'error');
+    } finally {
+      setStatusPick((p) => ({ ...p, [s.file_number]: '' }));
+      setActiveStatusUpdate(null);
+    }
   }
 
-  async function remind(s: Shipment) {
-    if (!confirm(`ליצור תזכורת לתיק ${s.file_number}? הטיוטה תמתין לאישור — לא יישלח מייל.`)) return;
-    try { await api.createReminder(s.file_number); toast('טיוטת תזכורת נוצרה וממתינה לאישור ✓', 'success'); load(); }
-    catch (e: any) { toast(e.message, 'error'); }
+  function deliver(s: Shipment) {
+    setActiveDeliverItem(s);
+  }
+
+  function changeStatus(s: Shipment, status: string) {
+    if (!status) return;
+    setActiveStatusUpdate({ item: s, nextStatus: status });
+  }
+
+  function openNotes(s: Shipment) {
+    setActiveNotesItem(s);
   }
 
   const clock = lastUpdated
@@ -180,7 +199,7 @@ export default function Dashboard() {
                   const meta = STATUS_META.find((m) => m.key === k);
                   const sev = timeSeverity(s);
                   return (
-                    <tr key={s.file_number} className="ship-row" onClick={() => setOpenFile(s.file_number)}>
+                    <tr key={s.file_number} className={'ship-row' + (s.notes ? ' has-notes' : '')} onClick={() => setOpenFile(s.file_number)}>
                       <td className="mono file-cell" style={{ ['--c' as any]: meta?.cssVar || 'var(--line)' }}>
                         {s.file_number}{s.hazardous === 'Yes' && <span title="חומר מסוכן"> ⚠</span>}
                       </td>
@@ -203,10 +222,10 @@ export default function Dashboard() {
                             onChange={(e) => changeStatus(s, e.target.value)}
                             title="עדכון סטטוס" aria-label="עדכון סטטוס"
                           >
-                            <option value="">🔄</option>
+                            <option value="">🔄 עדכון סטטוס</option>
                             {MANUAL_STATUSES.map((st) => <option key={st} value={st}>{st}</option>)}
                           </select>
-                          <button className="btn icon" title="יצירת תזכורת" aria-label="יצירת תזכורת" onClick={() => remind(s)}>📧</button>
+                          <button className={'btn icon' + (s.notes ? ' noted' : '')} title={s.notes ? `הערות לתיק: ${s.notes}` : 'הערות לתיק'} aria-label="הערות לתיק" onClick={() => openNotes(s)}>📝</button>
                           <button className="btn icon" title="כרטיס תיק" aria-label="כרטיס תיק" onClick={() => setOpenFile(s.file_number)}>👁</button>
                         </div>
                       </td>
@@ -221,6 +240,42 @@ export default function Dashboard() {
 
       {openItem && (
         <FileModal item={openItem} onClose={() => setOpenFile(null)} onChanged={() => load()} />
+      )}
+
+      {activeDeliverItem && (
+        <ConfirmModal
+          title={`סימון כנמסר — תיק ${activeDeliverItem.file_number}`}
+          confirmLabel="אשר"
+          onConfirm={() => performDeliver(activeDeliverItem)}
+          onCancel={() => setActiveDeliverItem(null)}
+        >
+          לסמן תיק {activeDeliverItem.file_number} כנמסר ללקוח?
+        </ConfirmModal>
+      )}
+
+      {activeStatusUpdate && (
+        <ConfirmModal
+          title={`עדכון סטטוס — תיק ${activeStatusUpdate.item.file_number}`}
+          confirmLabel="עדכן"
+          onConfirm={() => performStatusUpdate(activeStatusUpdate.item, activeStatusUpdate.nextStatus)}
+          onCancel={() => {
+            setStatusPick((p) => ({ ...p, [activeStatusUpdate.item.file_number]: '' }));
+            setActiveStatusUpdate(null);
+          }}
+        >
+          לעדכן את תיק {activeStatusUpdate.item.file_number} לסטטוס "{activeStatusUpdate.nextStatus}"?
+        </ConfirmModal>
+      )}
+
+      {activeNotesItem && (
+        <ShipmentNotesModal
+          item={activeNotesItem}
+          onCancel={() => setActiveNotesItem(null)}
+          onSaved={() => {
+            setActiveNotesItem(null);
+            load();
+          }}
+        />
       )}
     </>
   );

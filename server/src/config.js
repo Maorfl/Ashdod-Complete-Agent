@@ -5,6 +5,31 @@
 const fs = require('fs');
 const path = require('path');
 
+// טעינת server/.env אל process.env (סודות/override סביבתי) — לפני קריאת המשתנים.
+// Node 22: process.loadEnvFile; נפילה חיננית לפרסר ידני אם אינו זמין.
+(function loadDotEnv() {
+  const envPath = path.join(__dirname, '..', '.env');
+  if (!fs.existsSync(envPath)) return;
+  try {
+    if (typeof process.loadEnvFile === 'function') {
+      process.loadEnvFile(envPath);
+      return;
+    }
+  } catch { /* נפילה לפרסר הידני */ }
+  for (const raw of fs.readFileSync(envPath, 'utf8').split(/\r?\n/)) {
+    const line = raw.trim();
+    if (!line || line.startsWith('#')) continue;
+    const eq = line.indexOf('=');
+    if (eq === -1) continue;
+    const key = line.slice(0, eq).trim();
+    let val = line.slice(eq + 1).trim();
+    if ((val.startsWith('"') && val.endsWith('"')) || (val.startsWith("'") && val.endsWith("'"))) {
+      val = val.slice(1, -1);
+    }
+    if (key && process.env[key] === undefined) process.env[key] = val;
+  }
+})();
+
 const ROOT = path.join(__dirname, '..', '..');
 const CONFIG_DIR = path.join(ROOT, 'config');
 

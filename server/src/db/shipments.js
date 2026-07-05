@@ -49,6 +49,7 @@ const AGENT_COLUMNS = {
   agent_sent_at: 'DATETIME',
   first_seen: 'DATETIME',
   last_seen: 'DATETIME',
+  gatepass_pdf_path: 'TEXT', // נתיב מקומי ל-PDF שהתקבל מ-do-not-reply עבור התיק (Task 6)
 };
 (function ensureAgentColumns() {
   const existing = new Set(db.prepare('PRAGMA table_info(shipments)').all().map((c) => c.name));
@@ -150,6 +151,13 @@ function markSent(fileNumber, notes = null) {
   return get(fileNumber);
 }
 
+// שמירת נתיב ה-PDF שהתקבל עבור התיק (gatepass מ-do-not-reply) — Task 6
+function setGatepass(fileNumber, pdfPath) {
+  db.prepare('UPDATE shipments SET gatepass_pdf_path=? WHERE file_number=?')
+    .run(pdfPath || null, String(fileNumber));
+  return get(fileNumber);
+}
+
 function all() {
   return db.prepare('SELECT * FROM shipments ORDER BY COALESCE(last_seen, status_updated_at, created_at) DESC').all();
 }
@@ -180,6 +188,7 @@ module.exports = {
   upsert,
   setStatus,
   markSent,
+  setGatepass,
   addHistory,
   all,
   byStatus,

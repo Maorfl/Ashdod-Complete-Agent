@@ -41,8 +41,12 @@ router.post('/:file/decision', async (req, res) => {
     const email = payload.email;
 
     if (graph.isEnabled() && graph.settings().sendOnApprove && email) {
+      // צירוף ה-gatepass PDF שאותר עבור התיק, אם קיים (Task 6)
+      const outgoing = rec.gatepass_pdf_path
+        ? { ...email, attachments: [rec.gatepass_pdf_path] }
+        : email;
       try {
-        await graph.sendMail(email);
+        await graph.sendMail(outgoing);
       } catch (e) {
         // שליחה נכשלה — התיק נשאר בתור, לא מסומן כנשלח
         return res.status(502).json({ error: `השליחה נכשלה: ${e.message}` });

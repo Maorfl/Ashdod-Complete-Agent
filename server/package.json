@@ -7,6 +7,7 @@
     "start": "node src/index.js",
     "dev": "node --watch src/index.js",
     "test:pipeline": "node src/test-pipeline.js",
+    "recompose": "node src/recompose-drafts.js",
     "build-importers": "node ../scripts/build-importers-from-xlsx.js"
   },
   "dependencies": {
