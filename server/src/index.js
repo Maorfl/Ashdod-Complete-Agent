@@ -10,6 +10,7 @@ const cors = require('cors');
 const { ROOT, PORT, HOST, config } = require('./config');
 const reportWatcher = require('./services/reportWatcher');
 const mailTracker = require('./services/mailTracker');
+const gatepassFetcher = require('./services/gatepassFetcher');
 const graph = require('./services/graphMail');
 const { checkVersion } = require('./version');
 
@@ -47,8 +48,9 @@ app.listen(PORT, HOST, async () => {
   console.log(`  Report Watcher פעיל (כל ${config.poll_interval_minutes} דק').`);
   if (graph.isEnabled()) {
     mailTracker.start();
-    console.log(`  Microsoft Graph מחובר — שליחה באישור + מעקב הגעות (כל ${graph.settings().pollMinutes} דק').\n`);
+    gatepassFetcher.start();
+    console.log(`  Microsoft Graph מחובר — שליחה באישור + מעקב הגעות + איתור gatepass (כל ${graph.settings().pollMinutes} דק').\n`);
   } else {
-    console.log('  Microsoft Graph כבוי — אישור מסמן נשלח בלבד, ללא שליחה בפועל.\n');
+    console.log('  Microsoft Graph כבוי — אישור מסמן נשלח בלבד; איתור gatepass ומעקב הגעות מושבתים.\n');
   }
 });

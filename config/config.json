@@ -23,7 +23,8 @@
     "client_secret": "",
     "send_on_approve": true,
     "poll_inbox_minutes": 5,
-    "_comment": "Client-credentials (app-only). דורש הרשאות אפליקציה Mail.Send + Mail.ReadWrite עם הסכמת מנהל. ניתן להחליף סוד דרך env: GRAPH_CLIENT_SECRET."
+    "gatepass_sender": "do-not-reply@h-caspi.co.il",
+    "_comment": "Client-credentials (app-only). דורש הרשאות אפליקציה Mail.Send + Mail.ReadWrite עם הסכמת מנהל. ניתן להחליף סוד דרך env: GRAPH_CLIENT_SECRET. gatepass_sender = שולח ה-PDF לצירוף לפי מספר תיק."
   },
 
   "external_email_override": "maorfl14@gmail.com",

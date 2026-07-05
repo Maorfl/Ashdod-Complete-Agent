@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { api, Shipment } from '../api';
 import { useAgentFilter, matchesAgent } from '../context/AgentFilterContext';
+import ConfirmModal from '../components/ConfirmModal';
 
 export default function Approvals() {
   const { agent } = useAgentFilter();
@@ -9,17 +10,24 @@ export default function Approvals() {
   const [flash, setFlash] = useState<{ t: string; ok: boolean } | null>(null);
   const [editFile, setEditFile] = useState<string | null>(null);
   const [editBody, setEditBody] = useState('');
+  const [activeApproveItem, setActiveApproveItem] = useState<Shipment | null>(null);
+  const [activeRejectItem, setActiveRejectItem] = useState<Shipment | null>(null);
+  const [rejectNotes, setRejectNotes] = useState('');
 
   function load() { api.approvals().then(setAllItems).catch((e) => setFlash({ t: e.message, ok: false })); }
   useEffect(load, []);
 
-  async function decide(file: string, decision: string, edited?: any) {
+  async function decide(file: string, decision: string, edited?: any, notes?: string) {
     try {
-      await api.decide(file, decision, edited);
-      setFlash({
-        t: decision === 'approve' ? 'אושר ונשלח מ-ashdod.agent@h-caspi.co.il' : decision === 'reject' ? 'הבקשה נדחתה' : 'הטיוטה עודכנה',
-        ok: true,
-      });
+      const res: any = await api.decide(file, decision, edited, notes);
+      if (decision === 'approve') {
+        // אמת מול המשתמש: נשלח בפועל רק אם Microsoft Graph מחובר (res.sent)
+        setFlash(res?.sent
+          ? { t: 'אושר ונשלח מ-ashdod.agent@h-caspi.co.il ✓', ok: true }
+          : { t: 'אושר וסומן כ"נשלח" — אך Microsoft Graph אינו מחובר, ולכן לא נשלח מייל בפועל. הגדירו GRAPH_* בקובץ server/.env.', ok: false });
+      } else {
+        setFlash({ t: decision === 'reject' ? 'הבקשה נדחתה' : 'הטיוטה עודכנה', ok: true });
+      }
       setEditFile(null);
       load();
     } catch (e: any) { setFlash({ t: e.message, ok: false }); }
@@ -57,6 +65,11 @@ export default function Approvals() {
                   {s.hazardous === 'Yes' && <span style={{ marginInlineStart: 10 }} title="חומר מסוכן">⚠</span>}
                 </div>
                 <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                  {(s.route === 'co_loader' || s.route === 'terminal') && (
+                    <span className={'gatepass-tag ' + (s.gatepass_pdf_path ? 'ok' : 'pending')}>
+                      {s.gatepass_pdf_path ? '📎 PDF מצורף ✓' : '⚠ טרם התקבל PDF'}
+                    </span>
+                  )}
                   {s.draft?.needs_review && <span className="review-flag">דורש בדיקת פרטי קשר</span>}
                   {s.department && <span className="type-tag">{s.department.toUpperCase()}</span>}
                   <span className={'badge route-' + (s.route || 'alert')}>{s.route}</span>
@@ -71,7 +84,7 @@ export default function Approvals() {
                   <div><span className="k">נושא: </span>{email.subject}</div>
                   {isEditing
                     ? <textarea rows={8} value={editBody} onChange={(e) => setEditBody(e.target.value)} />
-                    : <pre>{email.body}</pre>}
+                    : <pre dir="rtl">{email.body}</pre>}
                 </div>
               )}
 
@@ -83,9 +96,9 @@ export default function Approvals() {
                   </>
                 ) : (
                   <>
-                    <button className="btn primary" onClick={() => decide(s.file_number, 'approve')}>✅ אישור ושליחה</button>
+                    <button className="btn primary" onClick={() => setActiveApproveItem(s)}>✅ אישור ושליחה</button>
                     <button className="btn" onClick={() => startEdit(s)}>✏️ עריכה</button>
-                    <button className="btn danger" onClick={() => decide(s.file_number, 'reject')}>❌ דחייה</button>
+                    <button className="btn danger" onClick={() => { setActiveRejectItem(s); setRejectNotes(''); }}>❌ דחייה</button>
                   </>
                 )}
               </div>
@@ -93,6 +106,60 @@ export default function Approvals() {
           );
         })}
       </div>
+
+      {activeApproveItem && (
+        <ConfirmModal
+          title={`אישור ושליחה — תיק ${activeApproveItem.file_number}`}
+          confirmLabel="אשר ושלח"
+          onConfirm={async () => {
+            const file = activeApproveItem.file_number;
+            setActiveApproveItem(null);
+            await decide(file, 'approve');
+          }}
+          onCancel={() => setActiveApproveItem(null)}
+        >
+          <table className="details-table" style={{ width: '100%', marginBottom: 14 }}>
+            <tbody>
+              <tr><th>תיק</th><td className="mono">{activeApproveItem.file_number}</td></tr>
+              <tr><th>לקוח</th><td>{activeApproveItem.customer_name || '—'}</td></tr>
+              <tr><th>אל (To)</th><td className="mono">{activeApproveItem.draft?.email.to.join(', ') || '—'}</td></tr>
+              <tr><th>עותק (CC)</th><td className="mono">{activeApproveItem.draft?.email.cc.join(', ') || '—'}</td></tr>
+              <tr><th>נושא</th><td>{activeApproveItem.draft?.email.subject || '—'}</td></tr>
+            </tbody>
+          </table>
+          <p className="hint-line" style={{ color: 'var(--st-alert)', fontWeight: 'bold' }}>
+            המייל יישלח מ-ashdod.agent@h-caspi.co.il
+          </p>
+        </ConfirmModal>
+      )}
+
+      {activeRejectItem && (
+        <ConfirmModal
+          title={`דחיית טיוטה — תיק ${activeRejectItem.file_number}`}
+          confirmLabel="דחה"
+          danger={true}
+          onConfirm={async () => {
+            const file = activeRejectItem.file_number;
+            const notes = rejectNotes;
+            setActiveRejectItem(null);
+            await decide(file, 'reject', undefined, notes);
+          }}
+          onCancel={() => setActiveRejectItem(null)}
+        >
+          <p>האם אתה בטוח שברצונך לדחות את טיוטת המייל לתיק {activeRejectItem.file_number}?</p>
+          <div className="field" style={{ marginTop: 12 }}>
+            <label htmlFor="rej-notes">סיבת דחייה / הערה (לא חובה)</label>
+            <textarea
+              id="rej-notes"
+              rows={3}
+              value={rejectNotes}
+              onChange={(e) => setRejectNotes(e.target.value)}
+              placeholder="הקלד סיבת דחייה..."
+              autoFocus
+            />
+          </div>
+        </ConfirmModal>
+      )}
     </>
   );
 }

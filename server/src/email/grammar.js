@@ -20,7 +20,7 @@ function thanks(gender, number) {
 }
 
 function approval(gender, number) {
-  return `אבקש את אישור${suffix(gender, number)}`;
+  return `בבקשה אישור${suffix(gender, number)}`;
 }
 
 // "שלך / שלכם / שלכן"

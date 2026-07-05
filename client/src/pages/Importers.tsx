@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import { api, Importer } from '../api';
 import { useAgentFilter, matchesAgent } from '../context/AgentFilterContext';
+import ConfirmModal from '../components/ConfirmModal';
+import EmailListEditor from '../components/EmailListEditor';
 
 const BLANK: Partial<Importer> = {
   name: '', company_id: '', emails: [], address: '', notes: '',
@@ -23,7 +25,6 @@ const TYPES = [
 ];
 
 function listToText(a?: string[]) { return (a || []).join(', '); }
-function textToList(t: string) { return t.split(/[,;\n]/).map((s) => s.trim()).filter(Boolean); }
 
 export default function Importers() {
   const { agent } = useAgentFilter();
@@ -32,6 +33,10 @@ export default function Importers() {
   const [editing, setEditing] = useState<Importer | null>(null);
   const [isNew, setIsNew] = useState(false);
   const [flash, setFlash] = useState<{ t: string; ok: boolean } | null>(null);
+  const [activeDeleteImporter, setActiveDeleteImporter] = useState<Importer | null>(null);
+  const [activeNotesImporter, setActiveNotesImporter] = useState<Importer | null>(null);
+  const [tempNotes, setTempNotes] = useState('');
+  const [savingNotes, setSavingNotes] = useState(false);
 
   function load() { api.importers().then(setItems).catch((e) => setFlash({ t: e.message, ok: false })); }
   useEffect(load, []);
@@ -60,10 +65,25 @@ export default function Importers() {
     } catch (e: any) { setFlash({ t: e.message, ok: false }); }
   }
 
-  async function del(i: Importer) {
-    if (!confirm(`למחוק את היבואן "${i.name}"? התיקייה והנתונים יימחקו.`)) return;
-    try { await api.deleteImporter(i._folder!); setFlash({ t: 'היבואן נמחק', ok: true }); load(); }
-    catch (e: any) { setFlash({ t: e.message, ok: false }); }
+  function del(i: Importer) {
+    setActiveDeleteImporter(i);
+  }
+
+  async function performDelete(i: Importer) {
+    try {
+      await api.deleteImporter(i._folder!);
+      setFlash({ t: 'היבואן נמחק', ok: true });
+      load();
+    } catch (e: any) {
+      setFlash({ t: e.message, ok: false });
+    } finally {
+      setActiveDeleteImporter(null);
+    }
+  }
+
+  function openNotesModal(i: Importer) {
+    setActiveNotesImporter(i);
+    setTempNotes(i.notes || '');
   }
 
   const set = (k: keyof Importer, v: any) => setEditing((e) => (e ? { ...e, [k]: v } : e));
@@ -84,21 +104,55 @@ export default function Importers() {
 
       <div className="card" style={{ padding: 0 }}>
         <table>
-          <thead><tr><th>שם היבואן</th><th>ח.פ</th><th>מחלקה</th><th>סוג</th><th>מיילים</th><th></th></tr></thead>
+          <thead>
+            <tr>
+              <th>שם היבואן</th>
+              <th>ח.פ</th>
+              <th>מחלקה</th>
+              <th>מיילים</th>
+              <th>הערות</th>
+              <th>פעולות</th>
+            </tr>
+          </thead>
           <tbody>
-            {filtered.map((i) => (
-              <tr key={i._folder}>
-                <td><b>{i.name}</b>{i.dangerous_rule && <span title="כלל חומר מסוכן"> ⚠</span>}</td>
-                <td className="mono">{i.company_id || '—'}</td>
-                <td>{i.department ? i.department.toUpperCase() : '—'}</td>
-                <td><span className={'type-tag ' + (i.type || 'unknown')}>{TYPES.find((t) => t.v === i.type)?.l || i.type}</span></td>
-                <td className="mono" style={{ fontSize: 12, color: 'var(--muted)' }}>{listToText(i.emails) || '—'}</td>
-                <td><div className="row-actions">
-                  <button className="btn sm" onClick={() => openEdit(i)}>עריכה</button>
-                  <button className="btn sm danger" onClick={() => del(i)}>מחיקה</button>
-                </div></td>
-              </tr>
-            ))}
+            {filtered.map((i) => {
+              const emailsText = listToText(i.emails) || '—';
+              const truncatedEmails = emailsText.length > 30 ? `${emailsText.slice(0, 27)}...` : emailsText;
+              const notesText = i.notes || '';
+              const truncatedNotes = notesText.length > 30 ? `${notesText.slice(0, 27)}...` : notesText;
+
+              return (
+                <tr key={i._folder}>
+                  <td><b>{i.name}</b>{i.dangerous_rule && <span title="כלל חומר מסוכן"> ⚠</span>}</td>
+                  <td className="mono">{i.company_id || '—'}</td>
+                  <td>{i.department ? i.department.toUpperCase() : '—'}</td>
+                  <td className="mono" style={{ fontSize: 12, color: 'var(--muted)' }} title={emailsText.length > 30 ? emailsText : undefined}>
+                    {truncatedEmails}
+                  </td>
+                  <td>
+                    {notesText ? (
+                      <div
+                        title={notesText}
+                        style={{ cursor: 'pointer', maxWidth: 180, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
+                        onClick={() => openNotesModal(i)}
+                      >
+                        {truncatedNotes}
+                      </div>
+                    ) : (
+                      <button className="btn sm ghost" onClick={() => openNotesModal(i)} style={{ padding: '2px 6px', fontSize: 12 }}>
+                        ＋ הוסף הערה
+                      </button>
+                    )}
+                  </td>
+                  <td>
+                    <div className="row-actions">
+                      <button className="btn sm" onClick={() => openEdit(i)}>עריכה</button>
+                      <button className="btn sm danger" onClick={() => del(i)}>מחיקה</button>
+                    </div>
+                  </td>
+                </tr>
+              );
+            })}
             {filtered.length === 0 && <tr><td colSpan={6}><div className="empty">לא נמצאו יבואנים תואמים.</div></td></tr>}
           </tbody>
         </table>
@@ -118,16 +172,27 @@ export default function Importers() {
                     {DEPTS.map((d) => <option key={d.v} value={d.v}>{d.l}</option>)}</select></div>
               </div>
               <div className="field"><label>כתובת</label><input value={editing.address} onChange={(e) => set('address', e.target.value)} /></div>
-              <div className="field"><label>מיילים של היבואן (מופרדים בפסיק)</label>
-                <input value={listToText(editing.emails)} onChange={(e) => set('emails', textToList(e.target.value))} /></div>
+              <EmailListEditor
+                label="מיילים של היבואן"
+                emails={editing.emails || []}
+                onChange={(next) => set('emails', next)}
+              />
               <div className="grid-2">
                 <div className="field"><label>סוג טיפול</label>
                   <select value={editing.type} onChange={(e) => set('type', e.target.value)}>
                     {TYPES.map((t) => <option key={t.v} value={t.v}>{t.l}</option>)}</select></div>
                 <div className="field"><label>מוביל המשך</label><input value={editing.cont_general} onChange={(e) => set('cont_general', e.target.value)} /></div>
               </div>
-              <div className="field"><label>מיילי מוביל המשך</label>
-                <input value={listToText(editing.cont_general_emails)} onChange={(e) => set('cont_general_emails', textToList(e.target.value))} /></div>
+              <EmailListEditor
+                label="מיילי מוביל המשך"
+                emails={editing.cont_general_emails || []}
+                onChange={(next) => set('cont_general_emails', next)}
+              />
+              <EmailListEditor
+                label='מיילי מוביל חומ"ס'
+                emails={editing.cont_dangerous_emails || []}
+                onChange={(next) => set('cont_dangerous_emails', next)}
+              />
               <div className="field" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                 <input type="checkbox" style={{ width: 18 }} checked={editing.dangerous_rule} onChange={(e) => set('dangerous_rule', e.target.checked)} />
                 <label style={{ margin: 0 }}>חל כלל חומר מסוכן (Hazardous → סמא)</label>
@@ -141,6 +206,52 @@ export default function Importers() {
             </div>
           </div>
         </div>
+      )}
+
+      {activeDeleteImporter && (
+        <ConfirmModal
+          title={`מחיקת יבואן — ${activeDeleteImporter.name}`}
+          confirmLabel="מחק יבואן"
+          danger={true}
+          onConfirm={() => performDelete(activeDeleteImporter)}
+          onCancel={() => setActiveDeleteImporter(null)}
+        >
+          האם אתה בטוח שברצונך למחוק את היבואן "{activeDeleteImporter.name}"? התיקייה והנתונים יימחקו.
+        </ConfirmModal>
+      )}
+
+      {activeNotesImporter && (
+        <ConfirmModal
+          title={`הערות עבור ${activeNotesImporter.name}`}
+          confirmLabel="שמור הערה"
+          busy={savingNotes}
+          onConfirm={async () => {
+            setSavingNotes(true);
+            try {
+              await api.updateImporter(activeNotesImporter._folder!, { notes: tempNotes });
+              setFlash({ t: 'הערה עודכנה בהצלחה', ok: true });
+              setActiveNotesImporter(null);
+              load();
+            } catch (e: any) {
+              setFlash({ t: e.message, ok: false });
+            } finally {
+              setSavingNotes(false);
+            }
+          }}
+          onCancel={() => setActiveNotesImporter(null)}
+        >
+          <div className="field">
+            <label htmlFor="notes-textarea">הערות מיוחדות</label>
+            <textarea
+              id="notes-textarea"
+              rows={5}
+              value={tempNotes}
+              onChange={(e) => setTempNotes(e.target.value)}
+              placeholder="הקלד הערות כאן..."
+              autoFocus
+            />
+          </div>
+        </ConfirmModal>
       )}
     </>
   );
