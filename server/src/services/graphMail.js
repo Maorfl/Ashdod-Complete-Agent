@@ -123,14 +123,18 @@ async function markRead(mailbox, messageId) {
  * חיפוש הודעות משולח מסוים (למשל do-not-reply@) — למיפוי gatepass לפי מספר תיק.
  * מחזיר subject/body כדי לאתר את מספר התיק, וסימון האם יש צרופות.
  */
-async function searchFrom(mailbox, fromAddress, top = 50) {
+async function searchFrom(mailbox, fromAddress, top = 100) {
   const mb = encodeURIComponent(mailbox || config.sender_mailbox);
   const filter = encodeURIComponent(`from/emailAddress/address eq '${fromAddress}'`);
+  // הערה: Graph פוסל שילוב $filter על from עם $orderby על receivedDateTime
+  // ("restriction or sort order too complex"). לכן ממיינים בצד הלקוח.
   const data = await graphFetch(
     `/users/${mb}/mailFolders/inbox/messages?$filter=${filter}&$top=${top}` +
-    `&$orderby=receivedDateTime desc&$select=id,subject,from,receivedDateTime,bodyPreview,hasAttachments`
+    `&$select=id,subject,from,receivedDateTime,bodyPreview,hasAttachments`
   );
-  return data?.value || [];
+  const msgs = data?.value || [];
+  msgs.sort((a, b) => new Date(b.receivedDateTime || 0) - new Date(a.receivedDateTime || 0));
+  return msgs;
 }
 
 /** צרופות של הודעה (מטא-דאטה: שם, contentType, contentBytes ל-fileAttachment) */

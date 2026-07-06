@@ -16,6 +16,18 @@ const shipments = require('../db/shipments');
 
 const STATUS = { ALERT: 'alert', PENDING: 'pending_approval' };
 
+// כלל scope קבוע (config.report_scope): רק LCL + נציג נבחר נכנסים לצנרת.
+// תחנת מכס 2 נאכפת בנפרד ע"י כלל ה-no_op במסווג.
+function normRep(s) {
+  return String(s || '').replace(/\s+/g, ' ').trim();
+}
+function inScope(rec) {
+  const scope = config.report_scope || {};
+  if (scope.fcl_lcl && String(rec.fcl_lcl || '').trim() !== scope.fcl_lcl) return false;
+  if (scope.service_rep && normRep(rec.service_rep) !== normRep(scope.service_rep)) return false;
+  return true;
+}
+
 let timer = null;
 let lastRun = null;
 
@@ -24,10 +36,13 @@ function runOnce() {
   if (!fs.existsSync(REPORT_PATH)) return record({ skipped: 'report_missing', path: REPORT_PATH });
 
   const { records } = readReport(REPORT_PATH);
-  const summary = { total: records.length, no_op: 0, queued: 0, alerts: 0, skipped_tracked: 0, errors: 0 };
+  const summary = { total: records.length, out_of_scope: 0, no_op: 0, queued: 0, alerts: 0, skipped_tracked: 0, errors: 0 };
 
   for (const rec of records) {
     try {
+      // כלל scope קבוע — רק LCL + הנציג שהוגדר; שאר התיקים אינם נכנסים לצנרת כלל
+      if (!inScope(rec)) { summary.out_of_scope += 1; continue; }
+
       const decision = classify(rec, importersDb.findByName(rec.customer_name));
 
       if (decision.route === 'no_op') { summary.no_op += 1; continue; } // לא נשמר

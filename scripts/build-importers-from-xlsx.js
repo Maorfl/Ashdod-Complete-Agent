@@ -10,6 +10,7 @@
 const XLSX = require('xlsx');
 const fs = require('fs');
 const path = require('path');
+const iconv = require('iconv-lite');
 
 const ROOT = path.join(__dirname, '..');
 const config = JSON.parse(fs.readFileSync(path.join(ROOT, 'config', 'config.json'), 'utf8'));
@@ -40,10 +41,20 @@ function findHeaderRow(rows) {
   return 5;
 }
 
-function readReport(file) {
-  const wb = XLSX.readFile(file);
+function loadSheetRows(file) {
+  // תמיכה ב-CSV מקודד Windows-1255 (עברית) לצד .xlsx — כמו ב-server/src/report/reader.js
+  let wb;
+  if (path.extname(file).toLowerCase() === '.csv') {
+    wb = XLSX.read(iconv.decode(fs.readFileSync(file), 'win1255'), { type: 'string' });
+  } else {
+    wb = XLSX.readFile(file);
+  }
   const ws = wb.Sheets[wb.SheetNames[0]];
-  const rows = XLSX.utils.sheet_to_json(ws, { header: 1, raw: true, defval: '' });
+  return XLSX.utils.sheet_to_json(ws, { header: 1, raw: true, defval: '' });
+}
+
+function readReport(file) {
+  const rows = loadSheetRows(file);
   const h = findHeaderRow(rows);
   const header = rows[h].map((c) => String(c).trim());
   const col = (n) => header.indexOf(n);
@@ -57,7 +68,8 @@ function readReport(file) {
     station: col('Customs Station Code'),
     haz: col('Hazardous'),
   };
-  const data = rows.slice(h + 1).filter((r) => String(r[idx.file]).trim());
+  // רק מספר תיק מספרי — פוסל שורת סיכום/פוטר (למשל ["Total","366 Files"])
+  const data = rows.slice(h + 1).filter((r) => /^\d+$/.test(String(r[idx.file]).trim()));
   return { data, idx, headerRow: h };
 }
 

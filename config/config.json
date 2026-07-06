@@ -1,8 +1,14 @@
 {
-  "report_path": "./data/אשדוד.xlsx",
-  "report_path_comment": "מקומי כברירת מחדל. בפרודקשן ניתן להצביע על תיקייה משותפת, למשל \\\\fileserver\\focus_reports\\אשדוד.xlsx",
+  "report_path": "./data/ASDODAGENT.csv",
+  "report_path_comment": "דוח CSV מקודד Windows-1255. מקומי כברירת מחדל. בפרודקשן ניתן להצביע על תיקייה משותפת. הקובץ הישן ./data/אשדוד.xlsx נשמר כארכיון ואינו נקרא עוד.",
   "poll_interval_minutes": 10,
   "relevant_customs_station_code": 2,
+
+  "report_scope": {
+    "fcl_lcl": "LCL",
+    "service_rep": "משה רוסו",
+    "_comment": "כלל קבוע: רק תיקי LCL של הנציג משה רוסו נכנסים לצנרת. תחנת מכס 2 (אשדוד) נאכפת ממילא ע\"י כלל ה-no_op במסווג. חל גם על רענוני דוח עתידיים."
+  },
 
   "caspi_forwarder_names": ["כספי סוכני מכס ושילוח בינלאומי"],
   "empty_forwarder_is_caspi": true,

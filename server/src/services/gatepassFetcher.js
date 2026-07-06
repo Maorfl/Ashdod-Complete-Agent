@@ -77,17 +77,38 @@ async function fetchForFile(fileNumber) {
   return { file: fileNumber, path: saved };
 }
 
-/** מעבר על תיקים שממתינים לאישור בלי PDF וניסיון לאתר עבורם */
+/**
+ * מעבר על תיקים שממתינים לאישור בלי PDF וניסיון לאתר עבורם.
+ * יעיל: שולף את הודעות do-not-reply פעם אחת ומתאים מולן את כל התיקים
+ * (במקום קריאת mailbox נפרדת לכל תיק), ומוריד צרופה רק להתאמה בפועל.
+ */
 async function runOnce() {
   if (!config.feature_flags?.haifa_arrival) return record({ skipped: 'feature_off' });
   if (!graph.isEnabled()) return record({ skipped: 'graph_disabled' });
 
   const pending = shipments.byStatus('pending_approval').filter((r) => !r.gatepass_pdf_path);
   const summary = { checked: pending.length, found: 0, errors: 0, details: [] };
+
+  let messages;
+  try {
+    messages = await graph.searchFrom(config.sender_mailbox, GATEPASS_SENDER, 200);
+  } catch (e) {
+    return record({ ...summary, errors: pending.length, fatal: e.message, at: new Date().toISOString() });
+  }
+  summary.sender_messages = messages.length;
+
   for (const rec of pending) {
     try {
-      const r = await fetchForFile(rec.file_number);
-      if (r.path && !r.cached) { summary.found += 1; summary.details.push(r); }
+      const match = messages.find((m) => m.hasAttachments && messageMatchesFile(m, rec.file_number));
+      if (!match) continue;
+      const attachments = await graph.listAttachments(config.sender_mailbox, match.id);
+      const pdf = attachments.find((a) => /pdf$/i.test(a.name || '') || a.contentType === 'application/pdf');
+      if (!pdf) continue;
+      const saved = await saveAttachment(rec.file_number, pdf);
+      if (!saved) continue;
+      shipments.setGatepass(rec.file_number, saved);
+      summary.found += 1;
+      summary.details.push({ file: rec.file_number, path: saved });
     } catch (e) {
       summary.errors += 1;
       summary.details.push({ file: rec.file_number, error: e.message });

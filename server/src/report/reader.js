@@ -4,6 +4,9 @@
  * אפס תלות ב-LLM.
  */
 const XLSX = require('xlsx');
+const fs = require('fs');
+const path = require('path');
+const iconv = require('iconv-lite');
 
 const COLS = {
   file: 'File Number',
@@ -44,10 +47,26 @@ function str(v) {
   return v === null || v === undefined ? '' : String(v).trim();
 }
 
-function readReport(filePath) {
-  const wb = XLSX.readFile(filePath);
+/**
+ * טוען את שורות הדוח. תומך ב-.xlsx (SheetJS ישירות) וב-.csv המקודד Windows-1255
+ * (עברית) — מפענחים את הבייטים ב-iconv-lite ואז מפרסרים כמחרוזת, אחרת ה-CSV
+ * מתקבל כ-mojibake. אפס תלות ב-LLM.
+ */
+function loadSheetRows(filePath) {
+  const ext = path.extname(filePath).toLowerCase();
+  let wb;
+  if (ext === '.csv') {
+    const decoded = iconv.decode(fs.readFileSync(filePath), 'win1255');
+    wb = XLSX.read(decoded, { type: 'string' });
+  } else {
+    wb = XLSX.readFile(filePath);
+  }
   const ws = wb.Sheets[wb.SheetNames[0]];
-  const rows = XLSX.utils.sheet_to_json(ws, { header: 1, raw: true, defval: '' });
+  return XLSX.utils.sheet_to_json(ws, { header: 1, raw: true, defval: '' });
+}
+
+function readReport(filePath) {
+  const rows = loadSheetRows(filePath);
   const h = findHeaderRow(rows);
   const header = rows[h].map((c) => String(c).trim());
   const at = {};
@@ -56,7 +75,8 @@ function readReport(filePath) {
   const records = [];
   for (const r of rows.slice(h + 1)) {
     const fileNumber = str(r[at.file]);
-    if (!fileNumber) continue;
+    // רק מספר תיק מספרי — פוסל שורות סיכום/פוטר כמו ["Total","366 Files"]
+    if (!/^\d+$/.test(fileNumber)) continue;
     records.push({
       file_number: fileNumber,
       fcl_lcl: str(r[at.fcl]),
