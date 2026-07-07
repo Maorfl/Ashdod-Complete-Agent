@@ -34,15 +34,22 @@ export function agentNameToDept(name?: string | null): Exclude<AgentKey, 'all'> 
   return NAME_TO_DEPT[normName(name)] || null;
 }
 
-/** בדיקת התאמה: department קודם, ואם חסר — נרמול שם הסוכן/נציג */
+/**
+ * בדיקת התאמה: department קודם, ואם חסר — נרמול שם הסוכן/נציג.
+ * Defense in depth (Task 3): תחת CUS1 מוצגים רק לקוחות ה-whitelist. גם אם רשומה
+ * מתויגת department=cus1 (באג/עריכה ידנית/ייבוא שגוי), אם whitelisted===false מהשרת
+ * היא לא תופיע תחת CUS1 — לא סומכים על department לבד.
+ */
 export function matchesAgent(
-  rec: { department?: string | null; agent_name?: string | null; service_rep?: string | null },
+  rec: { department?: string | null; agent_name?: string | null; service_rep?: string | null; whitelisted?: boolean },
   agent: AgentKey
 ): boolean {
   if (agent === 'all') return true;
   const dept = String(rec.department || '').toLowerCase().trim();
-  if (dept) return dept === agent;
-  return agentNameToDept(rec.agent_name) === agent || agentNameToDept(rec.service_rep) === agent;
+  const resolved = dept || agentNameToDept(rec.agent_name) || agentNameToDept(rec.service_rep) || '';
+  if (resolved !== agent) return false;
+  if (agent === 'cus1' && rec.whitelisted === false) return false; // שכבת אכיפה שנייה
+  return true;
 }
 
 const STORAGE_KEY = 'caspi.agent_filter';

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { api, Shipment } from '../api';
 import { useAgentFilter, matchesAgent } from '../context/AgentFilterContext';
 import ConfirmModal from '../components/ConfirmModal';
+import EmailListEditor from '../components/EmailListEditor';
 
 export default function Approvals() {
   const { agent } = useAgentFilter();
@@ -10,6 +11,9 @@ export default function Approvals() {
   const [flash, setFlash] = useState<{ t: string; ok: boolean } | null>(null);
   const [editFile, setEditFile] = useState<string | null>(null);
   const [editBody, setEditBody] = useState('');
+  // עריכת נמענים — אפשרות זמנית: קיימת כי השליחה עדיין בשער אישור אנושי
+  const [editTo, setEditTo] = useState<string[]>([]);
+  const [editCc, setEditCc] = useState<string[]>([]);
   const [activeApproveItem, setActiveApproveItem] = useState<Shipment | null>(null);
   const [activeRejectItem, setActiveRejectItem] = useState<Shipment | null>(null);
   const [rejectNotes, setRejectNotes] = useState('');
@@ -36,6 +40,8 @@ export default function Approvals() {
   function startEdit(s: Shipment) {
     setEditFile(s.file_number);
     setEditBody(s.draft?.email.body || '');
+    setEditTo(s.draft?.email.to || []);
+    setEditCc(s.draft?.email.cc || []);
   }
 
   return (
@@ -70,6 +76,7 @@ export default function Approvals() {
                       {s.gatepass_pdf_path ? '📎 PDF מצורף ✓' : '⚠ טרם התקבל PDF'}
                     </span>
                   )}
+                  {s.real_recipients && <span className="review-flag" title="אישור ישלח מייל אמיתי לנמען אמיתי — לא לכתובת ה-override">📮 נמענים אמיתיים</span>}
                   {s.draft?.needs_review && <span className="review-flag">דורש בדיקת פרטי קשר</span>}
                   {s.department && <span className="type-tag">{s.department.toUpperCase()}</span>}
                   <span className={'badge route-' + (s.route || 'alert')}>{s.route}</span>
@@ -79,8 +86,20 @@ export default function Approvals() {
               {email && (
                 <div className="email-preview">
                   <div><span className="k">מאת: </span><span className="mono">{email.from}</span></div>
-                  <div><span className="k">אל: </span><span className="mono">{email.to.join(', ')}</span></div>
-                  <div><span className="k">עותק: </span><span className="mono">{email.cc.join(', ')}</span></div>
+                  {isEditing ? (
+                    <>
+                      <EmailListEditor label="אל (To)" emails={editTo} onChange={setEditTo} />
+                      <EmailListEditor label="עותק (CC)" emails={editCc} onChange={setEditCc} />
+                      <p className="hint-line" style={{ color: 'var(--muted)', fontSize: 12 }}>
+                        עריכת נמענים — אפשרות זמנית כל עוד השליחה דורשת אישור ידני.
+                      </p>
+                    </>
+                  ) : (
+                    <>
+                      <div><span className="k">אל: </span><span className="mono">{email.to.join(', ')}</span></div>
+                      <div><span className="k">עותק: </span><span className="mono">{email.cc.join(', ')}</span></div>
+                    </>
+                  )}
                   <div><span className="k">נושא: </span>{email.subject}</div>
                   {isEditing
                     ? <textarea rows={8} value={editBody} onChange={(e) => setEditBody(e.target.value)} />
@@ -91,7 +110,7 @@ export default function Approvals() {
               <div className="row-actions" style={{ marginTop: 16 }}>
                 {isEditing ? (
                   <>
-                    <button className="btn primary" onClick={() => decide(s.file_number, 'edit', { body: editBody })}>שמירת עריכה</button>
+                    <button className="btn primary" onClick={() => decide(s.file_number, 'edit', { body: editBody, to: editTo, cc: editCc })}>שמירת עריכה</button>
                     <button className="btn" onClick={() => setEditFile(null)}>ביטול עריכה</button>
                   </>
                 ) : (
@@ -130,6 +149,11 @@ export default function Approvals() {
           <p className="hint-line" style={{ color: 'var(--st-alert)', fontWeight: 'bold' }}>
             המייל יישלח מ-ashdod.agent@h-caspi.co.il
           </p>
+          {activeApproveItem.real_recipients && (
+            <p className="hint-line" style={{ color: 'var(--st-alert)', fontWeight: 'bold' }}>
+              ⚠ טיוטה זו נושאת נמענים אמיתיים — המייל יגיע ללקוח/למוביל בפועל, לא לכתובת הבדיקה.
+            </p>
+          )}
         </ConfirmModal>
       )}
 

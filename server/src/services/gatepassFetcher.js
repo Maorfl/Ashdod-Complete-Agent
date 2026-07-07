@@ -7,17 +7,19 @@
  * לכן מספר התיק מזוהה מהנושא לפי "FILE NUMBER <ספרות>" (עם fallback לכל רצף ספרות
  * התואם את מספר התיק, כולל bodyPreview). אין ניחוש עיוור — התאמה מול מספר התיק המבוקש.
  *
- * שומר את הצרופה תחת data/attachments/<file_number>/<filename>.pdf ומעדכן
- * gatepass_pdf_path ברשומת התיק. אפס תלות ב-LLM. השליחה עצמה נשארת תחת אישור אנושי.
+ * שומר את הצרופה בתיקיית היבואן של הלקוח — data/importers/<שם>/<מספר תיק>.pdf —
+ * ומעדכן gatepass_pdf_path ברשומת התיק (fallback ל-data/attachments אם אין תיקיה).
+ * אפס תלות ב-LLM. שליחה — לפי מדיניות האישור/הדגל auto_send_haifa_transfer.
  */
 const fs = require('fs');
 const path = require('path');
 const { config, DATA_DIR } = require('../config');
 const graph = require('./graphMail');
 const shipments = require('../db/shipments');
+const importersDb = require('../db/importers');
 
 const GATEPASS_SENDER = (config.microsoft_graph?.gatepass_sender) || 'do-not-reply@h-caspi.co.il';
-const ATTACH_ROOT = path.join(DATA_DIR, 'attachments');
+const ATTACH_ROOT = path.join(DATA_DIR, 'attachments'); // fallback בלבד — ראו saveAttachment
 
 let timer = null;
 let lastRun = null;
@@ -43,11 +45,27 @@ function messageMatchesFile(msg, fileNumber) {
   return new RegExp(`(^|\\D)${fileNumber}(\\D|$)`).test(text);
 }
 
+/**
+ * יעד השמירה: תיקיית היבואן של הלקוח — data/importers/<שם>/<מספר תיק>.pdf.
+ * הפתרון לפי customer_name של התיק דרך findByName/safeFolder הקיימים (לא סכמת שמות
+ * שנייה). אם אין תיקיית יבואן תואמת (לא אמור לקרות ללקוחות ה-whitelist) — fallback
+ * למיקום הישן data/attachments/<מספר תיק>/ עם אזהרה מפורשת, לא כשל שקט.
+ */
+function resolveDest(fileNumber, att) {
+  const rec = shipments.get(fileNumber);
+  const imp = rec?.customer_name ? importersDb.findByName(rec.customer_name) : null;
+  if (imp) {
+    return { dir: path.join(importersDb.IMP_ROOT, imp._folder), file: `${fileNumber}.pdf` };
+  }
+  console.warn(`[gatepassFetcher] no importer folder for file ${fileNumber} (customer: ${rec?.customer_name || '?'}) — falling back to data/attachments`);
+  return { dir: path.join(ATTACH_ROOT, String(fileNumber)), file: safeName(att.name) };
+}
+
 async function saveAttachment(fileNumber, att) {
   if (!att.contentBytes) return null; // רק fileAttachment עם תוכן
-  const dir = path.join(ATTACH_ROOT, String(fileNumber));
+  const { dir, file } = resolveDest(fileNumber, att);
   fs.mkdirSync(dir, { recursive: true });
-  const dest = path.join(dir, safeName(att.name));
+  const dest = path.join(dir, file);
   fs.writeFileSync(dest, Buffer.from(att.contentBytes, 'base64'));
   return dest;
 }
@@ -63,7 +81,10 @@ async function fetchForFile(fileNumber) {
     return { file: fileNumber, path: existing.gatepass_pdf_path, cached: true };
   }
 
-  const messages = await graph.searchFrom(config.sender_mailbox, GATEPASS_SENDER, 50);
+  // חיפוש תחום לטווח הימים האחרונים (gatepass_lookback_days) — לא $top שטוח לא-ממוין
+  const messages = await graph.searchFrom(config.sender_mailbox, GATEPASS_SENDER, {
+    sinceDays: graph.settings().gatepassLookbackDays,
+  });
   const match = messages.find((m) => m.hasAttachments && messageMatchesFile(m, fileNumber));
   if (!match) return { file: fileNumber, skipped: 'no_match' };
 
@@ -91,7 +112,10 @@ async function runOnce() {
 
   let messages;
   try {
-    messages = await graph.searchFrom(config.sender_mailbox, GATEPASS_SENDER, 200);
+    // תחום לטווח הימים האחרונים — מגיע להודעות החדשות באמת (ראו הערה ב-searchFrom)
+    messages = await graph.searchFrom(config.sender_mailbox, GATEPASS_SENDER, {
+      sinceDays: graph.settings().gatepassLookbackDays,
+    });
   } catch (e) {
     return record({ ...summary, errors: pending.length, fatal: e.message, at: new Date().toISOString() });
   }

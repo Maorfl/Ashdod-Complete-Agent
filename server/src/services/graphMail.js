@@ -20,6 +20,7 @@ function settings() {
     clientSecret: process.env.GRAPH_CLIENT_SECRET || g.client_secret,
     sendOnApprove: g.send_on_approve !== false,
     pollMinutes: Number(g.poll_inbox_minutes || 5),
+    gatepassLookbackDays: Number(g.gatepass_lookback_days || 14),
   };
 }
 
@@ -122,17 +123,30 @@ async function markRead(mailbox, messageId) {
 /**
  * חיפוש הודעות משולח מסוים (למשל do-not-reply@) — למיפוי gatepass לפי מספר תיק.
  * מחזיר subject/body כדי לאתר את מספר התיק, וסימון האם יש צרופות.
+ *
+ * sinceDays: תוחם את החיפוש ל-receivedDateTime של N הימים האחרונים. הכרחי: Graph
+ * פוסל שילוב $filter על from עם $orderby על receivedDateTime ("too complex"),
+ * ולכן $top שטוח החזיר batch לא-ממוין מאמצע תיבה בת מאות הודעות ופספס את החדשות
+ * (אומת בבדיקה חיה). טווח תאריכים + $filter על from כן נתמך. עם paging (nextLink)
+ * עד maxTotal, כך שכל ההודעות בטווח מכוסות ולא רק עמוד ראשון.
  */
-async function searchFrom(mailbox, fromAddress, top = 100) {
+async function searchFrom(mailbox, fromAddress, { top = 100, sinceDays = null, maxTotal = 500 } = {}) {
   const mb = encodeURIComponent(mailbox || config.sender_mailbox);
-  const filter = encodeURIComponent(`from/emailAddress/address eq '${fromAddress}'`);
-  // הערה: Graph פוסל שילוב $filter על from עם $orderby על receivedDateTime
-  // ("restriction or sort order too complex"). לכן ממיינים בצד הלקוח.
-  const data = await graphFetch(
-    `/users/${mb}/mailFolders/inbox/messages?$filter=${filter}&$top=${top}` +
-    `&$select=id,subject,from,receivedDateTime,bodyPreview,hasAttachments`
-  );
-  const msgs = data?.value || [];
+  let filter = `from/emailAddress/address eq '${fromAddress}'`;
+  if (sinceDays) {
+    const since = new Date(Date.now() - sinceDays * 86400000).toISOString();
+    filter += ` and receivedDateTime ge ${since}`;
+  }
+  let url = `/users/${mb}/mailFolders/inbox/messages?$filter=${encodeURIComponent(filter)}&$top=${top}` +
+    `&$select=id,subject,from,receivedDateTime,bodyPreview,hasAttachments`;
+
+  const msgs = [];
+  while (url && msgs.length < maxTotal) {
+    const data = await graphFetch(url);
+    msgs.push(...(data?.value || []));
+    const next = data?.['@odata.nextLink'];
+    url = next ? next.replace(GRAPH, '') : null; // nextLink מוחזר אבסולוטי — חוזרים ליחסי
+  }
   msgs.sort((a, b) => new Date(b.receivedDateTime || 0) - new Date(a.receivedDateTime || 0));
   return msgs;
 }

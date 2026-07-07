@@ -35,6 +35,7 @@ export function statusKeyOf(s: Pick<Shipment, 'status'>): StatusKey {
 export function statusLabel(raw: string): string {
   return ({
     pending_approval: 'ממתין לאישור',
+    awaiting_gatepass: 'ממתין לגייטפס',
     sent: 'נשלח — שוחרר באשדוד',
     alert: 'דורש בדיקה',
     rejected: 'נדחה',

@@ -6,3 +6,9 @@ client/dist/
 client/tsconfig.tsbuildinfo
 *.db-wal
 *.db-shm
+# runtime artifacts — לא נכנסים להיסטוריה
+data/shipments.backup-*.db
+data/importers/**/*.pdf
+data/attachments/
+data/logs/
+.claude/settings.local.json

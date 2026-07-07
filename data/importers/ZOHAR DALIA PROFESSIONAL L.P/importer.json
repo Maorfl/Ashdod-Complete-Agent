@@ -2,16 +2,20 @@
   "name": "ZOHAR DALIA PROFESSIONAL L.P.",
   "company_id": "",
   "emails": [
-    "maorfl14@gmail.com"
+    "lioray@zohardalia.co.il"
   ],
   "address": "",
-  "notes": "",
+  "notes": "מוביל המשך: צוות סמא (SME) → שירות שדה | CO-LOADER/מסוף: אוברסיז / אושן לינק / DSV | כלל חומ\"ס: לא חל (סמא תמיד)",
   "department": "cus1",
   "service_rep": "משה רוסו",
-  "type": "unknown",
+  "type": "haifa_cont",
   "dangerous_rule": false,
-  "cont_general": "",
-  "cont_general_emails": [],
+  "cont_general": "סמא",
+  "cont_general_emails": [
+    "sme-service4@sme.co.il",
+    "storage@sme.co.il",
+    "Yelena@sme.co.il"
+  ],
   "cont_dangerous_emails": [],
   "aliases": [],
   "seen_stations": [

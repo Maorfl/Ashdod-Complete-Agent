@@ -1,18 +1,164 @@
 {
   "_comment": "טבלת קודי CO-LOADER. כל כתובות המייל הוחלפו ל-maorfl14@gmail.com (external_email_override). gender: m/f, number: s/p קובעים את הניסוח (טיפולך/טיפולכם/טיפולכן). קודים עם needs_review=true ממתינים לפרטי קשר אמיתיים (OPEN GAP).",
   "co_loaders": {
-    "641": { "name": "אושן לינק", "name_en": "OCEAN LINK", "contact": "צוות אושן לינק", "gender": "f", "number": "p", "emails": ["maorfl14@gmail.com"] },
-    "415": { "name": "טוטל קארגו", "name_en": "TOTAL CARGO", "contact": "צוות טוטל", "gender": "f", "number": "p", "emails": ["maorfl14@gmail.com"] },
-    "232": { "name": "אלדן", "name_en": "Eldan Cargo", "contact": "אתי", "gender": "f", "number": "s", "emails": ["maorfl14@gmail.com"] },
-    "237": { "name": "אבירם", "name_en": "Aviram", "contact": "צוות אבירם", "gender": "m", "number": "p", "emails": ["maorfl14@gmail.com"] },
-    "238": { "name": "אושפיר", "name_en": "Oshfir", "contact": "צוות אושפיר", "gender": "m", "number": "p", "emails": ["maorfl14@gmail.com"] },
-    "484": { "name": "ישראל קארגו", "name_en": "ILCargo", "contact": "סנדרה", "gender": "f", "number": "s", "emails": ["maorfl14@gmail.com"] },
-    "958": { "name": "ישראל קארגו", "name_en": "ILCargo", "contact": "סנדרה", "gender": "f", "number": "s", "emails": ["maorfl14@gmail.com"] },
-    "997": { "name": "וריטס", "name_en": "Veritas", "contact": "יוסי", "gender": "m", "number": "s", "emails": ["maorfl14@gmail.com"] },
-    "307": { "name": "DSV", "name_en": "DSV", "contact": "אתי", "gender": "f", "number": "s", "emails": ["maorfl14@gmail.com"] },
-    "852": { "name": "תובלה משולבת", "name_en": "JOINT TRANSPORT", "contact": "אייל", "gender": "m", "number": "s", "emails": ["maorfl14@gmail.com"] },
-    "635": { "name": "EASY CONSOL", "name_en": "EASY CONSOL", "contact": "צוות איזי קונסול", "gender": "m", "number": "p", "emails": ["maorfl14@gmail.com"], "needs_review": true },
-    "674": { "name": "CONSOLA", "name_en": "CONSOLA", "contact": "צוות קונסולה", "gender": "m", "number": "p", "emails": ["maorfl14@gmail.com"], "needs_review": true },
-    "15373": { "name": "SPARTA CARGO", "name_en": "SPARTA CARGO", "contact": "צוות ספרטה", "gender": "m", "number": "p", "emails": ["maorfl14@gmail.com"], "needs_review": true }
+    "232": {
+      "name": "אלדן",
+      "name_en": "ELDAN CARGO",
+      "contact": "אתי (Etil)",
+      "gender": "f",
+      "number": "s",
+      "emails": [
+        "etil@Eldan-Cargo.Com",
+        "operation@eldan-cargo.com"
+      ],
+      "phrasing": "אתי, אודה לטיפולך בהעברה לחיפה בבקשה אישורך תודה (:"
+    },
+    "237": {
+      "name": "אבירם",
+      "name_en": "AVIRAM",
+      "contact": "סופיה / עומרי",
+      "gender": "m",
+      "number": "p",
+      "emails": [
+        "Sofia@aviram.co.il",
+        "ops@aviram.co.il",
+        "omri@aviram.co.il"
+      ],
+      "phrasing": "צוות אבירם, אודה לטיפולכם בהעברה לחיפה בבקשה אישורכם",
+      "notes": "237 לפי נוהל, נמצא גם כ-ops@/omri@"
+    },
+    "238": {
+      "name": "אושפיר",
+      "name_en": "OSHFIR",
+      "contact": "מריה / רומן / קייט",
+      "gender": "m",
+      "number": "p",
+      "emails": [
+        "Maria@oshfir.co.il",
+        "RomanJ@oshfir.co.il"
+      ],
+      "phrasing": "צוות אושפיר, אודה לטיפולכם בהעברה לחיפה בבקשה אישורכם",
+      "notes": "12x בניתוח"
+    },
+    "307": {
+      "name": "DSV",
+      "name_en": "DSV",
+      "contact": "אתי",
+      "gender": "f",
+      "number": "s",
+      "emails": [
+        "maorfl14@gmail.com"
+      ]
+    },
+    "415": {
+      "name": "טוטל קארגו",
+      "name_en": "TOTAL CARGO",
+      "contact": "צוות טוטל",
+      "gender": "f",
+      "number": "p",
+      "emails": [
+        "imptcl@total-cargo.com"
+      ],
+      "phrasing": "צוות טוטל, אודה לטיפולכן בהעברה לחיפה בבקשה אישורכן (:",
+      "notes": "51x בניתוח"
+    },
+    "484": {
+      "name": "ישראל קארגו\\ICL",
+      "name_en": "ISL CARGO / ILCARGO",
+      "contact": "סנדרה",
+      "gender": "f",
+      "number": "s",
+      "emails": [
+        "ASHDOD@ilcargo.com",
+        "sandra@ilcargo.com"
+      ],
+      "phrasing": "סנדרה, אודה לטיפולך בהעברה לחיפה בבקשה אישורך",
+      "notes": "נמצא גם כ-ישראל קארגו בדוח Focus"
+    },
+    "635": {
+      "name": "EASY CONSOL",
+      "name_en": "EASY CONSOL",
+      "contact": "אופק / ניסים",
+      "gender": "m",
+      "number": "p",
+      "emails": [
+        "TIFUL@easyconsol.com"
+      ],
+      "needs_review": true,
+      "phrasing": "אופק וניסים, אודה לטיפולכם בהעברה לחיפה",
+      "notes": "נמצא בדוח Focus — כ-4 תיקים"
+    },
+    "641": {
+      "name": "אושן לינק",
+      "name_en": "OCEAN LINK",
+      "contact": "מאלי / אתי / לירן",
+      "gender": "f",
+      "number": "p",
+      "emails": [
+        "import@ocean-link.co.il"
+      ],
+      "phrasing": "צוות אושן לינק, אודה לטיפולכן בהעברה לחיפה בבקשה אישורכן (:",
+      "notes": "נפוץ ביותר — 114x בניתוח"
+    },
+    "674": {
+      "name": "CONSOLA",
+      "name_en": "CONSOLA",
+      "contact": "עידו",
+      "gender": "m",
+      "number": "s",
+      "emails": [
+        "service@consolaa.com"
+      ],
+      "needs_review": true,
+      "phrasing": "עידו, אודה לטיפולך בהעברה לחיפה",
+      "notes": "נמצא בדוח Focus — תיק אחד"
+    },
+    "852": {
+      "name": "JOINT TRANSPORT",
+      "name_en": "JOINT TRANSPORT",
+      "contact": "אייל",
+      "gender": "m",
+      "number": "s",
+      "emails": [
+        "maorfl14@gmail.com"
+      ],
+      "notes": "נמצא בדוח Focus — תיק אחד",
+      "needs_review": true
+    },
+    "958": {
+      "name": "ישראל קארגו",
+      "name_en": "ILCargo",
+      "contact": "סנדרה",
+      "gender": "f",
+      "number": "s",
+      "emails": [
+        "maorfl14@gmail.com"
+      ]
+    },
+    "997": {
+      "name": "וריטס",
+      "name_en": "VERITAS",
+      "contact": "יוסי חקמון",
+      "gender": "m",
+      "number": "s",
+      "emails": [
+        "yossi@veritas.co.il",
+        "noams@veritas.co.il",
+        "lior@veritas.co.il"
+      ],
+      "phrasing": "יוסי, אודה לטיפולך בהעברה לחיפה בבקשה אישורך"
+    },
+    "15373": {
+      "name": "ספרטה קארגו",
+      "name_en": "SPARTA CARGO",
+      "contact": "צוות ספרטה",
+      "gender": "m",
+      "number": "p",
+      "emails": [
+        "maorfl14@gmail.com"
+      ],
+      "needs_review": true,
+      "notes": "נמצא בדוח Focus — 30 תיקים (!), דורש טיפול דחוף"
+    }
   }
 }

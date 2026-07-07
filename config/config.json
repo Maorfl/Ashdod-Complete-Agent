@@ -1,27 +1,38 @@
 {
-  "report_path": "./data/ASDODAGENT.csv",
-  "report_path_comment": "דוח CSV מקודד Windows-1255. מקומי כברירת מחדל. בפרודקשן ניתן להצביע על תיקייה משותפת. הקובץ הישן ./data/אשדוד.xlsx נשמר כארכיון ואינו נקרא עוד.",
+  "report_path": "G:\\mosher\\caspitracker\\REPORTS\\ASDODAGENT.csv",
+  "report_path_comment": "דוח CSV מקודד Windows-1255. נתיב פרודקשן ברשת (כונן ממופה G:). שם הקובץ אומת מול השיתוף בפועל: ASDODAGENT.csv (בלי H — לא ASHDODAGENT). עשוי להיות בלתי-נגיש מחוץ לפרודקשן — fs.existsSync ב-reportWatcher מטפל בכך בחן (report_missing). לדיב/בדיקות: override דרך משתנה הסביבה REPORT_PATH, למשל REPORT_PATH=./data/ASDODAGENT.csv.",
   "poll_interval_minutes": 10,
+  "poll_interval_minutes_comment": "Task 1 — שעון הסריקה: כל 10 דקות קורא ומפרסר את הדוח אל cache בזיכרון, ללא נגיעה ב-DB.",
+  "commit_before_hour_minutes": 5,
+  "commit_before_hour_minutes_comment": "Task 2 — שעון הקומיט רץ בשעון-קיר N דקות לפני תחילת כל שעה (5 => HH:55). זה החלון היחיד שכותב ל-DB / שולח.",
   "relevant_customs_station_code": 2,
-
   "report_scope": {
     "fcl_lcl": "LCL",
-    "service_rep": "משה רוסו",
-    "_comment": "כלל קבוע: רק תיקי LCL של הנציג משה רוסו נכנסים לצנרת. תחנת מכס 2 (אשדוד) נאכפת ממילא ע\"י כלל ה-no_op במסווג. חל גם על רענוני דוח עתידיים."
+    "_comment": "כלל scope מתוקן (2026-07-07, אישור משתמש): כל תיקי ה-LCL של אשדוד נכנסים לצנרת. הגבלת הנציג (משה רוסו) הוסרה — הייתה טעות; רשימת 19 לקוחות ההעברה לחיפה (customer_whitelist) הוסרה גם היא באישור מפורש. אשדוד-בלבד (תחנת מכס 2) נאכף ע\"י כלל ה-no_op במסווג. server/src/scope.js מחזיר 'מותר' לכולם כשאין customer_whitelist — שער תצוגת CUS1 מנוטרל אוטומטית."
   },
-
-  "caspi_forwarder_names": ["כספי סוכני מכס ושילוח בינלאומי"],
+  "caspi_forwarder_names": [
+    "כספי סוכני מכס ושילוח בינלאומי"
+  ],
   "empty_forwarder_is_caspi": true,
   "empty_forwarder_is_caspi_comment": "Inter. Forwarder ריק = מטופל ככספי. הנחה הניתנת לשינוי (OPEN GAP).",
-
   "sender_mailbox": "ashdod.agent@h-caspi.co.il",
-  "always_cc": ["ashdod@h-caspi.co.il"],
+  "always_cc": [
+    "ashdod@h-caspi.co.il"
+  ],
   "departments": {
-    "cus1": { "name": "משה רוסו", "email": "cus1@h-caspi.co.il" },
-    "cus2": { "name": "דורון רימה", "email": "cus2@h-caspi.co.il" },
-    "cus3": { "name": "אביהוא עבדי", "email": "cus3@h-caspi.co.il" }
+    "cus1": {
+      "name": "משה רוסו",
+      "email": "cus1@h-caspi.co.il"
+    },
+    "cus2": {
+      "name": "דורון רימה",
+      "email": "cus2@h-caspi.co.il"
+    },
+    "cus3": {
+      "name": "אביהוא עבדי",
+      "email": "cus3@h-caspi.co.il"
+    }
   },
-
   "microsoft_graph": {
     "enabled": true,
     "tenant_id": "",
@@ -30,44 +41,52 @@
     "send_on_approve": true,
     "poll_inbox_minutes": 5,
     "gatepass_sender": "do-not-reply@h-caspi.co.il",
+    "gatepass_lookback_days": 14,
+    "gatepass_lookback_days_comment": "חיפוש ה-gatepass תחום לטווח receivedDateTime של N הימים האחרונים (עם paging), במקום $top שטוח לא-ממוין שהחזיר הודעות ישנות מאמצע התיבה ופספס את החדשות (אומת בבדיקה חיה מול 450 הודעות).",
     "_comment": "Client-credentials (app-only). דורש הרשאות אפליקציה Mail.Send + Mail.ReadWrite עם הסכמת מנהל. ניתן להחליף סוד דרך env: GRAPH_CLIENT_SECRET. gatepass_sender = שולח ה-PDF לצירוף לפי מספר תיק."
   },
-
   "external_email_override": "maorfl14@gmail.com",
   "external_email_override_comment": "כל נמען חיצוני (מובילים/יבואנים/מסופים) ב-To מנותב לכאן. מיילי המערכת הפנימיים נשמרים כפי שהם.",
-
+  "retention": {
+    "delivered_days": 21,
+    "gatepass_pdf_days": 21,
+    "pdf_cleanup_hour": 7,
+    "_comment": "מדיניות שמירה: תיקים בסטטוס 'נמסר ללקוח' נמחקים (כולל היסטוריה) אחרי 21 יום — בדיקה יומית. קבצי gatepass PDF בתיקיות היבואנים נמחקים אחרי 21 יום (לפי mtime) — בדיקה יומית בשעה 07:00 (מיושרת לשעון קיר). הכל נרשם ללוג לפני מחיקה."
+  },
   "approval_reminder_hours": 2,
   "approval_escalation_hours": 4,
   "reminder_transit_hours": 48,
   "reminder_arrived_hours": 24,
-
   "hazardous_default_carrier": "גולד בונד",
   "hazardous_override_carrier": "סמא",
-
   "tracking": {
     "sent_status": "sent",
-    "owns_file_statuses": ["sent", "שוחרר באשדוד", "יצא לחיפה", "התקבל בחיפה", "נמסר ללקוח"],
+    "owns_file_statuses": [
+      "sent",
+      "שוחרר באשדוד",
+      "יצא לחיפה",
+      "התקבל בחיפה",
+      "נמסר ללקוח"
+    ],
     "comment": "ownsFile מחזיר רשומה אם הסטטוס באחד מאלה — מונע שליחה כפולה. כולל את הסטטוס הלוגי 'sent' של הסוכן וגם את סטטוסי המעקב התפעוליים בעברית של תיק שכבר שוחרר/נמסר."
   },
-
   "feature_flags": {
     "ashdod_release": true,
-    "haifa_arrival": true
+    "haifa_arrival": true,
+    "auto_send_haifa_transfer": false,
+    "auto_send_haifa_transfer_comment": "Task 6 — כשtrue, מיילי ההעברה לחיפה (co_loader/terminal בלבד) נשלחים אוטומטית בקומיט, ללא תור אישור. prepaid/direct/alert/תזכורות לא מושפעים. ברירת מחדל false עד אימות מלא מול נתוני בדיקה. הנמענים ממשיכים דרך external_email_override גם במסלול זה."
   },
-
   "server": {
     "host": "0.0.0.0",
     "port": 4000,
     "host_comment": "מאפשר גישה מכמה מחשבים ברשת המקומית בו-זמנית."
   },
-
   "github": {
     "owner": "REPLACE_WITH_OWNER",
     "repo": "caspi-agent",
     "current_version": "1.0.0",
     "check_on_startup": true
   },
-
   "ocr": {
     "enabled": true,
     "lang": "heb+eng",

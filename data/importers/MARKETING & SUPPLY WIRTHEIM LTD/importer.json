@@ -2,13 +2,15 @@
   "name": "MARKETING & SUPPLY WIRTHEIM LTD",
   "company_id": "",
   "emails": [
-    "maorfl14@gmail.com"
+    "NADAV@WIRTHEIM.COM",
+    "meital@wirtheim.com",
+    "E.avitan@wirtheim.com"
   ],
   "address": "",
-  "notes": "",
+  "notes": "נדב ואיתן מגיעים לסמא/אוברסיז חיפה | מוביל המשך: נדב ואיתן אוספים בעצמם | CO-LOADER/מסוף: אושן לינק (641) / טוטל (415) | כלל חומ\"ס: לא חל (לקוח אוסף) | (אין מוביל המשך קנוני — לקוח/מוביל ייעודי)",
   "department": "cus1",
   "service_rep": "משה רוסו",
-  "type": "unknown",
+  "type": "haifa_self",
   "dangerous_rule": false,
   "cont_general": "",
   "cont_general_emails": [],

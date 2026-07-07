@@ -1,0 +1,20 @@
+{
+  "name": "GALAM LTD",
+  "company_id": "",
+  "emails": [
+    "cohnl@galam.co.il",
+    "scheinmanh@galam.co.il"
+  ],
+  "address": "",
+  "notes": "מוביל ייעודי — הדס | מוביל המשך: הדס → אוברסיז חיפה | CO-LOADER/מסוף: אוברסיז אשדוד | כלל חומ\"ס: לא חל (לקוח אוסף) | (אין מוביל המשך קנוני — לקוח/מוביל ייעודי)",
+  "department": "cus1",
+  "service_rep": "",
+  "type": "haifa_self",
+  "dangerous_rule": false,
+  "cont_general": "",
+  "cont_general_emails": [],
+  "cont_dangerous_emails": [],
+  "aliases": [],
+  "seen_stations": [],
+  "files": []
+}

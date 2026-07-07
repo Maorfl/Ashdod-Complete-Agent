@@ -4,6 +4,7 @@ import { api } from "./api";
 import Dashboard from "./pages/Dashboard";
 import Importers from "./pages/Importers";
 import Approvals from "./pages/Approvals";
+import SentEmails from "./pages/SentEmails";
 import { AgentFilterProvider, useAgentFilter, AGENTS } from "./context/AgentFilterContext";
 import { ToastProvider } from "./components/Toasts";
 
@@ -69,6 +70,7 @@ function Shell() {
                     <Route path="/" element={<Dashboard />} />
                     <Route path="/importers" element={<Importers />} />
                     <Route path="/approvals" element={<Approvals />} />
+                    <Route path="/sent-emails" element={<SentEmails />} />
                 </Routes>
             </main>
 
@@ -83,6 +85,9 @@ function Shell() {
                 <div className="grp">נתונים</div>
                 <NavLink to="/importers" className={nav}>
                     <span className="ic">▦</span> ניהול יבואנים
+                </NavLink>
+                <NavLink to="/sent-emails" className={nav}>
+                    <span className="ic">✉</span> מיילים שנשלחו
                 </NavLink>
             </nav>
         </div>

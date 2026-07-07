@@ -59,10 +59,29 @@ export interface Shipment {
   department: string;
   co_loader_code: string;
   continuation: string;
+  transfer_performer?: string | null; // מבצע העברה לחיפה: קו-לואדר / משלח לא-כספי / מסוף
   hazardous: string;
   type: string;
   gatepass_pdf_path?: string | null;
+  auto_sent?: number; // 1 = נשלח אוטומטית (העברה לחיפה) ללא אישור אנושי (Task 6)
+  whitelisted?: boolean; // מחושב בשרת (scope.js): האם הלקוח ברשימת CUS1 — defense in depth
+  real_recipients?: boolean; // הטיוטה נושאת נמענים אמיתיים (לא override) — אישור ישלח מייל אמיתי
   draft?: Draft | null;
+}
+
+// לוג "מיילים שנשלחו" — העתק היסטורי מדויק של כל מייל שנשלח בפועל (append-only)
+export interface SentEmail {
+  id: number;
+  file_number: string;
+  customer_name: string | null;
+  route: string | null;
+  from_address: string | null;
+  to_addresses: string[];
+  cc_addresses: string[];
+  subject: string | null;
+  body: string | null;
+  auto: number; // 1 = נשלח אוטומטית
+  sent_at: string;
 }
 
 export interface HistoryEntry {
@@ -94,6 +113,7 @@ export const api = {
 
   dashboard: () => req<{ counts: DashboardCounts; total: number; items: Shipment[] }>('/shipments'),
   approvals: () => req<Shipment[]>('/approvals'),
+  sentEmails: () => req<SentEmail[]>('/sent-emails'),
   decide: (file: string, decision: string, edited?: Partial<DraftEmail>, notes?: string) =>
     req('/approvals/' + encodeURIComponent(file) + '/decision', {
       method: 'POST',

@@ -2,17 +2,25 @@
   "name": "UNILEVER ISRAEL HOME&PERSONAL CARE",
   "company_id": "",
   "emails": [
-    "maorfl14@gmail.com"
+    "Keren.Bashan@unilever.com"
   ],
   "address": "",
-  "notes": "",
+  "notes": "חומ\"ס — Dangerous תמיד | מוביל המשך: צוות סדצקי | CO-LOADER/מסוף: אושן לינק (641) / אוברסיז | כלל חומ\"ס: ✅ חל Dangerous→סמא",
   "department": "cus1",
   "service_rep": "משה רוסו",
-  "type": "unknown",
-  "dangerous_rule": false,
-  "cont_general": "",
-  "cont_general_emails": [],
-  "cont_dangerous_emails": [],
+  "type": "haifa_cont",
+  "dangerous_rule": true,
+  "cont_general": "סדצקי",
+  "cont_general_emails": [
+    "sidur@sadetsky.co.il"
+  ],
+  "cont_dangerous_emails": [
+    "sme-service4@sme.co.il",
+    "storage@sme.co.il",
+    "Yelena@sme.co.il",
+    "MosheK@sme.co.il",
+    "saraa@sme.co.il"
+  ],
   "aliases": [],
   "seen_stations": [
     "1",

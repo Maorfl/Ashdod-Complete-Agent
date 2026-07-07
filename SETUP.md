@@ -4,6 +4,10 @@
 - **Node.js 20+** (נבדק על 22)
 - Windows (נבדק על Windows 11). עובד גם על Linux/Mac.
 
+## התקנה מהירה (Windows)
+לחיצה כפולה על **`install.bat`** בתיקיית הפרויקט — מריץ `npm install` + `npm run build` עם הודעות סטטוס.
+להפעלה: לחיצה כפולה על **`start-server.bat`** (חלון קונסולה גלוי עם לוגים; לחלופין `packaging/start-background.vbs` להרצה שקטה ברקע).
+
 ## התקנה
 ```bash
 cd caspi-agent
@@ -20,7 +24,15 @@ npm run build        # בונה את ה-frontend (tsc + vite) ל-client/dist
 ```bash
 npm start            # מפעיל את השרת על 0.0.0.0:4000, מגיש גם את ה-frontend
 ```
-פתחו בדפדפן: **http://localhost:4000** (או `http://<IP-של-השרת>:4000` ממחשב אחר ברשת).
+פתחו בדפדפן: **http://localhost:4000**. באנר ההפעלה מדפיס גם את כתובת ה-IP האמיתית ברשת (למשל `http://192.168.1.42:4000`) לגישה ממחשבים אחרים.
+
+### גישה ממחשבים אחרים ברשת — Windows Firewall
+השרת מאזין על `0.0.0.0:4000`, אך ייתכן ש-Windows Firewall חוסם חיבורים נכנסים ממחשבים אחרים.
+אם הדשבורד לא נפתח ממחשב אחר, פתחו את הפורט (פעם אחת, ב-PowerShell/CMD **כמנהל**):
+```powershell
+netsh advfirewall firewall add rule name="Caspi Agent 4000" dir=in action=allow protocol=TCP localport=4000
+```
+(שינוי מערכתי — מבוצע ידנית בכוונה, לא ע"י הסקריפטים.)
 
 ## פיתוח (hot-reload)
 ```bash

@@ -2,13 +2,14 @@
   "name": "SMITH TOOLS TRADE LTD",
   "company_id": "",
   "emails": [
-    "maorfl14@gmail.com"
+    "LeayaC@smithtools.co.il",
+    "dikla@smithtools.co.il"
   ],
   "address": "",
-  "notes": "",
+  "notes": "מוביל המשך: דיקלה וליה אוספות לבד | CO-LOADER/מסוף: אוברסיז / גולד בונד | כלל חומ\"ס: לא חל (לקוח אוסף) | (אין מוביל המשך קנוני — לקוח/מוביל ייעודי)",
   "department": "cus1",
   "service_rep": "משה רוסו",
-  "type": "unknown",
+  "type": "haifa_self",
   "dangerous_rule": false,
   "cont_general": "",
   "cont_general_emails": [],

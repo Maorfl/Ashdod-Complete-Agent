@@ -22,6 +22,7 @@ export default function Dashboard() {
   const [err, setErr] = useState('');
   const [busy, setBusy] = useState(false);
   const [filter, setFilter] = useState<StatusKey | 'all'>('all');
+  const [q, setQ] = useState(''); // חיפוש לפי מספר תיק / שם לקוח
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const [openFile, setOpenFile] = useState<string | null>(null);
   const [statusPick, setStatusPick] = useState<Record<string, string>>({});
@@ -60,16 +61,23 @@ export default function Dashboard() {
   }, [agentItems]);
 
   const visible = useMemo(() => {
-    const list = filter === 'all'
+    let list = filter === 'all'
       ? agentItems.filter((s) => statusKeyOf(s) !== 'delivered')
       : agentItems.filter((s) => statusKeyOf(s) === filter);
+    // חיפוש חופשי — התאמת substring לא-רגישת-רישיות למספר תיק או שם לקוח
+    const needle = q.trim().toLowerCase();
+    if (needle) {
+      list = list.filter((s) =>
+        String(s.file_number || '').toLowerCase().includes(needle) ||
+        String(s.customer_name || '').toLowerCase().includes(needle));
+    }
     return [...list].sort((a, b) => {
       const ai = STATUS_ORDER.indexOf(statusKeyOf(a));
       const bi = STATUS_ORDER.indexOf(statusKeyOf(b));
       if (ai !== bi) return ai - bi;
       return new Date(b.status_updated_at || 0).getTime() - new Date(a.status_updated_at || 0).getTime();
     });
-  }, [agentItems, filter]);
+  }, [agentItems, filter, q]);
 
   const openItem = useMemo(() => visible.find((s) => s.file_number === openFile) || null, [visible, openFile]);
 
@@ -158,6 +166,7 @@ export default function Dashboard() {
       </div>
 
       <div className="filter-bar">
+        <div className="search"><input placeholder="חיפוש לפי מספר תיק או שם לקוח…" value={q} onChange={(e) => setQ(e.target.value)} /></div>
         <button className={'pill' + (filter === 'all' ? ' active' : '')} onClick={() => setFilter('all')}>הכל</button>
         {STATUS_META.map((m) => (
           <button
@@ -190,7 +199,7 @@ export default function Dashboard() {
               <thead>
                 <tr>
                   <th>תיק</th><th>לקוח</th><th>תאריך שחרור</th><th>סטטוס</th>
-                  <th>מוביל / מסוף</th><th>מחלקה</th><th>זמן בסטטוס</th><th>פעולות</th>
+                  <th>מבצע העברה לחיפה</th><th>מחלקה</th><th>זמן בסטטוס</th><th>פעולות</th>
                 </tr>
               </thead>
               <tbody>
@@ -207,8 +216,9 @@ export default function Dashboard() {
                       <td className="mono">{formatDateHe(s.release_date)}</td>
                       <td>
                         <span className="st-badge" style={{ ['--c' as any]: meta?.cssVar || 'var(--muted)' }}>{statusLabel(s.status)}</span>
+                        {s.auto_sent ? <span className="st-badge" style={{ ['--c' as any]: 'var(--st-arrived)', marginInlineStart: 4 }} title="נשלח אוטומטית ללא אישור אנושי (העברה לחיפה)">⚡ אוטומטי</span> : null}
                       </td>
-                      <td>{s.continuation || '—'}</td>
+                      <td>{s.transfer_performer || '—'}</td>
                       <td>{s.department ? s.department.toUpperCase() : '—'}</td>
                       <td className={'mono time-cell' + (sev ? ' time-' + sev : '')}>{formatDuration(s.status_updated_at)}</td>
                       <td className="actions-cell" onClick={(e) => e.stopPropagation()}>

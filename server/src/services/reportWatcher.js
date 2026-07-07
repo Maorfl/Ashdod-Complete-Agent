@@ -1,60 +1,156 @@
 /**
- * services/reportWatcher.js — לולאת ה-polling (מצב 1).
- * רץ כל poll_interval_minutes: קורא דוח, מסנן תיקים חדשים מול ה-DB, מסווג,
- * בונה טיוטת מייל ומכניס לתור אישור מחלקה. אינו שולח דבר בעצמו (human-in-the-loop).
+ * services/reportWatcher.js — לולאת ה-polling (מצב 1), בתצורת שני שעונים נפרדים.
  *
- * תיקי no_op אינם נשמרים ב-DB (לא רלוונטיים לאשדוד) — רק נספרים בסיכום הריצה,
- * כדי לשמור על טבלת shipments התפעולית נקייה. רק תיקים שדורשים פעולה נשמרים.
+ * Task 1 — שעון סריקה (scanOnce): רץ כל poll_interval_minutes (10), קורא ומפרסר את
+ *   הדוח אל cache בזיכרון בלבד. אינו נוגע ב-DB.
+ * Task 2 — שעון קומיט (commit): רץ בשעון-קיר, 5 דקות לפני תחילת כל שעה (HH:55, לפי
+ *   config.commit_before_hour_minutes). לוקח את ה-cache האחרון ומריץ את הצנרת בפועל:
+ *   סינון scope → סיווג → upsert ל-DB → בניית טיוטה / שליחה אוטומטית (Task 6).
+ *
+ * הפרדת שני השעונים מאפשרת סריקה תכופה (רעננות דשבורד) בלי הצפת ה-DB/שליחות,
+ * וריכוז כל הכתיבות והשליחות לחלון קומיט אחד צפוי בשעה.
+ *
+ * תיקי no_op אינם נשמרים ב-DB (לא רלוונטיים לאשדוד) — רק נספרים. אינו שולח דבר
+ * בעצמו למעט מסלולי ההעברה לחיפה כשמופעל הדגל auto_send_haifa_transfer (Task 6).
  */
 const fs = require('fs');
 const { config, REPORT_PATH } = require('../config');
 const { readReport } = require('../report/reader');
-const { classify } = require('../report/classifier');
+const { classify, transferPerformer } = require('../report/classifier');
 const { composeRelease } = require('../email/composer');
 const importersDb = require('../db/importers');
 const shipments = require('../db/shipments');
+const graph = require('./graphMail');
+const gatepass = require('./gatepassFetcher');
+const scope = require('../scope');
 
-const STATUS = { ALERT: 'alert', PENDING: 'pending_approval' };
+// pending_approval — תור אישור אנושי; awaiting_gatepass — מסלול העברה שאושר לשליחה
+// אוטומטית וממתין להגעת ה-gatepass PDF (Task 4/6). alert — בדיקה ידנית.
+const STATUS = { ALERT: 'alert', PENDING: 'pending_approval', AWAITING_GATEPASS: 'awaiting_gatepass' };
+const TRANSFER_ROUTES = new Set(['co_loader', 'terminal']);
 
-// כלל scope קבוע (config.report_scope): רק LCL + נציג נבחר נכנסים לצנרת.
-// תחנת מכס 2 נאכפת בנפרד ע"י כלל ה-no_op במסווג.
+// כלל scope קבוע (config.report_scope): רק LCL + הנציג הנבחר + רשימת לקוחות ההעברה
+// לחיפה (Task 3) נכנסים לצנרת. תחנת מכס 2 נאכפת בנפרד ע"י כלל ה-no_op במסווג.
 function normRep(s) {
   return String(s || '').replace(/\s+/g, ' ').trim();
 }
 function inScope(rec) {
-  const scope = config.report_scope || {};
-  if (scope.fcl_lcl && String(rec.fcl_lcl || '').trim() !== scope.fcl_lcl) return false;
-  if (scope.service_rep && normRep(rec.service_rep) !== normRep(scope.service_rep)) return false;
+  const s = config.report_scope || {};
+  if (s.fcl_lcl && String(rec.fcl_lcl || '').trim() !== s.fcl_lcl) return false;
+  if (s.service_rep && normRep(rec.service_rep) !== normRep(s.service_rep)) return false;
+  // רק 19 לקוחות ההעברה לחיפה — מקור אמת יחיד ב-scope.js (משותף לשכבת ההגשה)
+  if (!scope.isWhitelisted(rec.customer_name)) return false;
   return true;
 }
 
-let timer = null;
-let lastRun = null;
+// ---------- Task 1: cache סריקה (ללא נגיעה ב-DB) ----------
+let scanCache = null; // { records, scannedAt, error, path }
 
-function runOnce() {
-  if (!config.feature_flags?.ashdod_release) return record({ skipped: 'feature_off' });
-  if (!fs.existsSync(REPORT_PATH)) return record({ skipped: 'report_missing', path: REPORT_PATH });
+function scanOnce() {
+  if (!fs.existsSync(REPORT_PATH)) {
+    // נתיב הדוח (למשל G:\...\ASHDODAGENT.CSV) עשוי להיות בלתי נגיש מחוץ לפרודקשן —
+    // מדווחים בבירור ולא קורסים.
+    console.warn(`[reportWatcher] scan: report not found at ${REPORT_PATH}`);
+    scanCache = { records: [], scannedAt: new Date().toISOString(), error: 'report_missing', path: REPORT_PATH };
+    return scanCache;
+  }
+  try {
+    const { records } = readReport(REPORT_PATH);
+    scanCache = { records, scannedAt: new Date().toISOString(), error: null, path: REPORT_PATH, count: records.length };
+  } catch (e) {
+    console.error(`[reportWatcher] scan failed: ${e.message}`);
+    scanCache = { records: [], scannedAt: new Date().toISOString(), error: e.message, path: REPORT_PATH };
+  }
+  return scanCache;
+}
 
-  const { records } = readReport(REPORT_PATH);
-  const summary = { total: records.length, out_of_scope: 0, no_op: 0, queued: 0, alerts: 0, skipped_tracked: 0, errors: 0 };
+// האם ה-cache ריק/ישן/שגוי ולכן דרושה סריקה מיידית לפני קומיט?
+function scanCacheStale() {
+  if (!scanCache || scanCache.error) return true;
+  const staleMs = (config.poll_interval_minutes || 10) * 60 * 1000 * 2;
+  return (Date.now() - Date.parse(scanCache.scannedAt)) > staleMs;
+}
+
+// האם מסלול זה זכאי לשליחה אוטומטית? (Task 6: co_loader/terminal + דגל + Graph מחובר)
+function autoSendEnabled(route) {
+  return !!config.feature_flags?.auto_send_haifa_transfer && TRANSFER_ROUTES.has(route) && graph.isEnabled();
+}
+
+/**
+ * Task 4/6 — שליחה או דחייה של מייל העברה לחיפה.
+ * הרשומה חייבת להתקיים ב-DB לפני החיפוש (gatepass.setGatepass מבצע UPDATE).
+ * מדיניות (Task 4): לא שולחים בלי ה-gatepass PDF — משאירים awaiting_gatepass, וניסיון
+ * חוזר בקומיט הבא. שליחה נעשית עם ה-PDF כצרופה אמיתית; הנמענים כבר עברו override במסווג.
+ * מחזיר 'auto_sent' | 'awaiting_gatepass' | 'error'.
+ */
+async function sendOrDefer(fileNumber, email, summary) {
+  let res;
+  try {
+    res = await gatepass.fetchForFile(fileNumber); // { path } בהצלחה, אחרת { skipped }
+  } catch (e) {
+    summary.errors += 1;
+    return 'error';
+  }
+  if (!res || !res.path) {
+    summary.awaiting_gatepass += 1;
+    return 'awaiting_gatepass'; // ממתין ל-PDF — יישאר גלוי ויינסה שוב בקומיט הבא
+  }
+  const outgoing = { ...email, attachments: [res.path] };
+  try {
+    // צירוף ה-gatepass כ-fileAttachment אמיתי (graphMail תומך במערך נתיבים)
+    await graph.sendMail(outgoing);
+  } catch (e) {
+    summary.errors += 1;
+    return 'error'; // נשאר awaiting_gatepass — ניסיון חוזר בקומיט הבא
+  }
+  // לוג "מיילים שנשלחו" — העתק היסטורי מדויק כפי שנשלח (append-only)
+  const shipped = shipments.get(fileNumber);
+  shipments.logSentEmail({ file_number: fileNumber, customer_name: shipped?.customer_name, route: shipped?.route, email: outgoing, auto: true });
+  shipments.markSent(fileNumber, 'נשלח אוטומטית (העברה לחיפה) עם gatepass', { auto: true });
+  summary.auto_sent += 1;
+  return 'auto_sent';
+}
+
+// ---------- Task 2: קומיט — סיווג + כתיבה ל-DB + טיוטה/שליחה ----------
+async function commit() {
+  if (!config.feature_flags?.ashdod_release) return record({ skipped: 'feature_off', at: new Date().toISOString() });
+
+  // אם אין סריקה עדיין / הסריקה נכשלה / התיישנה — סורקים כעת (inline) לפני הקומיט.
+  if (scanCacheStale()) scanOnce();
+  if (scanCache.error === 'report_missing') {
+    return record({ skipped: 'report_missing', path: REPORT_PATH, at: new Date().toISOString() });
+  }
+
+  const records = scanCache.records || [];
+  const summary = {
+    total: records.length, out_of_scope: 0, no_op: 0, queued: 0, alerts: 0,
+    skipped_tracked: 0, auto_sent: 0, awaiting_gatepass: 0, errors: 0,
+  };
 
   for (const rec of records) {
     try {
-      // כלל scope קבוע — רק LCL + הנציג שהוגדר; שאר התיקים אינם נכנסים לצנרת כלל
+      // כלל scope קבוע — רק LCL + הנציג + רשימת ההעברה לחיפה נכנסים לצנרת
       if (!inScope(rec)) { summary.out_of_scope += 1; continue; }
 
-      const decision = classify(rec, importersDb.findByName(rec.customer_name));
+      const importer = importersDb.findByName(rec.customer_name);
+      const decision = classify(rec, importer);
 
       if (decision.route === 'no_op') { summary.no_op += 1; continue; } // לא נשמר
-      if (shipments.isTracked(rec.file_number)) {
-        // תיק קיים — משלימים release_date מהדוח אם חסר (לא נוגעים בסטטוס/היסטוריה)
-        if (rec.release_date && !shipments.get(rec.file_number)?.release_date) {
+
+      const existing = shipments.get(rec.file_number);
+      if (existing) {
+        // תיק שממתין ל-gatepass — ניסיון שליחה חוזר (לא "כבר טופל")
+        if (existing.status === STATUS.AWAITING_GATEPASS && autoSendEnabled(decision.route)) {
+          const email = composeRelease(rec, decision, importer);
+          await sendOrDefer(rec.file_number, email, summary);
+          continue;
+        }
+        // תיק קיים אחר — משלימים release_date מהדוח אם חסר (לא נוגעים בסטטוס/היסטוריה)
+        if (rec.release_date && !existing.release_date) {
           shipments.upsert({ file_number: rec.file_number, release_date: rec.release_date });
         }
         summary.skipped_tracked += 1; continue; // כבר טופל/שוחרר
       }
-
-      const importer = importersDb.findByName(rec.customer_name);
 
       if (decision.route === 'alert') {
         shipments.upsert({
@@ -65,6 +161,7 @@ function runOnce() {
           reason: decision.reason,
           release_date: rec.release_date || null,
           department: importer?.department || null,
+          transfer_performer: transferPerformer(rec) || null,
           hazardous: rec.hazardous,
           draft_payload: { decision },
         });
@@ -72,31 +169,41 @@ function runOnce() {
         continue;
       }
 
-      // מסלול פעיל — בניית טיוטה והכנסה לתור אישור
+      // מסלול פעיל — בניית טיוטה
       const email = composeRelease(rec, decision, importer);
-      shipments.upsert({
+      const base = {
         file_number: rec.file_number,
         customer_name: rec.customer_name,
-        status: STATUS.PENDING,
         route: decision.route,
         reason: decision.reason || null,
         release_date: rec.release_date || null,
         department: importer?.department || null,
         co_loader_code: rec.co_loader_code || null,
         continuation: decision.continuation?.name || null,
+        transfer_performer: transferPerformer(rec) || null,
         hazardous: rec.hazardous,
         wg_reshimon_no: rec.wg_reshimon_no || null,
         type: importer?.type || null,
         agent_name: importer?.service_rep || null,
         draft_payload: { route: decision.route, needs_review: !!decision.needs_review, email, alerts: decision.alerts || [] },
-      });
-      summary.queued += 1;
+      };
+
+      // Task 6 — שליחה אוטומטית רק למסלולי ההעברה לחיפה (co_loader/terminal), מאחורי דגל.
+      // prepaid/direct נשארים בתור האישור האנושי כמקודם.
+      if (autoSendEnabled(decision.route)) {
+        // הרשומה חייבת להתקיים לפני חיפוש ה-gatepass (setGatepass מבצע UPDATE)
+        shipments.upsert({ ...base, status: STATUS.AWAITING_GATEPASS });
+        await sendOrDefer(rec.file_number, email, summary);
+      } else {
+        shipments.upsert({ ...base, status: STATUS.PENDING });
+        summary.queued += 1;
+      }
     } catch (e) {
       summary.errors += 1;
     }
   }
 
-  return record({ ...summary, at: new Date().toISOString() });
+  return record({ ...summary, scannedAt: scanCache.scannedAt, at: new Date().toISOString() });
 }
 
 function record(r) {
@@ -104,16 +211,70 @@ function record(r) {
   return r;
 }
 
+// ---------- הרצה ידנית (manual): סריקה + קומיט מיידיים, עוקף את שני השעונים ----------
+async function runNow() {
+  scanOnce();
+  return commit();
+}
+
+// ---------- תזמון ----------
+let scanTimer = null;
+let commitTimer = null;
+let lastRun = null;
+let nextCommitAt = null;
+
+/**
+ * מרחק בזמן (ms) עד ה-HH:MM הבא של הקומיט, מיושר לשעון-קיר מקומי.
+ * targetMin = 60 - commit_before_hour_minutes (למשל 55). מחושב תמיד מ-now אמיתי כדי
+ * להישאר מיושר גם לאחר restart / דריפט / מעבר שעון קיץ.
+ */
+function msUntilNextCommit(now = new Date()) {
+  const beforeMin = Number(config.commit_before_hour_minutes ?? 5);
+  const targetMin = ((60 - beforeMin) % 60 + 60) % 60;
+  const t = new Date(now);
+  t.setSeconds(0, 0);
+  t.setMinutes(targetMin);
+  if (t.getTime() <= now.getTime()) t.setHours(t.getHours() + 1); // עברנו את היעד — לשעה הבאה
+  return t.getTime() - now.getTime();
+}
+
+function scheduleNextCommit() {
+  const delay = msUntilNextCommit();
+  nextCommitAt = new Date(Date.now() + delay).toISOString();
+  commitTimer = setTimeout(async () => {
+    try { await commit(); } catch (e) { record({ error: e.message, at: new Date().toISOString() }); }
+    scheduleNextCommit(); // רה-תזמון מ-now טרי — שומר יישור לשעון הקיר
+  }, delay);
+}
+
 function start() {
-  if (timer) return;
-  const ms = (config.poll_interval_minutes || 10) * 60 * 1000;
-  runOnce();
-  timer = setInterval(runOnce, ms);
+  if (scanTimer || commitTimer) return;
+  const scanMs = (config.poll_interval_minutes || 10) * 60 * 1000;
+  scanOnce();                          // סריקה ראשונית מיידית
+  scanTimer = setInterval(scanOnce, scanMs);
+  scheduleNextCommit();                // קומיט ראשון ב-HH:55 הקרוב
 }
 
 function stop() {
-  if (timer) clearInterval(timer);
-  timer = null;
+  if (scanTimer) clearInterval(scanTimer);
+  if (commitTimer) clearTimeout(commitTimer);
+  scanTimer = commitTimer = null;
 }
 
-module.exports = { runOnce, start, stop, status: () => lastRun };
+function status() {
+  return {
+    last: lastRun,
+    scan: scanCache ? { scannedAt: scanCache.scannedAt, count: scanCache.count ?? (scanCache.records || []).length, error: scanCache.error } : null,
+    nextCommitAt,
+  };
+}
+
+module.exports = {
+  // ליבה
+  scanOnce, commit, runNow,
+  runOnce: runNow, // תאימות לאחור (reset-shipments / endpoint ידני) — הרצה מלאה מיידית
+  // תזמון
+  start, stop, status,
+  // חשוף לבדיקות
+  inScope, msUntilNextCommit,
+};

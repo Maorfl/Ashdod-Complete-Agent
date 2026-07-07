@@ -33,6 +33,19 @@ CREATE TABLE IF NOT EXISTS status_history (
   changed_at DATETIME,
   notes TEXT
 );
+CREATE TABLE IF NOT EXISTS sent_emails (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  file_number TEXT,
+  customer_name TEXT,
+  route TEXT,
+  from_address TEXT,
+  to_addresses TEXT,
+  cc_addresses TEXT,
+  subject TEXT,
+  body TEXT,
+  auto INTEGER,
+  sent_at DATETIME
+);
 `);
 
 // עמודות עבודה של הסוכן — מתווספות רק אם חסרות (לא הרסני)
@@ -50,6 +63,8 @@ const AGENT_COLUMNS = {
   first_seen: 'DATETIME',
   last_seen: 'DATETIME',
   gatepass_pdf_path: 'TEXT', // נתיב מקומי ל-PDF שהתקבל מ-do-not-reply עבור התיק (Task 6)
+  auto_sent: 'INTEGER',      // 1 = נשלח אוטומטית (העברה לחיפה) ללא אישור אנושי (Task 6)
+  transfer_performer: 'TEXT', // "מבצע העברה לחיפה" — קו-לואדר / משלח לא-כספי / מסוף (classifier.transferPerformer)
 };
 (function ensureAgentColumns() {
   const existing = new Set(db.prepare('PRAGMA table_info(shipments)').all().map((c) => c.name));
@@ -107,6 +122,7 @@ function upsert(rec) {
     department: rec.department ?? existing?.department ?? null,
     co_loader_code: rec.co_loader_code ?? existing?.co_loader_code ?? null,
     continuation: rec.continuation ?? existing?.continuation ?? null,
+    transfer_performer: rec.transfer_performer ?? existing?.transfer_performer ?? null,
     hazardous: rec.hazardous ?? existing?.hazardous ?? null,
     wg_reshimon_no: rec.wg_reshimon_no ?? existing?.wg_reshimon_no ?? null,
     type: rec.type ?? existing?.type ?? null,
@@ -118,13 +134,14 @@ function upsert(rec) {
 
   db.prepare(`INSERT INTO shipments
     (file_number,customer_name,release_date,status,status_updated_at,notes,created_at,agent_name,
-     route,reason,department,co_loader_code,continuation,hazardous,wg_reshimon_no,type,draft_payload,agent_sent_at,first_seen,last_seen)
+     route,reason,department,co_loader_code,continuation,transfer_performer,hazardous,wg_reshimon_no,type,draft_payload,agent_sent_at,first_seen,last_seen)
     VALUES (@file_number,@customer_name,@release_date,@status,@status_updated_at,@notes,@created_at,@agent_name,
-     @route,@reason,@department,@co_loader_code,@continuation,@hazardous,@wg_reshimon_no,@type,@draft_payload,@agent_sent_at,@first_seen,@last_seen)
+     @route,@reason,@department,@co_loader_code,@continuation,@transfer_performer,@hazardous,@wg_reshimon_no,@type,@draft_payload,@agent_sent_at,@first_seen,@last_seen)
     ON CONFLICT(file_number) DO UPDATE SET
       customer_name=@customer_name,release_date=@release_date,status=@status,status_updated_at=@status_updated_at,
       notes=@notes,agent_name=@agent_name,route=@route,reason=@reason,department=@department,
-      co_loader_code=@co_loader_code,continuation=@continuation,hazardous=@hazardous,wg_reshimon_no=@wg_reshimon_no,
+      co_loader_code=@co_loader_code,continuation=@continuation,transfer_performer=@transfer_performer,
+      hazardous=@hazardous,wg_reshimon_no=@wg_reshimon_no,
       type=@type,draft_payload=@draft_payload,agent_sent_at=@agent_sent_at,last_seen=@last_seen`).run(merged);
 
   if (rec.status !== undefined && rec.status !== existing?.status) {
@@ -142,11 +159,11 @@ function setStatus(fileNumber, status, notes = null) {
   return get(fileNumber);
 }
 
-// סימון "נשלח" — מקור האמת ל-ownsFile
-function markSent(fileNumber, notes = null) {
+// סימון "נשלח" — מקור האמת ל-ownsFile. opts.auto=true => שליחה אוטומטית (Task 6).
+function markSent(fileNumber, notes = null, opts = {}) {
   const now = new Date().toISOString();
-  db.prepare('UPDATE shipments SET status=?, status_updated_at=?, agent_sent_at=?, last_seen=? WHERE file_number=?')
-    .run(SENT_STATUS, now, now, now, String(fileNumber));
+  db.prepare('UPDATE shipments SET status=?, status_updated_at=?, agent_sent_at=?, last_seen=?, auto_sent=? WHERE file_number=?')
+    .run(SENT_STATUS, now, now, now, opts.auto ? 1 : 0, String(fileNumber));
   addHistory(fileNumber, SENT_STATUS, notes);
   return get(fileNumber);
 }
@@ -156,6 +173,37 @@ function setGatepass(fileNumber, pdfPath) {
   db.prepare('UPDATE shipments SET gatepass_pdf_path=? WHERE file_number=?')
     .run(pdfPath || null, String(fileNumber));
   return get(fileNumber);
+}
+
+/**
+ * sent_emails — לוג append-only של מיילים שנשלחו בפועל (לא נגזר מ-draft_payload,
+ * שעלול להידרס בעריכה/recompose). נכתב בכל הצלחה של graphMail.sendMail — גם במסלול
+ * האישור האנושי (routes/approvals) וגם בשליחה האוטומטית (reportWatcher.sendOrDefer).
+ */
+function logSentEmail({ file_number, customer_name, route, email, auto = false }) {
+  db.prepare(`INSERT INTO sent_emails
+    (file_number, customer_name, route, from_address, to_addresses, cc_addresses, subject, body, auto, sent_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`).run(
+    String(file_number || ''), customer_name || null, route || null,
+    email?.from || null,
+    JSON.stringify(email?.to || []), JSON.stringify(email?.cc || []),
+    email?.subject || null, email?.body || null,
+    auto ? 1 : 0, new Date().toISOString(),
+  );
+}
+
+function sentEmails(limit = 200) {
+  return db.prepare('SELECT * FROM sent_emails ORDER BY sent_at DESC, id DESC LIMIT ?').all(limit);
+}
+
+// מחיקת תיק מהמעקב + היסטוריית הסטטוסים שלו (טרנזקציה). לניקוי רשומות שלא היו
+// אמורות להיכנס לצנרת (out-of-scope). מחזיר מספר שורות shipments שנמחקו (0/1).
+const _remove = db.transaction((fileNumber) => {
+  db.prepare('DELETE FROM status_history WHERE file_number = ?').run(String(fileNumber));
+  return db.prepare('DELETE FROM shipments WHERE file_number = ?').run(String(fileNumber)).changes;
+});
+function remove(fileNumber) {
+  return _remove(fileNumber);
 }
 
 function all() {
@@ -190,6 +238,9 @@ module.exports = {
   markSent,
   setGatepass,
   addHistory,
+  remove,
+  logSentEmail,
+  sentEmails,
   all,
   byStatus,
   history,

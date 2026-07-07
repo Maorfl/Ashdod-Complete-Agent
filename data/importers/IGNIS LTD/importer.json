@@ -1,0 +1,25 @@
+{
+  "name": "IGNIS LTD",
+  "company_id": "",
+  "emails": [
+    "office@ignismat.com"
+  ],
+  "address": "",
+  "notes": "מוביל המשך: מירב אוספת לבד | CO-LOADER/מסוף: ישראל קארגו (484) / וריטס (997) | כלל חומ\"ס: ✅ חל Dangerous→סמא | (אין מוביל המשך קנוני — לקוח/מוביל ייעודי)",
+  "department": "cus1",
+  "service_rep": "",
+  "type": "haifa_cont",
+  "dangerous_rule": true,
+  "cont_general": "",
+  "cont_general_emails": [],
+  "cont_dangerous_emails": [
+    "sme-service4@sme.co.il",
+    "storage@sme.co.il",
+    "Yelena@sme.co.il",
+    "MosheK@sme.co.il",
+    "saraa@sme.co.il"
+  ],
+  "aliases": [],
+  "seen_stations": [],
+  "files": []
+}

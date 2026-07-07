@@ -11,8 +11,14 @@ function subjectLine(rec) {
   return `C/ ${rec.customer_name} FILE NO/ ${rec.file_number}`;
 }
 
+// ריווח כפול (2026-07-07, אישור משתמש מפורש): כל גוף מייל נבנה עם join('\n\n') —
+// שורה ריקה בין כל שתי שורות עוקבות, בכל סוגי המיילים, כולל מייל "העברה לחיפה"
+// שהפורמט הצפוף שלו אומת בעבר מול הנוהל הכתוב. זו ההנחיה החדשה — לא רגרסיה "לתקן".
+// שורות '' ריקות שהפרידו ידנית הוסרו כדי שלא ייווצרו פערים משולשים.
+const JOIN = '\n\n';
+
 function signature() {
-  return ['', 'בברכה,', 'צוות כספי אשדוד'];
+  return ['בברכה,', 'צוות כספי אשדוד'];
 }
 
 // מיפוי משותף: מוביל המשך / מפתח מסוף → שם יעד המשך בחיפה.
@@ -47,12 +53,11 @@ function composeRelease(rec, decision, importer) {
       ...base,
       body: [
         'שלום רב,',
-        '',
         `משלוח של ${rec.customer_name} (תיק ${rec.file_number}) שוחרר בנמל אשדוד.`,
         `התיק מנוהל כ-PREPAID על ידי ${decision.forwarder || 'המשלח'} — נא להמשיך בהובלה לחיפה.`,
         'מצורפים תעודת משלוח וגייטפס (ככל שזמינים).',
         ...signature(),
-      ].join('\n'),
+      ].join(JOIN),
     };
   }
 
@@ -62,11 +67,10 @@ function composeRelease(rec, decision, importer) {
       ...base,
       body: [
         'שלום רב,',
-        '',
         `משלוח של ${rec.customer_name} (תיק ${rec.file_number}) שוחרר בנמל אשדוד.`,
         'נא לתאם איסוף/המשך טיפול מול היבואן.',
         ...signature(),
-      ].join('\n'),
+      ].join(JOIN),
     };
   }
 
@@ -93,6 +97,8 @@ function composeRelease(rec, decision, importer) {
     : `צוות ${cont.name || 'מוביל ההמשך'}, משלוח יגיע ל${haifaName}`;
   const availabilityLine = isSelf ? 'נעדכן בזמינות.' : 'המשך שלכם. נעדכן בזמינות.';
 
+  // ריווח כפול גם כאן — בכוונה (ראו הערת JOIN למעלה): גובר על הפורמט הצפוף
+  // שאומת בעבר ביט-אחר-ביט מול הנוהל הכתוב. לא רגרסיה.
   const body = [
     releaseLine,
     `צוות ${handlerName}, ${g.thanks(hg, hn)} בהעברה לחיפה`,
@@ -102,7 +108,7 @@ function composeRelease(rec, decision, importer) {
     'מצ"ב ניירת.',
     'בברכה,',
     'צוות כספי',
-  ].join('\n');
+  ].join(JOIN);
 
   // CC למסלולים אלה בלבד: מייל המחלקה בלבד — ללא ashdod@ (config.always_cc)
   const transferCc = cc.filter((x) => !(config.always_cc || []).includes(x));
@@ -126,7 +132,7 @@ function composeArrival(record, terminalKey) {
     to: [config.external_email_override],
     cc: [...(config.always_cc || [])],
     subject: `RE: C/ ${record.customer_name || record.customer || ''} FILE NO/ ${record.file_number}`,
-    body: ['שלום רב,', '', line, ...signature()].join('\n'),
+    body: ['שלום רב,', line, ...signature()].join(JOIN),
   };
 }
 
@@ -143,12 +149,11 @@ function composeReminder(record, notes) {
   const cont = record.continuation ? ` (מוביל המשך: ${record.continuation})` : '';
   const bodyLines = [
     'שלום רב,',
-    '',
     `תזכורת בנוגע למשלוח של ${record.customer_name || ''} (תיק ${record.file_number})${cont}.`,
     'טרם התקבל עדכון על התקדמות הטיפול — נודה לעדכון סטטוס בהקדם.',
   ];
   if (notes) {
-    bodyLines.push('', `הערת מחלקה: ${notes}`);
+    bodyLines.push(`הערת מחלקה: ${notes}`);
   }
   bodyLines.push(...signature());
 
@@ -157,7 +162,7 @@ function composeReminder(record, notes) {
     to: [config.external_email_override],
     cc,
     subject: `RE: C/ ${record.customer_name || ''} FILE NO/ ${record.file_number} — תזכורת`,
-    body: bodyLines.join('\n'),
+    body: bodyLines.join(JOIN),
   };
 }
 

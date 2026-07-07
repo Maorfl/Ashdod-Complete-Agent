@@ -1,10 +1,12 @@
 /**
  * db/importers.js — שכבת נתוני יבואנים. כל יבואן = תיקיה תחת data/importers/<שם>
  * ובתוכה importer.json (שם, ח.פ, מיילים, כתובת, הערות, type, מחלקה). קבצי JSON לוקאליים, לא DB.
+ * ללקוחות ההעברה לחיפה (whitelist) נוצר גם instructions.txt נגזר — ראו instructionsText.
  */
 const fs = require('fs');
 const path = require('path');
 const { DATA_DIR } = require('../config');
+const scope = require('../scope');
 
 const IMP_ROOT = path.join(DATA_DIR, 'importers');
 
@@ -44,6 +46,33 @@ function findByName(name) {
   return null;
 }
 
+/**
+ * instructionsText — טקסט קובץ ההוראות של לקוח העברה לחיפה, בפורמט המאומת מקבצי
+ * ה"הוראות - <לקוח>.docx" (פורמט בלבד — לא מועתקות מהם כתובות אמיתיות):
+ *   שורת כותרת (שם הלקוח), "מיילים של היבואן:" + emails,
+ *   ורק כאשר cont_general מוגדר — "מיילים של המוביל המשך (<שם>):" + cont_general_emails.
+ * מוזן אך ורק מהנתונים החיים ב-importer.json. כשהרשימה ריקה נכתב placeholder מפורש
+ * ("— טרם הוזן —") — צפוי ותקין כל עוד כלל אי-העתקת המיילים בתוקף.
+ */
+const NO_EMAILS_PLACEHOLDER = '— טרם הוזן —';
+function instructionsText(record) {
+  const emails = (arr) => (arr && arr.length ? arr : [NO_EMAILS_PLACEHOLDER]);
+  const lines = [record.name, 'מיילים של היבואן:', ...emails(record.emails)];
+  if (record.cont_general) {
+    lines.push('', `מיילים של המוביל המשך (${record.cont_general}):`, ...emails(record.cont_general_emails));
+  }
+  return lines.join('\n') + '\n';
+}
+
+// כתיבה/רענון של instructions.txt בתיקיית היבואן — רק ללקוחות ההעברה לחיפה (whitelist).
+// נקרא אוטומטית מ-create/update כך שהקובץ לעולם לא מתיישן מול importer.json.
+function writeInstructions(folder, record) {
+  if (!scope.isWhitelisted(record.name)) return null;
+  const dest = path.join(IMP_ROOT, folder, 'instructions.txt');
+  fs.writeFileSync(dest, instructionsText(record), 'utf8');
+  return dest;
+}
+
 function create(data) {
   ensureRoot();
   if (!data.name) throw new Error('שם יבואן חובה');
@@ -53,6 +82,7 @@ function create(data) {
   fs.mkdirSync(dir, { recursive: true });
   const record = normalize(data);
   fs.writeFileSync(path.join(dir, 'importer.json'), JSON.stringify(record, null, 2), 'utf8');
+  writeInstructions(folder, record); // לקוח העברה לחיפה חדש => instructions.txt מיידי
   return { _folder: folder, ...record };
 }
 
@@ -62,6 +92,7 @@ function update(folder, patch) {
   delete current._folder;
   const merged = normalize({ ...current, ...patch });
   fs.writeFileSync(path.join(IMP_ROOT, folder, 'importer.json'), JSON.stringify(merged, null, 2), 'utf8');
+  writeInstructions(folder, merged); // רענון — הקובץ לא מתיישן מול emails/cont_general
   return { _folder: folder, ...merged };
 }
 
@@ -93,4 +124,4 @@ function normalize(d) {
   };
 }
 
-module.exports = { list, readByFolder, findByName, create, update, remove, safeFolder, IMP_ROOT };
+module.exports = { list, readByFolder, findByName, create, update, remove, safeFolder, instructionsText, writeInstructions, IMP_ROOT };

@@ -7,6 +7,8 @@ const shipments = require('../db/shipments');
 const departments = require('../db/departments');
 const { composeReminder } = require('../email/composer');
 const gatepassFetcher = require('../services/gatepassFetcher');
+const scope = require('../scope');
+const { config } = require('../config');
 const router = express.Router();
 
 // סטטוסים מותרים לעדכון ידני מהדשבורד (whitelist)
@@ -30,11 +32,15 @@ function dashboardCounts(items) {
   return c;
 }
 
-// פירוק draft_payload (JSON) לתצוגה בכרטיס התיק
+// פירוק draft_payload (JSON) + סימון whitelisted (defense in depth): מקור אמת יחיד
+// (scope.js) — לא סומכים על department לבד. + real_recipients: הטיוטה נושאת נמענים
+// אמיתיים (לא override) — מוצג בכרטיס התיק שהמאשר לא יופתע.
 function withDraft(r) {
   let draft = null;
   try { draft = r.draft_payload ? JSON.parse(r.draft_payload) : null; } catch { /* ignore */ }
-  return { ...r, draft };
+  const to = draft?.email?.to || [];
+  const realRecipients = to.some((a) => a && a !== config.external_email_override);
+  return { ...r, draft, whitelisted: scope.isWhitelisted(r.customer_name), real_recipients: realRecipients };
 }
 
 // דשבורד

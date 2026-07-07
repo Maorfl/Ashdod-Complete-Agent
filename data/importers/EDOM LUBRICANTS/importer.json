@@ -2,17 +2,26 @@
   "name": "EDOM LUBRICANTS",
   "company_id": "",
   "emails": [
-    "maorfl14@gmail.com"
+    "office@edom-lubricant.co.il"
   ],
   "address": "",
-  "notes": "",
+  "notes": "מוביל המשך: ואפי ונתיה (גולד בונד) | CO-LOADER/מסוף: אושן לינק / טוטל | כלל חומ\"ס: ✅ חל Dangerous→סמא",
   "department": "cus1",
   "service_rep": "משה רוסו",
-  "type": "unknown",
-  "dangerous_rule": false,
-  "cont_general": "",
-  "cont_general_emails": [],
-  "cont_dangerous_emails": [],
+  "type": "haifa_cont",
+  "dangerous_rule": true,
+  "cont_general": "גולד בונד",
+  "cont_general_emails": [
+    "hgc@goldbond.co.il",
+    "hlcl@goldbond.co.il"
+  ],
+  "cont_dangerous_emails": [
+    "sme-service4@sme.co.il",
+    "storage@sme.co.il",
+    "Yelena@sme.co.il",
+    "MosheK@sme.co.il",
+    "saraa@sme.co.il"
+  ],
   "aliases": [],
   "seen_stations": [
     "2"

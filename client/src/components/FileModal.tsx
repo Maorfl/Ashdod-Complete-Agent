@@ -8,6 +8,7 @@ import { statusKeyOf, statusLabel, STATUS_META, MANUAL_STATUSES, formatDateHe, f
 import { useToast } from "./Toasts";
 import ConfirmModal from "./ConfirmModal";
 import ShipmentNotesModal from "./ShipmentNotesModal";
+import EmailListEditor from "./EmailListEditor";
 
 const ROUTE_LABELS: Record<string, string> = {
     co_loader: "CO-LOADER",
@@ -38,6 +39,11 @@ export default function FileModal({
     const [editBody, setEditBody] = useState("");
     const [savedBody, setSavedBody] = useState<string | null>(null);
     const [savingDraft, setSavingDraft] = useState(false);
+    // עריכת נמענים — אפשרות זמנית: קיימת כי השליחה עדיין בשער אישור אנושי
+    const [editTo, setEditTo] = useState<string[]>([]);
+    const [editCc, setEditCc] = useState<string[]>([]);
+    const [savedTo, setSavedTo] = useState<string[] | null>(null);
+    const [savedCc, setSavedCc] = useState<string[] | null>(null);
 
     useEffect(() => {
         api.history(item.file_number)
@@ -58,6 +64,8 @@ export default function FileModal({
     const email = item.draft?.email;
     // גוף הטיוטה להצגה: הערך שנשמר לאחרונה בכרטיס גובר עד שה-prop מתרענן
     const displayBody = savedBody ?? email?.body ?? "";
+    const displayTo = savedTo ?? email?.to ?? [];
+    const displayCc = savedCc ?? email?.cc ?? [];
     const canEditDraft = item.status === "pending_approval";
 
     async function performDeliver() {
@@ -102,6 +110,8 @@ export default function FileModal({
 
     function startEditDraft() {
         setEditBody(displayBody);
+        setEditTo(displayTo);
+        setEditCc(displayCc);
         setIsEditingDraft(true);
     }
 
@@ -112,8 +122,10 @@ export default function FileModal({
     async function saveDraft() {
         setSavingDraft(true);
         try {
-            await api.decide(item.file_number, "edit", { body: editBody });
+            await api.decide(item.file_number, "edit", { body: editBody, to: editTo, cc: editCc });
             setSavedBody(editBody);
+            setSavedTo(editTo);
+            setSavedCc(editCc);
             setIsEditingDraft(false);
             toast("הטיוטה עודכנה ✓", "success");
             onChanged(); // רענון הרשימה בלי לסגור את הכרטיס
@@ -238,14 +250,26 @@ export default function FileModal({
                                 <span className="k">מאת: </span>
                                 <span className="mono">{email.from}</span>
                             </div>
-                            <div>
-                                <span className="k">אל: </span>
-                                <span className="mono">{email.to.join(", ")}</span>
-                            </div>
-                            <div>
-                                <span className="k">עותק: </span>
-                                <span className="mono">{email.cc.join(", ")}</span>
-                            </div>
+                            {isEditingDraft ? (
+                                <>
+                                    <EmailListEditor label="אל (To)" emails={editTo} onChange={setEditTo} />
+                                    <EmailListEditor label="עותק (CC)" emails={editCc} onChange={setEditCc} />
+                                    <p className="hint-line" style={{ color: "var(--muted)", fontSize: 12 }}>
+                                        עריכת נמענים — אפשרות זמנית כל עוד השליחה דורשת אישור ידני.
+                                    </p>
+                                </>
+                            ) : (
+                                <>
+                                    <div>
+                                        <span className="k">אל: </span>
+                                        <span className="mono">{displayTo.join(", ")}</span>
+                                    </div>
+                                    <div>
+                                        <span className="k">עותק: </span>
+                                        <span className="mono">{displayCc.join(", ")}</span>
+                                    </div>
+                                </>
+                            )}
                             <div>
                                 <span className="k">נושא: </span>
                                 {email.subject}

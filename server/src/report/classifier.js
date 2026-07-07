@@ -43,6 +43,21 @@ function isHazardous(rec) {
 }
 
 /**
+ * transferPerformer — "מבצע העברה לחיפה": מי מבצע בפועל את ההעברה אשדוד→חיפה.
+ * מושג נפרד ממוביל ההמשך בחיפה (continuation). סדר עדיפות מדויק:
+ *   1. Co Loader Name קיים → הקו-לואדר.
+ *   2. אחרת, Inter. Forwarder קיים ואינו כספי (isCaspiForwarder) → המשלח.
+ *   3. אחרת (כספי / ריק=כספי) → המסוף (Cust. Stor. Site Des).
+ */
+function transferPerformer(rec) {
+  const coLoader = String(rec.co_loader_name || '').trim();
+  if (coLoader) return coLoader;
+  const fwd = String(rec.forwarder || '').trim();
+  if (fwd && !isCaspiForwarder(fwd)) return fwd;
+  return String(rec.site_des || '').trim();
+}
+
+/**
  * @param rec רשומת דוח מנורמלת (reader.js)
  * @param importer רשומת יבואן (או null אם לא נמצא)
  * @returns {route, reason, recipients:{to,cc}, continuation, handler, alerts, needs_email, needs_review}
@@ -161,4 +176,4 @@ function uniq(arr) {
   return [...new Set((arr || []).filter(Boolean))];
 }
 
-module.exports = { classify, isHazardous, isCaspiForwarder, resolveContinuation };
+module.exports = { classify, isHazardous, isCaspiForwarder, resolveContinuation, transferPerformer };

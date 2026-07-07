@@ -1,16 +1,186 @@
 {
   "_comment": "מסופי אשדוד ומובילי המשך. כל המיילים החיצוניים הוחלפו ל-maorfl14@gmail.com (external_email_override). מסופים/מובילים עם needs_review=true ממתינים לפרטי קשר אמיתיים (OPEN GAP).",
   "terminals": {
-    "אוברסיז אשדוד": { "key": "overseas", "downloader": "אוברסיז אשדוד", "emails": ["maorfl14@gmail.com"] },
-    "קונטרם אשדוד": { "key": "goldbond", "downloader": "גולד בונד אשדוד", "emails": ["maorfl14@gmail.com"] },
-    "מסוף 207 אשדוד בע\"מ": { "key": "masof207", "downloader": "תמיד מגיע עם CO-LOADER", "emails": [], "always_with_coloader": true },
-    "אשדוד בונדד מ.מטען ומחסן בע\"מ": { "key": "bonded", "downloader": "סמא חיפה", "emails": ["maorfl14@gmail.com"], "needs_review": true },
-    "סויספורט": { "key": "swissport", "downloader": "לאישור הסניף", "emails": ["maorfl14@gmail.com"], "needs_review": true }
+    "אוברסיז אשדוד": {
+      "key": "overseas",
+      "downloader": "אוברסיז אשדוד",
+      "emails": [
+        "mitur@ovrs-comr.co.il",
+        "servicehaifa@ovrs-comr.co.il",
+        "ServiceAshdod@ovrs-comr.co.il",
+        "dvir@ovrs-comr.co.il"
+      ],
+      "location": "אשדוד",
+      "role": "מסוף אחסון + מוריד לחיפה (אוברסיז אחראי להעברה מאשדוד לחיפה)",
+      "delivery_place": "OVERSEAS ASHDOD",
+      "notes": "הנפוץ ביותר — 94 תיקים בדוח Focus",
+      "aliases": [
+        "אשדוד ; מסוף מטענים - אוברסיז קומרס בע\"מ"
+      ]
+    },
+    "קונטרם אשדוד": {
+      "key": "goldbond",
+      "downloader": "גולד בונד אשדוד",
+      "emails": [
+        "hgc@goldbond.co.il",
+        "hlcl@goldbond.co.il",
+        "lcl@goldbond.co.il",
+        "iturim@goldbond.co.il",
+        "gbh@goldbond.co.il"
+      ],
+      "location": "אשדוד",
+      "role": "מסוף אחסון",
+      "delivery_place": "GOLD BOND/CONTR",
+      "notes": "מצוין בנוהל — כרטיס קיים בפוקוס. לאשר כתובות",
+      "aliases": [
+        "קבוצת גולד בונד בעמ - אשדוד (מסוף מטענים)",
+        "קונטרם אשדוד"
+      ]
+    },
+    "מסוף 207 אשדוד בע\"מ": {
+      "key": "masof207",
+      "downloader": "תמיד מגיע עם CO-LOADER",
+      "emails": [],
+      "always_with_coloader": true,
+      "location": "אשדוד",
+      "role": "מסוף אחסון בלבד (CO-LOADER תמיד אחראי להורדה)",
+      "delivery_place": "MASOF 207",
+      "notes": "53 תיקים בדוח. לעולם לא שולחים ישירות — CO-LOADER מטפל",
+      "aliases": [
+        "מסוף 207 בע\"מ - אשדוד (מסוף מטענים)"
+      ]
+    },
+    "אשדוד בונדד מ.מטען ומחסן בע\"מ": {
+      "key": "bonded",
+      "downloader": "סמא חיפה",
+      "emails": [
+        "maorfl14@gmail.com"
+      ],
+      "needs_review": true,
+      "location": "אשדוד",
+      "role": "⏳ לאשר עם הסניף",
+      "delivery_place": "⏳ לאשר",
+      "notes": "10 תיקים בדוח Focus — טרם תועד",
+      "aliases": [
+        "אשדוד בונדד מ.מטען ומחסן בע\"מ"
+      ]
+    },
+    "סויספורט": {
+      "key": "swissport",
+      "downloader": "לאישור הסניף",
+      "emails": [
+        "maorfl14@gmail.com"
+      ],
+      "needs_review": true,
+      "location": "אשדוד",
+      "role": "⏳ לאשר עם הסניף",
+      "delivery_place": "⏳ לאשר",
+      "notes": "32 תיקים בדוח Focus — טרם תועד",
+      "aliases": [
+        "סויספורט"
+      ]
+    },
+    "אשדוד ; מסוף מטענים - אוברסיז קומרס בע\"מ": {
+      "key": "overseas",
+      "downloader": "אוברסיז אשדוד",
+      "emails": [
+        "mitur@ovrs-comr.co.il",
+        "servicehaifa@ovrs-comr.co.il",
+        "ServiceAshdod@ovrs-comr.co.il",
+        "dvir@ovrs-comr.co.il"
+      ],
+      "location": "אשדוד",
+      "role": "מסוף אחסון + מוריד לחיפה (אוברסיז אחראי להעברה מאשדוד לחיפה)",
+      "delivery_place": "OVERSEAS ASHDOD",
+      "notes": "הנפוץ ביותר — 94 תיקים בדוח Focus",
+      "aliases": [
+        "אשדוד ; מסוף מטענים - אוברסיז קומרס בע\"מ"
+      ]
+    },
+    "קבוצת גולד בונד בעמ - אשדוד (מסוף מטענים)": {
+      "key": "goldbond",
+      "downloader": "גולד בונד אשדוד",
+      "emails": [
+        "hgc@goldbond.co.il",
+        "hlcl@goldbond.co.il",
+        "lcl@goldbond.co.il",
+        "iturim@goldbond.co.il",
+        "gbh@goldbond.co.il"
+      ],
+      "location": "אשדוד",
+      "role": "מסוף אחסון",
+      "delivery_place": "GOLD BOND/CONTR",
+      "notes": "מצוין בנוהל — כרטיס קיים בפוקוס. לאשר כתובות",
+      "aliases": [
+        "קבוצת גולד בונד בעמ - אשדוד (מסוף מטענים)",
+        "קונטרם אשדוד"
+      ]
+    },
+    "מסוף 207 בע\"מ - אשדוד (מסוף מטענים)": {
+      "key": "masof207",
+      "downloader": "תמיד מגיע עם CO-LOADER",
+      "emails": [
+        "maorfl14@gmail.com"
+      ],
+      "always_with_coloader": true,
+      "location": "אשדוד",
+      "role": "מסוף אחסון בלבד (CO-LOADER תמיד אחראי להורדה)",
+      "delivery_place": "MASOF 207",
+      "notes": "53 תיקים בדוח. לעולם לא שולחים ישירות — CO-LOADER מטפל",
+      "aliases": [
+        "מסוף 207 בע\"מ - אשדוד (מסוף מטענים)"
+      ]
+    },
+    "נמל אשדוד": {
+      "key": "port",
+      "emails": [
+        "maorfl14@gmail.com"
+      ],
+      "location": "אשדוד",
+      "role": "מסוף אחסון",
+      "delivery_place": "PORT ASHDOD",
+      "notes": "86 תיקים בדוח — בדרך כלל עם CO-LOADER",
+      "aliases": [
+        "נמל אשדוד"
+      ]
+    }
   },
   "continuation_carriers": {
-    "גולד בונד": { "emails": ["maorfl14@gmail.com"], "gender": "m", "number": "p" },
-    "סמא": { "emails": ["maorfl14@gmail.com"], "gender": "f", "number": "s", "contact": "ילנה" },
-    "סדצקי": { "emails": ["maorfl14@gmail.com"], "gender": "m", "number": "p" }
+    "גולד בונד": {
+      "emails": [
+        "hgc@goldbond.co.il",
+        "hlcl@goldbond.co.il"
+      ],
+      "gender": "m",
+      "number": "p",
+      "phrasing": "ואפי ונתיה, משלוח יגיע לאוברסיז/למחסנכם בבקשה לבצע המשך",
+      "main_customers": "GEVASOL (General), FIBERNET, SESAMY, GEREIS, EDOM, HAIFA MEDICAL, BENTAL, PLADOT",
+      "notes": "הודעות הגעה: server@conterm.co.il"
+    },
+    "סמא": {
+      "emails": [
+        "sme-service4@sme.co.il",
+        "storage@sme.co.il",
+        "Yelena@sme.co.il",
+        "MosheK@sme.co.il",
+        "saraa@sme.co.il"
+      ],
+      "gender": "f",
+      "number": "s",
+      "contact": "ילנה",
+      "phrasing": "צוות סמא, משלוח יגיע למחסנכם המשך שלכם. נעדכן בזמינות",
+      "main_customers": "TELDOR, ZOHAR DALIA, GEVASOL (Dangerous), UNILEVER (Dangerous)",
+      "notes": "הודעות הגעה: Yelena@sme.co.il"
+    },
+    "סדצקי": {
+      "emails": [
+        "sidur@sadetsky.co.il"
+      ],
+      "gender": "m",
+      "number": "p",
+      "phrasing": "צוות סדצקי, משלוח יגיע לאוברסיז חיפה המשך שלכם. נעדכן בזמינות",
+      "main_customers": "UNILEVER (General)"
+    }
   },
   "dangerous_goods": {
     "default_carrier": "גולד בונד",
@@ -18,8 +188,113 @@
     "_rule": "גולד בונד אינה מורידה חומר מסוכן. אם Hazardous=Yes -> המוביל הופך לסמא."
   },
   "haifa_arrival_senders": {
-    "goldbond": { "from": "server@conterm.co.il", "id_in": "body", "pattern": "מספר תיק" },
-    "sme": { "from": ["Yelena@sme.co.il", "sme-service4@sme.co.il", "storage@sme.co.il"], "id_in": "subject", "pattern": "//" },
-    "overseas": { "from": "root@mails.ovrs.co.il", "id_in": "subject", "pattern": "Resh", "lookup_by": "wg_reshimon_no" }
+    "goldbond": {
+      "from": "server@conterm.co.il",
+      "id_in": "body",
+      "pattern": "מספר תיק"
+    },
+    "sme": {
+      "from": [
+        "Yelena@sme.co.il",
+        "sme-service4@sme.co.il",
+        "storage@sme.co.il"
+      ],
+      "id_in": "subject",
+      "pattern": "//"
+    },
+    "overseas": {
+      "from": "root@mails.ovrs.co.il",
+      "id_in": "subject",
+      "pattern": "Resh",
+      "lookup_by": "wg_reshimon_no"
+    }
+  },
+  "haifa_terminals": {
+    "אוברסיז חיפה (Admiralty / אדמירליטי)": {
+      "key": "overseas",
+      "location": "חיפה",
+      "role": "יעד מעבר בלבד (⚠️ לא מוביל המשך — מוביל אחר אוסף מכאן)",
+      "delivery_place": "OVERSEAS HAIFA",
+      "notes": "81 תיקים בדוח. הודעות הגעה: root@mails.ovrs.co.il",
+      "emails": [
+        "mitur@ovrs-comr.co.il",
+        "servicehaifa@ovrs-comr.co.il"
+      ]
+    },
+    "סמא (SME) חיפה": {
+      "key": "sme",
+      "location": "חיפה",
+      "role": "מחסן יעד + מוביל המשך (מבצע המשך ללקוח)",
+      "delivery_place": "SME HAIFA",
+      "notes": "הודעות הגעה: Yelena@sme.co.il תשובה לסמא: 'המשך שלכם' / 'מוביל יגיע לאסוף'",
+      "emails": [
+        "sme-service4@sme.co.il",
+        "storage@sme.co.il",
+        "Yelena@sme.co.il",
+        "MosheK@sme.co.il",
+        "saraa@sme.co.il",
+        "sme-service3@sme.co.il"
+      ]
+    },
+    "גולד בונד / קונטרם חיפה": {
+      "key": "goldbond",
+      "location": "חיפה",
+      "role": "מחסן יעד + מוביל המשך (ואפי ונתיה = אנשי קשר ראשיים)",
+      "delivery_place": "GOLD BOND HAIFA",
+      "notes": "הודעות הגעה: server@conterm.co.il אנשי קשר: ואפי, נתיה, אייל, איטורים",
+      "emails": [
+        "hgc@goldbond.co.il",
+        "hlcl@goldbond.co.il",
+        "itsik@goldbond.co.il",
+        "gb@goldbond.co.il",
+        "gbh@goldbond.co.il"
+      ]
+    },
+    "סדצקי חיפה": {
+      "key": "sadetsky",
+      "location": "חיפה",
+      "role": "מחסן יעד + מוביל המשך",
+      "delivery_place": "SADETSKY HAIFA",
+      "notes": "משמש בעיקר ל-UNILEVER",
+      "emails": [
+        "sidur@sadetsky.co.il"
+      ]
+    },
+    "נמל חיפה": {
+      "key": "port",
+      "location": "חיפה",
+      "role": "מסוף ימי ראשי",
+      "delivery_place": "PORT HAIFA",
+      "notes": "512 תיקים בדוח Focus — כבר בחיפה, לא רלוונטי לסוכן",
+      "emails": [
+        "maorfl14@gmail.com"
+      ]
+    }
+  },
+  "continuation_carriers_extra": {
+    "TLS — המשך הובלה": {
+      "phrasing": "TLS — מכותבים ישירות (לא ניסוח 'המשך שלכם')",
+      "main_customers": "WURTH ISRAEL, MAROM ITAY, DYNAMICLASS",
+      "notes": "לקוחות TLS — מוביל קבוע",
+      "emails": [
+        "tls@tls.co.il",
+        "tls.iliab@gmail.com"
+      ]
+    },
+    "מירב → עכו (NAAMAN)": {
+      "phrasing": "מירב, המשך לעכו (ניסוח לאשר)",
+      "main_customers": "IGNIS LTD",
+      "emails": [
+        "office@naaman-ref.com"
+      ]
+    },
+    "הדס → אוברסיז חיפה (GALAM)": {
+      "phrasing": "הדס — מוביל ייעודי",
+      "main_customers": "GALAM LTD בלבד",
+      "notes": "מוביל פרטי של הלקוח",
+      "emails": [
+        "mitur@ovrs-comr.co.il"
+      ]
+    }
   }
 }

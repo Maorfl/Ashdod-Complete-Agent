@@ -5,16 +5,25 @@
  * שימוש: node src/test-pipeline.js   (או npm run test:pipeline)
  * אפס תלות ב-LLM. אינו נוגע ב-DB ואינו שולח דואר.
  */
+const fs = require('fs');
+const path = require('path');
 const { readReport } = require('./report/reader');
 const { classify } = require('./report/classifier');
 const { composeRelease } = require('./email/composer');
 const imp = require('./db/importers');
-const { REPORT_PATH, config } = require('./config');
+const { REPORT_PATH, ROOT, config } = require('./config');
 
 const EXT = config.external_email_override;
+// נתיב הדוח: ארגומנט CLI > REPORT_PATH (config) > דגימה מקומית מצורפת.
+// כשברירת המחדל היא נתיב פרודקשן ברשת (G:) שאינו נגיש בדיב — נופלים לדגימה
+// המקומית ./data/ASDODAGENT.csv כדי ש-`npm run test:pipeline` יעבור בכל סביבה.
+const LOCAL_SAMPLE = path.join(ROOT, 'data', 'ASDODAGENT.csv');
+const TEST_REPORT_PATH = process.argv[2]
+  ? path.resolve(process.argv[2])
+  : (fs.existsSync(REPORT_PATH) ? REPORT_PATH : LOCAL_SAMPLE);
 
 function main() {
-  const { records, headerRow } = readReport(REPORT_PATH);
+  const { records, headerRow } = readReport(TEST_REPORT_PATH);
 
   const routes = {};
   const reasons = {};
@@ -57,13 +66,33 @@ function main() {
 
   const pad = (n) => String(n).padStart(5);
   console.log('=== Caspi Agent — Test Pipeline (ללא שליחת מיילים) ===');
-  console.log('דוח:', REPORT_PATH);
+  console.log('דוח:', TEST_REPORT_PATH);
   console.log('שורת כותרות (0-based):', headerRow, '| שורות נתונים:', records.length);
   const withRelease = records.filter((r) => r.release_date).length;
   console.log('רשומות עם release_date:', withRelease + '/' + records.length,
     '| דוגמה:', records.find((r) => r.release_date)?.release_date || '—');
 
-  console.log('\n--- ניתוב לפי מסלול ---');
+  // ---- משפך scope — raw -> LCL -> +נציג -> +19 לקוחות ההעברה לחיפה ----
+  // אכיפת ה-whitelist ממקור האמת היחיד (scope.js) — אותה הגדרה כמו inScope וההגשה.
+  const scope = require('./scope');
+  const rs = config.report_scope || {};
+  const nRep = (s) => String(s || '').replace(/\s+/g, ' ').trim();
+  const isLcl = (r) => !rs.fcl_lcl || String(r.fcl_lcl || '').trim() === rs.fcl_lcl;
+  const isRep = (r) => !rs.service_rep || nRep(r.service_rep) === nRep(rs.service_rep);
+  const inScopeRec = (r) => isLcl(r) && isRep(r) && scope.isWhitelisted(r.customer_name);
+  const cLcl = records.filter(isLcl).length;
+  const cRep = records.filter((r) => isLcl(r) && isRep(r)).length;
+  const scoped = records.filter(inScopeRec);
+  console.log('\n--- משפך scope ---');
+  console.log('  raw:', records.length, '| LCL:', cLcl, '| +נציג:', cRep, '| +19 לקוחות (inScope):', scoped.length);
+  const scopedRoutes = {};
+  for (const r of scoped) {
+    const d = classify(r, imp.findByName(r.customer_name));
+    scopedRoutes[d.route] = (scopedRoutes[d.route] || 0) + 1;
+  }
+  console.log('  ניתוב בתוך scope:', JSON.stringify(scopedRoutes));
+
+  console.log('\n--- ניתוב לפי מסלול (כל הדוח) ---');
   Object.entries(routes).sort((a, b) => b[1] - a[1]).forEach(([k, v]) => console.log('  ' + pad(v) + '  ' + k));
 
   console.log('\n--- סיבות (reason) ---');
