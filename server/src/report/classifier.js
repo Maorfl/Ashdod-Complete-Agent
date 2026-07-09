@@ -13,24 +13,42 @@
  *
  * כל נמען חיצוני ב-To מנותב דרך external_email_override.
  */
-const { config, coLoaders, terminals, continuationCarriers, dangerousGoods } = require('../config');
+const { config, continuationCarriers, dangerousGoods } = require('../config');
+const contacts = require('../db/contacts'); // מקור אמת יחיד ל-CO-LOADERS/מסופים + חיפוש לפי שם
 
 const EXT = config.external_email_override; // maorfl14@gmail.com
 
-// מפתח מנורמל (רווחים כפולים -> יחיד) למניעת אי-התאמה בגלל איכות נתונים בדוח
-function normKey(s) {
-  return String(s || '').replace(/\s+/g, ' ').trim();
-}
-const terminalsNorm = {};
-for (const [k, v] of Object.entries(terminals)) terminalsNorm[normKey(k)] = v;
 function lookupTerminal(site) {
-  return terminals[site] || terminalsNorm[normKey(site)] || null;
+  return contacts.getTerminal(site);
 }
 
-// כל כתובת חיצונית מנותבת ל-override היחיד. מיילי המערכת הפנימיים אינם עוברים כאן.
+// prepaid/direct + מובילי המשך: כל נמען חיצוני מנותב ל-override היחיד (כלל הבטיחות נשמר).
 function routeExternal(emails) {
   const list = Array.isArray(emails) ? emails : emails ? [emails] : [];
   return list.length ? [EXT] : [EXT];
+}
+
+// מסלולי ההעברה לחיפה (co_loader/terminal) — נמענים אמיתיים (אושר במפורש 2026-07-07):
+// מאחד את מיילי המסוף/קו-לואדר, מיילי "מבצע העברה לחיפה" לפי שם, ומיילי היבואן —
+// מסונן ל-@ ומדודפליקט. אם לא נמצאה אף כתובת אמיתית — נפילה ל-override (לא To ריק).
+// השליחה עצמה עדיין דורשת אישור אנושי; ה-CC הפנימי נשאר כפי שהוא.
+function realTo(...emailGroups) {
+  const seen = new Set();
+  const out = [];
+  for (const g of emailGroups) {
+    for (const e of (Array.isArray(g) ? g : g ? [g] : [])) {
+      const v = String(e || '').trim();
+      if (!v.includes('@')) continue;
+      const k = v.toLowerCase();
+      if (seen.has(k)) continue;
+      seen.add(k); out.push(v);
+    }
+  }
+  return out.length ? out : [EXT];
+}
+
+function realImporterEmails(importer) {
+  return (importer && Array.isArray(importer.emails)) ? importer.emails : [];
 }
 
 function isCaspiForwarder(forwarder) {
@@ -84,9 +102,13 @@ function classify(rec, importer) {
   // מוביל המשך + כלל חומר מסוכן (משותף ל-co_loader/terminal/direct)
   const continuation = resolveContinuation(rec, importer, alerts);
 
+  // "מבצע העברה לחיפה" ומייליו לפי שם (Task 1) — כולל ישות ללא קוד בדוח (למשל MASTER CARGO)
+  const performer = transferPerformer(rec);
+  const performerEmails = contacts.emailsFor(performer);
+
   // 3 — co_loader: קיים Co Loader Code
   if (rec.co_loader_code) {
-    const cl = coLoaders[rec.co_loader_code];
+    const cl = contacts.getCoLoaderByCode(rec.co_loader_code);
     if (!cl) {
       alerts.push({ type: 'unknown_co_loader', code: rec.co_loader_code });
       return { route: 'alert', reason: 'unknown_co_loader', code: rec.co_loader_code, alerts, needs_email: false };
@@ -95,7 +117,8 @@ function classify(rec, importer) {
       route: 'co_loader',
       handler: { kind: 'co_loader', code: rec.co_loader_code, name: cl.name, gender: cl.gender, number: cl.number },
       continuation,
-      recipients: { to: routeExternal(cl.emails), cc: deptCc(importer) },
+      // נמענים אמיתיים (Task 4): קו-לואדר + מבצע-לפי-שם + היבואן
+      recipients: { to: realTo(cl.emails, performerEmails, realImporterEmails(importer)), cc: deptCc(importer) },
       needs_review: !!cl.needs_review,
       alerts,
       needs_email: true,
@@ -113,7 +136,8 @@ function classify(rec, importer) {
       route: 'terminal',
       handler: { kind: 'terminal', site: rec.site_des, key: term.key, downloader: term.downloader },
       continuation,
-      recipients: { to: routeExternal(term.emails), cc: deptCc(importer) },
+      // נמענים אמיתיים (Task 4): מסוף + מבצע-לפי-שם + היבואן
+      recipients: { to: realTo(term.emails, performerEmails, realImporterEmails(importer)), cc: deptCc(importer) },
       needs_review: !!term.needs_review,
       alerts,
       needs_email: true,

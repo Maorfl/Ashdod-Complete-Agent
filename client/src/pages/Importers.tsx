@@ -7,7 +7,7 @@ import EmailListEditor from '../components/EmailListEditor';
 const BLANK: Partial<Importer> = {
   name: '', company_id: '', emails: [], address: '', notes: '',
   department: '', type: 'unknown', dangerous_rule: false,
-  cont_general: '', cont_general_emails: [], cont_dangerous_emails: [], aliases: [],
+  cont_general: '', contact_names: '', cont_general_emails: [], cont_dangerous_emails: [], aliases: [],
 };
 
 const DEPTS = [
@@ -181,7 +181,13 @@ export default function Importers() {
                 <div className="field"><label>סוג טיפול</label>
                   <select value={editing.type} onChange={(e) => set('type', e.target.value)}>
                     {TYPES.map((t) => <option key={t.v} value={t.v}>{t.l}</option>)}</select></div>
-                <div className="field"><label>מוביל המשך</label><input value={editing.cont_general} onChange={(e) => set('cont_general', e.target.value)} /></div>
+                {editing.type === 'haifa_self' ? (
+                  <div className="field"><label>אנשי קשר</label>
+                    <input value={editing.contact_names || ''} placeholder="למשל: נדב ואיתן" onChange={(e) => set('contact_names', e.target.value)} /></div>
+                ) : (
+                  <div className="field"><label>מוביל המשך</label>
+                    <input value={editing.cont_general} onChange={(e) => set('cont_general', e.target.value)} /></div>
+                )}
               </div>
               <EmailListEditor
                 label="מיילי מוביל המשך"

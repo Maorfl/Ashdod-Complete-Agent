@@ -108,10 +108,23 @@ export default function FileModal({
         setShowNotesModal(true);
     }
 
-    function startEditDraft() {
-        setEditBody(displayBody);
-        setEditTo(displayTo);
-        setEditCc(displayCc);
+    // עריכה מתחילה תמיד מהטיוטה העדכנית ביותר בשרת (לא מ-prop שעלול להיות ישן),
+    // כדי שלא לדרוס עריכה חדשה יותר שנשמרה במקום אחר. בכשל רשת נופלים למקומי.
+    async function startEditDraft() {
+        let body = displayBody, to = displayTo, cc = displayCc;
+        try {
+            const latest = await api.draft(item.file_number);
+            const e = latest?.draft?.email;
+            if (e) {
+                body = e.body || ""; to = e.to || []; cc = e.cc || [];
+                setSavedBody(body); setSavedTo(to); setSavedCc(cc);
+            }
+        } catch {
+            toast("לא ניתן לרענן טיוטה מהשרת — נטענה הגרסה המקומית", "error");
+        }
+        setEditBody(body);
+        setEditTo(to);
+        setEditCc(cc);
         setIsEditingDraft(true);
     }
 
@@ -173,15 +186,19 @@ export default function FileModal({
                             </tr>
                             <tr>
                                 <th>תאריך שחרור</th>
-                                <td className="mono">{formatDateHe(item.release_date)}</td>
+                                <td className="mono"><span dir="ltr">{formatDateHe(item.release_date)}</span></td>
                             </tr>
                             <tr>
                                 <th>עדכון סטטוס</th>
-                                <td className="mono">{formatDateTimeHe(item.status_updated_at)}</td>
+                                <td className="mono"><span dir="ltr">{formatDateTimeHe(item.status_updated_at)}</span></td>
                             </tr>
                             <tr>
                                 <th>מסלול</th>
                                 <td>{ROUTE_LABELS[item.route] || item.route || "—"}</td>
+                            </tr>
+                            <tr>
+                                <th>מסוף שחרור</th>
+                                <td>{item.site_des || "—"}</td>
                             </tr>
                             <tr>
                                 <th>מוביל המשך</th>
@@ -233,7 +250,7 @@ export default function FileModal({
                                     <div className="tl-dot" />
                                     <div className="tl-body">
                                         <div className="tl-status">{statusLabel(h.status)}</div>
-                                        <div className="tl-time mono">{formatDateTimeHe(h.changed_at)}</div>
+                                        <div className="tl-time mono"><span dir="ltr">{formatDateTimeHe(h.changed_at)}</span></div>
                                         {h.notes && <div className="tl-notes">{h.notes}</div>}
                                     </div>
                                 </li>

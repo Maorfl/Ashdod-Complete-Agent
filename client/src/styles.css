@@ -53,6 +53,8 @@ button { font-family: var(--font); cursor: pointer; }
   background: var(--ink);
   color: #eaf1f8;
   padding: 0 26px; height: 60px;
+  /* צמוד לראש המסך בזמן גלילה — מתחת לשכבות המודאל/מגירה (overlay: 40+) */
+  position: sticky; top: 0; z-index: 30;
 }
 .brand { display: flex; align-items: baseline; gap: 12px; }
 .brand b { font-weight: 800; font-size: 18px; letter-spacing: .2px; }
@@ -71,6 +73,10 @@ button { font-family: var(--font); cursor: pointer; }
 .nav {
   background: var(--ink-2);
   padding: 22px 14px; display: flex; flex-direction: column; gap: 4px;
+  /* ניווט דביק: נשאר נגיש בכל עומק גלילה, צמוד מתחת ל-topbar (60px) */
+  position: sticky; top: 60px; z-index: 20;
+  align-self: start;
+  height: calc(100vh - 60px); overflow-y: auto; box-sizing: border-box;
 }
 .nav .grp { color: #6f8197; font-size: 11px; font-weight: 700; letter-spacing: .12em;
   text-transform: uppercase; padding: 14px 12px 6px; }
@@ -262,6 +268,9 @@ td.mono, .mono { font-family: var(--mono); }
 /* שורה עם הערה — רקע מובחן שאינו מתנגש עם פס הסטטוס בתא התיק */
 .ship-row.has-notes { background: var(--row-noted); }
 .ship-row.has-notes:hover { background: #ece5d6; }
+.ship-row.performer-unknown { background: #fbeaea; }
+.ship-row.performer-unknown:hover { background: #f4dede; }
+.perf-warn { color: var(--st-alert); font-weight: 700; }
 /* נקודת חיווי על כפתור ההערות כשקיימת הערה */
 .btn.icon { position: relative; }
 .btn.icon.noted::after {
@@ -379,10 +388,12 @@ td.mono, .mono { font-family: var(--mono); }
 
 @media (max-width: 880px) {
   .shell { grid-template-columns: 1fr; }
-  .nav { flex-direction: row; flex-wrap: wrap; }
+  /* במסך צר ה-nav הוא פס אופקי וה-topbar בגובה משתנה — sticky היה גורם לחפיפות
+     ולבזבוז שטח מסך; חוזרים לזרימה רגילה (degradation מכוון). */
+  .nav { flex-direction: row; flex-wrap: wrap; position: static; height: auto; overflow-y: visible; }
   .strip { grid-template-columns: repeat(2, 1fr); }
   .row { grid-template-columns: 1fr; gap: 6px; }
-  .topbar { flex-wrap: wrap; height: auto; padding: 10px 16px; gap: 10px; }
+  .topbar { flex-wrap: wrap; height: auto; padding: 10px 16px; gap: 10px; position: static; }
   .agent-switch { order: 3; width: 100%; justify-content: stretch; }
   .agent-switch .seg { flex: 1; justify-content: center; }
 }
@@ -397,6 +408,7 @@ td.mono, .mono { font-family: var(--mono); }
   border-radius: 12px;
   width: 480px;
   max-width: 90vw;
+  max-height: 90vh; /* מודאל השליחה מכיל עורכי נמענים + גוף — גלילה פנימית במקום גלישה */
   box-shadow: 0 15px 45px rgba(0,0,0,.3);
   display: flex;
   flex-direction: column;
@@ -419,6 +431,7 @@ td.mono, .mono { font-family: var(--mono); }
   font-size: 14.5px;
   line-height: 1.6;
   color: var(--text);
+  overflow-y: auto; /* תוכן עשיר (עורכי נמענים + גוף) נגלל פנימית בתוך max-height של המודאל */
 }
 .confirm-foot {
   padding: 12px 20px;

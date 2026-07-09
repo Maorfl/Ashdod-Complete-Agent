@@ -116,6 +116,7 @@ function normalize(d) {
     type: d.type || 'unknown',
     dangerous_rule: !!d.dangerous_rule,
     cont_general: d.cont_general || '',
+    contact_names: d.contact_names || '', // אנשי קשר ללקוח שאוסף בעצמו (haifa_self) — במקום "צוות {מוביל}"
     cont_general_emails: d.cont_general_emails || [],
     cont_dangerous_emails: d.cont_dangerous_emails || [],
     aliases: d.aliases || [],

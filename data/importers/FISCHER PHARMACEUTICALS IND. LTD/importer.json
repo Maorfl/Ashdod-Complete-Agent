@@ -11,6 +11,7 @@
   "type": "haifa_cont",
   "dangerous_rule": true,
   "cont_general": "גולד בונד",
+  "contact_names": "",
   "cont_general_emails": [
     "hgc@goldbond.co.il",
     "hlcl@goldbond.co.il"
@@ -19,8 +20,7 @@
     "sme-service4@sme.co.il",
     "storage@sme.co.il",
     "Yelena@sme.co.il",
-    "MosheK@sme.co.il",
-    "saraa@sme.co.il"
+    "MosheK@sme.co.il"
   ],
   "aliases": [],
   "seen_stations": [

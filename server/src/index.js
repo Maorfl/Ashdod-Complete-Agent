@@ -13,6 +13,7 @@ const reportWatcher = require('./services/reportWatcher');
 const mailTracker = require('./services/mailTracker');
 const gatepassFetcher = require('./services/gatepassFetcher');
 const retention = require('./services/retention');
+const dailyReport = require('./services/dailyReport');
 const graph = require('./services/graphMail');
 const { checkVersion } = require('./version');
 
@@ -24,6 +25,7 @@ app.use('/api/importers', require('./routes/importers'));
 app.use('/api/shipments', require('./routes/shipments'));
 app.use('/api/approvals', require('./routes/approvals'));
 app.use('/api/sent-emails', require('./routes/sentEmails'));
+app.use('/api', require('./routes/contacts')); // /api/terminals + /api/co-loaders
 app.use('/api/version', require('./routes/version'));
 
 app.get('/api/health', (req, res) => res.json({ ok: true, time: new Date().toISOString() }));
@@ -72,7 +74,13 @@ app.listen(PORT, HOST, async () => {
   if (graph.isEnabled()) {
     mailTracker.start();
     gatepassFetcher.start();
-    console.log(`  Microsoft Graph מחובר — שליחה באישור + מעקב הגעות + איתור gatepass (כל ${graph.settings().pollMinutes} דק').\n`);
+    console.log(`  Microsoft Graph מחובר — שליחה באישור + מעקב הגעות + איתור gatepass (כל ${graph.settings().pollMinutes} דק').`);
+    if (dailyReport.isEnabled()) {
+      dailyReport.start();
+      console.log('  דוח מחלקתי פעיל — פעמיים ביום (09:00, 15:00): "יצא לחיפה" 2+ ימים לכל מחלקה.\n');
+    } else {
+      console.log('  דוח מחלקתי כבוי (feature_flags.daily_report=false).\n');
+    }
   } else {
     console.log('  Microsoft Graph כבוי — אישור מסמן נשלח בלבד; איתור gatepass ומעקב הגעות מושבתים.\n');
   }

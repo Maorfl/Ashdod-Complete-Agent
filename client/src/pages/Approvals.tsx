@@ -37,11 +37,19 @@ export default function Approvals() {
     } catch (e: any) { setFlash({ t: e.message, ok: false }); }
   }
 
-  function startEdit(s: Shipment) {
+  // עריכה מתחילה תמיד מהטיוטה העדכנית ביותר בשרת — לשונית האישורים אינה מתרעננת
+  // אוטומטית, כך שהעותק בזיכרון עלול להיות ישן. שמירה על בסיס ישן הייתה דורסת
+  // עריכה חדשה יותר. בכשל רשת נופלים לגרסה המקומית עם אזהרה.
+  async function startEdit(s: Shipment) {
+    let email = s.draft?.email;
+    try {
+      const latest = await api.draft(s.file_number);
+      if (latest?.draft?.email) email = latest.draft.email;
+    } catch { setFlash({ t: 'לא ניתן לרענן טיוטה מהשרת — נטענה הגרסה המקומית', ok: false }); }
     setEditFile(s.file_number);
-    setEditBody(s.draft?.email.body || '');
-    setEditTo(s.draft?.email.to || []);
-    setEditCc(s.draft?.email.cc || []);
+    setEditBody(email?.body || '');
+    setEditTo(email?.to || []);
+    setEditCc(email?.cc || []);
   }
 
   return (

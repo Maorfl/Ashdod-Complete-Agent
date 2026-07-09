@@ -23,6 +23,7 @@ const shipments = require('../db/shipments');
 const graph = require('./graphMail');
 const gatepass = require('./gatepassFetcher');
 const scope = require('../scope');
+const contacts = require('../db/contacts');
 
 // pending_approval — תור אישור אנושי; awaiting_gatepass — מסלול העברה שאושר לשליחה
 // אוטומטית וממתין להגעת ה-gatepass PDF (Task 4/6). alert — בדיקה ידנית.
@@ -137,6 +138,10 @@ async function commit() {
 
       if (decision.route === 'no_op') { summary.no_op += 1; continue; } // לא נשמר
 
+      // Task 8 — "מבצע העברה לחיפה" ואם הוא ישות מוכרת ב-co_loaders/terminals
+      const perf = transferPerformer(rec);
+      const performerUnknown = perf && !contacts.isKnown(perf) ? 1 : 0;
+
       const existing = shipments.get(rec.file_number);
       if (existing) {
         // תיק שממתין ל-gatepass — ניסיון שליחה חוזר (לא "כבר טופל")
@@ -161,7 +166,9 @@ async function commit() {
           reason: decision.reason,
           release_date: rec.release_date || null,
           department: importer?.department || null,
-          transfer_performer: transferPerformer(rec) || null,
+          transfer_performer: perf || null,
+          performer_unknown: performerUnknown,
+          site_des: rec.site_des || null,
           hazardous: rec.hazardous,
           draft_payload: { decision },
         });
@@ -180,7 +187,9 @@ async function commit() {
         department: importer?.department || null,
         co_loader_code: rec.co_loader_code || null,
         continuation: decision.continuation?.name || null,
-        transfer_performer: transferPerformer(rec) || null,
+        transfer_performer: perf || null,
+        performer_unknown: performerUnknown,
+        site_des: rec.site_des || null,
         hazardous: rec.hazardous,
         wg_reshimon_no: rec.wg_reshimon_no || null,
         type: importer?.type || null,

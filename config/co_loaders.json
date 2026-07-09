@@ -46,9 +46,7 @@
       "contact": "אתי",
       "gender": "f",
       "number": "s",
-      "emails": [
-        "maorfl14@gmail.com"
-      ]
+      "emails": []
     },
     "415": {
       "name": "טוטל קארגו",
@@ -119,9 +117,7 @@
       "contact": "אייל",
       "gender": "m",
       "number": "s",
-      "emails": [
-        "maorfl14@gmail.com"
-      ],
+      "emails": [],
       "notes": "נמצא בדוח Focus — תיק אחד",
       "needs_review": true
     },
@@ -131,9 +127,7 @@
       "contact": "סנדרה",
       "gender": "f",
       "number": "s",
-      "emails": [
-        "maorfl14@gmail.com"
-      ]
+      "emails": []
     },
     "997": {
       "name": "וריטס",
@@ -154,11 +148,21 @@
       "contact": "צוות ספרטה",
       "gender": "m",
       "number": "p",
-      "emails": [
-        "maorfl14@gmail.com"
-      ],
+      "emails": [],
       "needs_review": true,
       "notes": "נמצא בדוח Focus — 30 תיקים (!), דורש טיפול דחוף"
+    },
+    "master_cargo": {
+      "name": "MASTER CARGO",
+      "name_en": "MASTER CARGO",
+      "contact": "Ran Tuvia / Malka Ashuel",
+      "gender": "m",
+      "number": "p",
+      "emails": [
+        "Ran.Tuvia@MasterCargo.co.il",
+        "Malka.Ashuel@MasterCargo.co.il"
+      ],
+      "notes": "אין קוד Co Loader בדוח — מגיע רק דרך חיפוש לפי שם (מבצע העברה לחיפה). מפתח לא-מספרי כדי שלא יתנגש בקודי הדוח."
     }
   }
 }

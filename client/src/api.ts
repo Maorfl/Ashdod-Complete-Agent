@@ -24,6 +24,7 @@ export interface Importer {
   type: string;
   dangerous_rule: boolean;
   cont_general: string;
+  contact_names?: string; // אנשי קשר ללקוח שאוסף בעצמו (haifa_self)
   cont_general_emails: string[];
   cont_dangerous_emails: string[];
   aliases: string[];
@@ -60,6 +61,8 @@ export interface Shipment {
   co_loader_code: string;
   continuation: string;
   transfer_performer?: string | null; // מבצע העברה לחיפה: קו-לואדר / משלח לא-כספי / מסוף
+  performer_unknown?: number; // 1 = מבצע ההעברה אינו מוכר ב-co_loaders/terminals (Task 8)
+  site_des?: string | null; // מסוף השחרור (Cust. Stor. Site Des) — קובע את יעד ההגעה בחיפה
   hazardous: string;
   type: string;
   gatepass_pdf_path?: string | null;
@@ -94,8 +97,8 @@ export interface HistoryEntry {
 
 export interface DashboardCounts {
   pending_approval: number;
-  released_ashdod: number;
-  to_haifa: number;
+  in_transit: number;    // בדרך לחיפה (נשלח/שוחרר באשדוד/יצא לחיפה)
+  arrived_haifa: number; // הגיע לחיפה (התקבל בחיפה)
   delivered: number;
   alert: number;
 }
@@ -113,6 +116,9 @@ export const api = {
 
   dashboard: () => req<{ counts: DashboardCounts; total: number; items: Shipment[] }>('/shipments'),
   approvals: () => req<Shipment[]>('/approvals'),
+  // הטיוטה העדכנית ביותר מה-DB עבור תיק בודד — כל שטח שליחה/עריכה חייב להתחיל ממנה
+  // כדי שעריכה שנשמרה במקום אחר (כרטיס תיק / לשונית / דפדפן) לא תידרס ע"י עותק ישן.
+  draft: (file: string) => req<Shipment>('/approvals/' + encodeURIComponent(file)),
   sentEmails: () => req<SentEmail[]>('/sent-emails'),
   decide: (file: string, decision: string, edited?: Partial<DraftEmail>, notes?: string) =>
     req('/approvals/' + encodeURIComponent(file) + '/decision', {
@@ -120,6 +126,7 @@ export const api = {
       body: JSON.stringify({ decision, edited, notes }),
     }),
   runWatcher: () => req<Record<string, unknown>>('/version/watcher/run', { method: 'POST' }),
+  watcherStatus: () => req<{ last: any; scan: { scannedAt: string; count: number; error: string | null } | null; nextCommitAt: string | null }>('/version/watcher'),
 
   history: (file: string) => req<HistoryEntry[]>('/shipments/' + encodeURIComponent(file) + '/history'),
   updateStatus: (file: string, status: string, notes?: string) =>
@@ -141,4 +148,26 @@ export const api = {
     req<{ ok: boolean; path?: string; skipped?: string }>('/shipments/' + encodeURIComponent(file) + '/gatepass', {
       method: 'POST',
     }),
+
+  // ניהול מסופים ומשלחים (Task 3) — object keyed by name (terminals) / code (co-loaders)
+  terminals: () => req<Record<string, ContactEntry>>('/terminals'),
+  saveTerminals: (data: Record<string, ContactEntry>) =>
+    req<Record<string, ContactEntry>>('/terminals', { method: 'PUT', body: JSON.stringify(data) }),
+  coLoaders: () => req<Record<string, ContactEntry>>('/co-loaders'),
+  saveCoLoaders: (data: Record<string, ContactEntry>) =>
+    req<Record<string, ContactEntry>>('/co-loaders', { method: 'PUT', body: JSON.stringify(data) }),
 };
+
+// entry גמיש — שדות משתנים בין מסוף לקו-לואדר; emails משותף לשניהם
+export interface ContactEntry {
+  name?: string;
+  name_en?: string;
+  contact?: string;
+  emails: string[];
+  role?: string;
+  gender?: string;
+  number?: string;
+  notes?: string;
+  needs_review?: boolean;
+  [k: string]: unknown;
+}

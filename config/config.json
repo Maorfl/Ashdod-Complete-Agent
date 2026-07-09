@@ -74,7 +74,9 @@
     "ashdod_release": true,
     "haifa_arrival": true,
     "auto_send_haifa_transfer": false,
-    "auto_send_haifa_transfer_comment": "Task 6 — כשtrue, מיילי ההעברה לחיפה (co_loader/terminal בלבד) נשלחים אוטומטית בקומיט, ללא תור אישור. prepaid/direct/alert/תזכורות לא מושפעים. ברירת מחדל false עד אימות מלא מול נתוני בדיקה. הנמענים ממשיכים דרך external_email_override גם במסלול זה."
+    "auto_send_haifa_transfer_comment": "Task 6 — כשtrue, מיילי ההעברה לחיפה (co_loader/terminal בלבד) נשלחים אוטומטית בקומיט, ללא תור אישור. prepaid/direct/alert/תזכורות לא מושפעים. ברירת מחדל false עד אימות מלא מול נתוני בדיקה. הנמענים ממשיכים דרך external_email_override גם במסלול זה.",
+    "daily_report": true,
+    "daily_report_comment": "New Task 3 — כשtrue (ברירת מחדל), נשלח דוח מחלקתי אוטומטי פעמיים ביום (09:00, 15:00): לכל מחלקה (cus1/cus2/cus3) מייל נפרד אל כתובתה הפנימית עם התיקים ב'יצא לחיפה' 2+ ימים. פנימי בלבד — אינו עובר במסווג / external_email_override. תלוי גם ב-Microsoft Graph מחובר."
   },
   "server": {
     "host": "0.0.0.0",

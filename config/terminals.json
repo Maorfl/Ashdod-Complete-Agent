@@ -3,6 +3,7 @@
   "terminals": {
     "אוברסיז אשדוד": {
       "key": "overseas",
+      "haifa_arrival": "אוברסיז חיפה",
       "downloader": "אוברסיז אשדוד",
       "emails": [
         "mitur@ovrs-comr.co.il",
@@ -20,6 +21,7 @@
     },
     "קונטרם אשדוד": {
       "key": "goldbond",
+      "haifa_arrival": "קונטרם חיפה",
       "downloader": "גולד בונד אשדוד",
       "emails": [
         "hgc@goldbond.co.il",
@@ -39,8 +41,12 @@
     },
     "מסוף 207 אשדוד בע\"מ": {
       "key": "masof207",
+      "haifa_arrival": "סמא חיפה",
       "downloader": "תמיד מגיע עם CO-LOADER",
-      "emails": [],
+      "emails": [
+        "lcl@207.co.il",
+        "Manifest@207.co.il"
+      ],
       "always_with_coloader": true,
       "location": "אשדוד",
       "role": "מסוף אחסון בלבד (CO-LOADER תמיד אחראי להורדה)",
@@ -52,10 +58,9 @@
     },
     "אשדוד בונדד מ.מטען ומחסן בע\"מ": {
       "key": "bonded",
+      "haifa_arrival": "סמא חיפה",
       "downloader": "סמא חיפה",
-      "emails": [
-        "maorfl14@gmail.com"
-      ],
+      "emails": [],
       "needs_review": true,
       "location": "אשדוד",
       "role": "⏳ לאשר עם הסניף",
@@ -68,9 +73,7 @@
     "סויספורט": {
       "key": "swissport",
       "downloader": "לאישור הסניף",
-      "emails": [
-        "maorfl14@gmail.com"
-      ],
+      "emails": [],
       "needs_review": true,
       "location": "אשדוד",
       "role": "⏳ לאשר עם הסניף",
@@ -82,6 +85,7 @@
     },
     "אשדוד ; מסוף מטענים - אוברסיז קומרס בע\"מ": {
       "key": "overseas",
+      "haifa_arrival": "אוברסיז חיפה",
       "downloader": "אוברסיז אשדוד",
       "emails": [
         "mitur@ovrs-comr.co.il",
@@ -99,6 +103,7 @@
     },
     "קבוצת גולד בונד בעמ - אשדוד (מסוף מטענים)": {
       "key": "goldbond",
+      "haifa_arrival": "קונטרם חיפה",
       "downloader": "גולד בונד אשדוד",
       "emails": [
         "hgc@goldbond.co.il",
@@ -118,9 +123,11 @@
     },
     "מסוף 207 בע\"מ - אשדוד (מסוף מטענים)": {
       "key": "masof207",
+      "haifa_arrival": "סמא חיפה",
       "downloader": "תמיד מגיע עם CO-LOADER",
       "emails": [
-        "maorfl14@gmail.com"
+        "lcl@207.co.il",
+        "Manifest@207.co.il"
       ],
       "always_with_coloader": true,
       "location": "אשדוד",
@@ -133,9 +140,7 @@
     },
     "נמל אשדוד": {
       "key": "port",
-      "emails": [
-        "maorfl14@gmail.com"
-      ],
+      "emails": [],
       "location": "אשדוד",
       "role": "מסוף אחסון",
       "delivery_place": "PORT ASHDOD",

@@ -6,6 +6,7 @@
  */
 const { config } = require('../config');
 const g = require('./grammar');
+const contacts = require('../db/contacts');
 
 function subjectLine(rec) {
   return `C/ ${rec.customer_name} FILE NO/ ${rec.file_number}`;
@@ -30,6 +31,14 @@ function haifaTerminalName(carrierOrKey) {
   if (HAIFA_TERMINAL_BY_KEY[carrierOrKey]) return HAIFA_TERMINAL_BY_KEY[carrierOrKey];
   const key = CARRIER_NAME_TO_KEY[carrierOrKey];
   return (key && HAIFA_TERMINAL_BY_KEY[key]) || `${carrierOrKey} חיפה`;
+}
+
+// יעד ההגעה בחיפה לפי מסוף השחרור (Cust. Stor. Site Des → terminals[...].haifa_arrival):
+// אוברסיז אשדוד→אוברסיז חיפה, קונטרם אשדוד→קונטרם חיפה, מסוף 207/בונדד→סמא חיפה.
+// מחזיר null כשהמסוף אינו מוכר או שאין לו haifa_arrival — אז נופלים ללוגיקת המוביל.
+function haifaArrivalBySite(site) {
+  const t = site ? contacts.getTerminal(site) : null;
+  return (t && t.haifa_arrival) || null;
 }
 
 // עטיפת HTML מינימלית (Arial 12pt, RTL) — נלווית ל-body הטקסטואלי, לשליחה עתידית.
@@ -90,10 +99,14 @@ function composeRelease(rec, decision, importer) {
   const releaseLine = cont.hazardous ? 'משלוח שוחרר באשדוד (מטען מסוכן)' : 'משלוח שוחרר באשדוד';
 
   // שורת המשך + שורת זמינות — לפי סוג היבואן (haifa_self מול המשך ע"י מוביל)
-  const haifaName = haifaTerminalName(cont.name);
-  const isSelf = importer && importer.type === 'haifa_self';
+  // יעד ההגעה בחיפה נקבע קודם-כל לפי מסוף השחרור (site_des), ובנפילה לפי מוביל ההמשך.
+  const haifaName = haifaArrivalBySite(rec.site_des) || haifaTerminalName(cont.name);
+  // "אוסף בעצמו": type === haifa_self, או יבואן ללא מוביל המשך מוגדר (cont_general ריק) —
+  // אז משתמשים באנשי הקשר (contact_names) ובנפילה לשם הלקוח, במקום "צוות {מוביל}" (Task 5).
+  const isSelf = !!importer && (importer.type === 'haifa_self' || !importer.cont_general);
+  const selfName = (importer && importer.contact_names) || rec.customer_name;
   const continuationLine = isSelf
-    ? `${rec.customer_name}, משלוח יגיע ל${haifaName}`
+    ? `${selfName}, משלוח יגיע ל${haifaName}`
     : `צוות ${cont.name || 'מוביל ההמשך'}, משלוח יגיע ל${haifaName}`;
   const availabilityLine = isSelf ? 'נעדכן בזמינות.' : 'המשך שלכם. נעדכן בזמינות.';
 

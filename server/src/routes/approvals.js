@@ -33,6 +33,18 @@ router.get('/:file', (req, res) => {
   res.json(withDraft(r));
 });
 
+// ניקוי עריכת מייל נכנסת: to/cc חייבים להיות מערכי מחרוזות לא-ריקות
+function sanitizeEdited(edited) {
+  const clean = { ...edited };
+  for (const k of ['to', 'cc']) {
+    if (k in clean) {
+      if (!Array.isArray(clean[k])) { delete clean[k]; continue; }
+      clean[k] = clean[k].map((a) => String(a).trim()).filter(Boolean);
+    }
+  }
+  return clean;
+}
+
 // החלטת מחלקה: approve | reject | edit
 router.post('/:file/decision', async (req, res) => {
   const { decision, edited, notes } = req.body || {};
@@ -43,6 +55,12 @@ router.post('/:file/decision', async (req, res) => {
     // נקודת השליחה בפועל — Microsoft Graph מ-ashdod.agent@. שליחה אך ורק לאחר אישור אנושי.
     let payload = {};
     try { payload = rec.draft_payload ? JSON.parse(rec.draft_payload) : {}; } catch { payload = {}; }
+    // עריכות אחרונות (to/cc/body) שהגיעו עם האישור עצמו — ממוזגות ונשמרות לפני
+    // השליחה, בבקשה אחת אטומית (לא edit ואז approve נפרדים שעלולים להתפצל).
+    if (edited && payload.email) {
+      payload.email = { ...payload.email, ...sanitizeEdited(edited) };
+      shipments.upsert({ file_number: rec.file_number, draft_payload: payload });
+    }
     const email = payload.email;
 
     if (graph.isEnabled() && graph.settings().sendOnApprove && email) {
@@ -78,14 +96,7 @@ router.post('/:file/decision', async (req, res) => {
     if (edited) {
       // עריכת נמענים (to/cc) — אפשרות זמנית: קיימת כי השליחה עדיין בשער אישור אנושי.
       // בתוכנית עתידית של שליחה אוטומטית מלאה ייתכן שהעריכה הידנית תוסר/תצטמצם.
-      const clean = { ...edited };
-      for (const k of ['to', 'cc']) {
-        if (k in clean) {
-          if (!Array.isArray(clean[k])) { delete clean[k]; continue; }
-          clean[k] = clean[k].map((a) => String(a).trim()).filter(Boolean);
-        }
-      }
-      payload.email = { ...(payload.email || {}), ...clean };
+      payload.email = { ...(payload.email || {}), ...sanitizeEdited(edited) };
     }
     shipments.upsert({ file_number: rec.file_number, status: 'pending_approval', draft_payload: payload, notes: notes || rec.notes });
     return res.json({ ok: true, status: 'edited' });

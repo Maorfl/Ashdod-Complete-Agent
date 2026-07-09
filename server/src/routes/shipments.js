@@ -16,15 +16,15 @@ const MANUAL_STATUSES = ['שוחרר באשדוד', 'יצא לחיפה', 'התק
 
 // מיפוי סטטוסים ל-5 מונים לדשבורד
 function dashboardCounts(items) {
-  const c = { pending_approval: 0, released_ashdod: 0, to_haifa: 0, delivered: 0, alert: 0 };
+  const c = { pending_approval: 0, in_transit: 0, arrived_haifa: 0, delivered: 0, alert: 0 };
   for (const r of items) {
     switch (r.status) {
       case 'pending_approval': c.pending_approval += 1; break;
       case 'alert': c.alert += 1; break;
       case 'sent':
-      case 'שוחרר באשדוד': c.released_ashdod += 1; break;
-      case 'יצא לחיפה':
-      case 'התקבל בחיפה': c.to_haifa += 1; break;
+      case 'שוחרר באשדוד':
+      case 'יצא לחיפה': c.in_transit += 1; break;   // בדרך לחיפה
+      case 'התקבל בחיפה': c.arrived_haifa += 1; break; // הגיע לחיפה
       case 'נמסר ללקוח': c.delivered += 1; break;
       default: break;
     }

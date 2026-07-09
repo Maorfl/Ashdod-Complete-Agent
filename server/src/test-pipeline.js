@@ -49,12 +49,14 @@ function main() {
       needEmail++;
       mail = composeRelease(rec, decision, importer);
 
-      // בדיקת override: כל נמען To חייב להיות הכתובת היחידה החיצונית
+      // בדיקת override: מסלולי ההעברה לחיפה (co_loader/terminal) נושאים כעת נמענים
+      // אמיתיים במכוון (אושר 2026-07-07). prepaid/direct — עדיין override בלבד.
+      const transferRoute = decision.route === 'co_loader' || decision.route === 'terminal';
       for (const to of mail.to) {
         extTo++;
-        if (to !== EXT) leaks.push({ file: rec.file_number, to });
+        if (!transferRoute && to !== EXT) leaks.push({ file: rec.file_number, route: decision.route, to });
       }
-      // ה-CC חייב להיות פנימי בלבד (אסור override שם)
+      // ה-CC חייב להיות פנימי בלבד (אסור override שם) — בכל המסלולים
       for (const cc of mail.cc) {
         if (cc === EXT) leaks.push({ file: rec.file_number, cc });
       }

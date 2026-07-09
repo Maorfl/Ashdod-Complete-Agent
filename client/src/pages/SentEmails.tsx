@@ -50,7 +50,7 @@ export default function SentEmails() {
             <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
               {m.auto ? <span className="badge">⚡ נשלח אוטומטית</span> : <span className="badge">אושר ידנית</span>}
               {m.route && <span className={'badge route-' + m.route}>{m.route}</span>}
-              <span className="mono" style={{ color: 'var(--muted)', fontSize: 12 }}>{formatDateTimeHe(m.sent_at)}</span>
+              <span className="mono" dir="ltr" style={{ color: 'var(--muted)', fontSize: 12 }}>{formatDateTimeHe(m.sent_at)}</span>
             </div>
           </div>
           <div className="email-preview">

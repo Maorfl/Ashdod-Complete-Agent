@@ -16,13 +16,26 @@ export default function EmailListEditor({ label, emails, onChange, placeholder }
   const [err, setErr] = useState('');
 
   function add() {
-    const v = draft.trim().toLowerCase();
-    if (!v) return;
-    if (!EMAIL_RE.test(v)) { setErr('כתובת מייל לא תקינה'); return; }
-    if (emails.some((e) => e.toLowerCase() === v)) { setErr('הכתובת כבר קיימת ברשימה'); return; }
-    onChange([...emails, v]);
-    setDraft('');
-    setErr('');
+    // תמיכה בהדבקת רשימה מופרדת ב-; או , (Task 7): מפצל, מנרמל, מוסיף את התקינות
+    // שאינן כפולות בבת אחת, ומדווח משוב מצטבר במקום דחייה של הכל.
+    const tokens = draft.split(/[;,]+/).map((t) => t.trim().toLowerCase()).filter(Boolean);
+    if (!tokens.length) return;
+    const next = [...emails];
+    const existing = new Set(emails.map((e) => e.toLowerCase()));
+    let added = 0, invalid = 0, dup = 0;
+    for (const t of tokens) {
+      if (!EMAIL_RE.test(t)) { invalid += 1; continue; }
+      if (existing.has(t)) { dup += 1; continue; }
+      existing.add(t); next.push(t); added += 1;
+    }
+    if (added) onChange(next);
+    if (added && !invalid && !dup) { setDraft(''); setErr(''); return; }
+    const parts = [];
+    if (added) parts.push(`נוספו ${added}`);
+    if (dup) parts.push(`כפולות ${dup}`);
+    if (invalid) parts.push(`לא תקינות ${invalid}`);
+    setErr(parts.join(' · '));
+    if (added) setDraft(''); // נשאר בשדה רק אם שום דבר לא נוסף, לתיקון
   }
 
   function remove(idx: number) {

@@ -10,22 +10,24 @@ export type StatusKey = keyof DashboardCounts | 'other';
 export const STATUS_META: { key: keyof DashboardCounts; label: string; cssVar: string }[] = [
   { key: 'alert', label: 'דורש בדיקה', cssVar: 'var(--st-alert)' },
   { key: 'pending_approval', label: 'ממתין לאישור', cssVar: 'var(--st-pending)' },
-  { key: 'released_ashdod', label: 'שוחרר באשדוד', cssVar: 'var(--st-transit)' },
-  { key: 'to_haifa', label: 'בדרך / הגיע לחיפה', cssVar: 'var(--st-arrived)' },
+  { key: 'in_transit', label: 'בדרך לחיפה', cssVar: 'var(--st-transit)' },
+  { key: 'arrived_haifa', label: 'הגיע לחיפה', cssVar: 'var(--st-arrived)' },
   { key: 'delivered', label: 'נמסר ללקוח', cssVar: 'var(--st-delivered)' },
 ];
 
-// סדר ברירת המחדל בטבלה: התראה → ממתין → שוחרר → בחיפה → נמסר
-export const STATUS_ORDER: StatusKey[] = ['alert', 'pending_approval', 'released_ashdod', 'to_haifa', 'delivered', 'other'];
+// סדר ברירת המחדל בטבלה: התראה → ממתין → בדרך → הגיע → נמסר
+export const STATUS_ORDER: StatusKey[] = ['alert', 'pending_approval', 'in_transit', 'arrived_haifa', 'delivered', 'other'];
 
 export function statusKeyOf(s: Pick<Shipment, 'status'>): StatusKey {
   switch (s.status) {
     case 'pending_approval': return 'pending_approval';
     case 'alert': return 'alert';
+    // "בדרך לחיפה": שוחרר/נשלח באשדוד + יצא לחיפה
     case 'sent':
-    case 'שוחרר באשדוד': return 'released_ashdod';
-    case 'יצא לחיפה':
-    case 'התקבל בחיפה': return 'to_haifa';
+    case 'שוחרר באשדוד':
+    case 'יצא לחיפה': return 'in_transit';
+    // "הגיע לחיפה": התקבל בחיפה
+    case 'התקבל בחיפה': return 'arrived_haifa';
     case 'נמסר ללקוח': return 'delivered';
     default: return 'other';
   }
@@ -34,9 +36,9 @@ export function statusKeyOf(s: Pick<Shipment, 'status'>): StatusKey {
 // תווית עברית לסטטוס הגולמי (כולל סטטוסים לוגיים באנגלית)
 export function statusLabel(raw: string): string {
   return ({
-    pending_approval: 'ממתין לאישור',
+    pending_approval: 'ממתין לאישור שליחת מייל',
     awaiting_gatepass: 'ממתין לגייטפס',
-    sent: 'נשלח — שוחרר באשדוד',
+    sent: 'נשלח - ממתין לאישור העברה',
     alert: 'דורש בדיקה',
     rejected: 'נדחה',
   } as Record<string, string>)[raw] || raw || '—';
@@ -75,13 +77,13 @@ export function timeSeverity(s: Pick<Shipment, 'status' | 'status_updated_at'>):
   return '';
 }
 
-/** dd/mm/yyyy מתאריך ISO (yyyy-mm-dd) — עם לוכסנים, לפי האפיון */
+/** dd/mm/yy מתאריך ISO (yyyy-mm-dd) — עם לוכסנים, שנה בת 2 ספרות (למשל 05/07/26) */
 export function formatDateHe(iso?: string | null): string {
   if (!iso) return '—';
   const d = new Date(iso);
   if (!isFinite(d.getTime())) return '—';
   const p = (n: number) => String(n).padStart(2, '0');
-  return `${p(d.getDate())}/${p(d.getMonth() + 1)}/${d.getFullYear()}`;
+  return `${p(d.getDate())}/${p(d.getMonth() + 1)}/${String(d.getFullYear()).slice(-2)}`;
 }
 
 export function formatDateTimeHe(iso?: string | null): string {
