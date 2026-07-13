@@ -2,9 +2,9 @@
  * FileModal — כרטיס תיק: פרטים מלאים, ציר-זמן היסטוריה, טיוטת מייל ופעולות.
  * נסגר ב-Escape ובלחיצה על הרקע. הפעולות זהות לאלה שבטבלת הדשבורד.
  */
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { api, Shipment, HistoryEntry } from "../api";
-import { statusKeyOf, statusLabel, STATUS_META, MANUAL_STATUSES, formatDateHe, formatDateTimeHe } from "../status";
+import { statusKeyOf, statusLabel, STATUS_META, MANUAL_STATUSES, formatDateHe, formatDateTimeHe, requiresGatepass } from "../status";
 import { useToast } from "./Toasts";
 import ConfirmModal from "./ConfirmModal";
 import ShipmentNotesModal from "./ShipmentNotesModal";
@@ -44,6 +44,23 @@ export default function FileModal({
     const [editCc, setEditCc] = useState<string[]>([]);
     const [savedTo, setSavedTo] = useState<string[] | null>(null);
     const [savedCc, setSavedCc] = useState<string[] | null>(null);
+    const [uploading, setUploading] = useState(false);
+    const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+    async function onUploadGatepass(file: File) {
+        setUploading(true);
+        try {
+            await api.uploadGatepass(item.file_number, file);
+            toast("gatepass PDF צורף ✓", "success");
+            onChanged(); // רענון כדי שכפתור השליחה ייפתח
+            onClose();
+        } catch (e: any) {
+            toast(e.message, "error");
+        } finally {
+            setUploading(false);
+            if (fileInputRef.current) fileInputRef.current.value = "";
+        }
+    }
 
     useEffect(() => {
         api.history(item.file_number)
@@ -219,13 +236,32 @@ export default function FileModal({
                                 <th>חומר מסוכן</th>
                                 <td>{item.hazardous === "Yes" ? "⚠ כן" : "לא"}</td>
                             </tr>
-                            {(item.route === "co_loader" || item.route === "terminal") && (
+                            {requiresGatepass(item) && (
                                 <tr>
-                                    <th>PDF מצורף</th>
+                                    <th>gatepass PDF</th>
                                     <td>
                                         <span className={"gatepass-tag " + (item.gatepass_pdf_path ? "ok" : "pending")}>
-                                            {item.gatepass_pdf_path ? "📎 PDF מצורף ✓" : "⚠ טרם התקבל PDF"}
+                                            {item.gatepass_pdf_path ? "📎 PDF מצורף ✓" : "⚠ טרם התקבל PDF — חובה לשליחה"}
                                         </span>
+                                        {!item.gatepass_pdf_path && (
+                                            <div style={{ marginTop: 8 }}>
+                                                <input
+                                                    ref={fileInputRef}
+                                                    type="file"
+                                                    accept="application/pdf"
+                                                    disabled={uploading}
+                                                    aria-label="צירוף gatepass PDF"
+                                                    onChange={(e) => {
+                                                        const f = e.target.files?.[0];
+                                                        if (f) onUploadGatepass(f);
+                                                    }}
+                                                />
+                                                {uploading && <span style={{ marginInlineStart: 8 }}>מעלה…</span>}
+                                                <div className="hint-line" style={{ color: "var(--muted)", fontSize: 12, marginTop: 4 }}>
+                                                    לא ניתן לשלוח מייל ללא gatepass PDF. צרפו קובץ PDF ידנית או המתינו לקבלתו.
+                                                </div>
+                                            </div>
+                                        )}
                                     </td>
                                 </tr>
                             )}

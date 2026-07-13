@@ -71,10 +71,28 @@ async function saveAttachment(fileNumber, att) {
 }
 
 /**
+ * saveUploadedPdf — שמירה ידנית של gatepass PDF שהועלה ע"י המשתמש (Task 5).
+ * משתמש באותה מוסכמת נתיב כמו הצרופה הנכנסת (resolveDest → תיקיית היבואן / fallback),
+ * ומעדכן gatepass_pdf_path ברשומת התיק. מחזיר את נתיב היעד שנשמר.
+ */
+function saveUploadedPdf(fileNumber, buffer, originalName) {
+  const { dir, file } = resolveDest(fileNumber, { name: originalName || `${fileNumber}.pdf` });
+  fs.mkdirSync(dir, { recursive: true });
+  const dest = path.join(dir, file);
+  fs.writeFileSync(dest, buffer);
+  shipments.setGatepass(fileNumber, dest);
+  return dest;
+}
+
+/**
  * fetchForFile — מחפש את ה-gatepass של תיק בודד ושומר אותו.
  * מחזיר { file, path } בהצלחה, או { file, skipped } אם לא נמצא.
  */
 async function fetchForFile(fileNumber) {
+  // אנטי-רה-טריגר (Task 3): תיק שכבר טופל/נשלח (status ∈ owns_file_statuses) לא יעודכן
+  // שוב — לא gatepass_pdf_path ולא סטטוס — ולא משנה מי השולח של הודעה נכנסת מאוחרת.
+  // החיפוש ממילא תחום ל-GATEPASS_SENDER, אבל זו אכיפה מפורשת וגלויה בקוד.
+  if (shipments.ownsFile(fileNumber)) return { file: fileNumber, skipped: 'already_owned' };
   if (!graph.isEnabled()) return { file: fileNumber, skipped: 'graph_disabled' };
   const existing = shipments.get(fileNumber);
   if (existing?.gatepass_pdf_path && fs.existsSync(existing.gatepass_pdf_path)) {
@@ -107,7 +125,13 @@ async function runOnce() {
   if (!config.feature_flags?.haifa_arrival) return record({ skipped: 'feature_off' });
   if (!graph.isEnabled()) return record({ skipped: 'graph_disabled' });
 
-  const pending = shipments.byStatus('pending_approval').filter((r) => !r.gatepass_pdf_path);
+  // תיקים הממתינים ל-PDF: קודם-כל המצב החדש "ממתין ל-PDF" (טיוטה מוחזקת מחוץ לתור
+  // האישורים), וגם pending_approval ישנים ללא PDF (תאימות לאחור). צירוף ה-PDF יעביר
+  // אוטומטית את תיקי "ממתין ל-PDF" ל-pending_approval (setGatepass).
+  const pending = [
+    ...shipments.byStatus(shipments.AWAITING_PDF_STATUS),
+    ...shipments.byStatus('pending_approval'),
+  ].filter((r) => !r.gatepass_pdf_path);
   const summary = { checked: pending.length, found: 0, errors: 0, details: [] };
 
   let messages;
@@ -123,6 +147,8 @@ async function runOnce() {
 
   for (const rec of pending) {
     try {
+      // אנטי-רה-טריגר (Task 3) — גם אם תיק כבר טופל/נשלח נכנס לכאן בטעות, לא נוגעים בו
+      if (shipments.ownsFile(rec.file_number)) continue;
       const match = messages.find((m) => m.hasAttachments && messageMatchesFile(m, rec.file_number));
       if (!match) continue;
       const attachments = await graph.listAttachments(config.sender_mailbox, match.id);
@@ -152,4 +178,4 @@ function start() {
 
 function stop() { if (timer) clearInterval(timer); timer = null; }
 
-module.exports = { runOnce, fetchForFile, start, stop, status: () => lastRun, GATEPASS_SENDER };
+module.exports = { runOnce, fetchForFile, saveUploadedPdf, start, stop, status: () => lastRun, GATEPASS_SENDER };

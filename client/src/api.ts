@@ -43,6 +43,7 @@ export interface DraftEmail {
 export interface Draft {
   route: string;
   needs_review?: boolean;
+  reminder?: boolean; // טיוטת תזכורת ידנית — אינה דורשת gatepass PDF
   email: DraftEmail;
   alerts?: any[];
 }
@@ -63,6 +64,7 @@ export interface Shipment {
   transfer_performer?: string | null; // מבצע העברה לחיפה: קו-לואדר / משלח לא-כספי / מסוף
   performer_unknown?: number; // 1 = מבצע ההעברה אינו מוכר ב-co_loaders/terminals (Task 8)
   site_des?: string | null; // מסוף השחרור (Cust. Stor. Site Des) — קובע את יעד ההגעה בחיפה
+  fcl_lcl?: string | null; // FCL/LCL מהדוח — תצוגה בלבד; רק LCL זכאי להעברה לחיפה
   hazardous: string;
   type: string;
   gatepass_pdf_path?: string | null;
@@ -96,6 +98,7 @@ export interface HistoryEntry {
 }
 
 export interface DashboardCounts {
+  awaiting_pdf: number;  // טיוטת העברה לחיפה מוכנה, ממתינה ל-gatepass PDF (מחוץ לתור האישורים)
   pending_approval: number;
   in_transit: number;    // בדרך לחיפה (נשלח/שוחרר באשדוד/יצא לחיפה)
   arrived_haifa: number; // הגיע לחיפה (התקבל בחיפה)
@@ -125,6 +128,17 @@ export const api = {
       method: 'POST',
       body: JSON.stringify({ decision, edited, notes }),
     }),
+  // העלאת gatepass PDF ידנית (Task 5) — multipart, לא JSON; לכן fetch ישיר ולא req()
+  uploadGatepass: async (file: string, pdf: File): Promise<{ ok: boolean; path?: string }> => {
+    const fd = new FormData();
+    fd.append('file', pdf);
+    const res = await fetch(BASE + '/approvals/' + encodeURIComponent(file) + '/gatepass-upload', { method: 'POST', body: fd });
+    if (!res.ok) {
+      const e = await res.json().catch(() => ({ error: res.statusText }));
+      throw new Error(e.error || 'העלאת הקובץ נכשלה');
+    }
+    return res.json();
+  },
   runWatcher: () => req<Record<string, unknown>>('/version/watcher/run', { method: 'POST' }),
   watcherStatus: () => req<{ last: any; scan: { scannedAt: string; count: number; error: string | null } | null; nextCommitAt: string | null }>('/version/watcher'),
 

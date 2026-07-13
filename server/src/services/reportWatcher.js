@@ -16,7 +16,7 @@
 const fs = require('fs');
 const { config, REPORT_PATH } = require('../config');
 const { readReport } = require('../report/reader');
-const { classify, transferPerformer } = require('../report/classifier');
+const { classify, transferPerformer, isHaifaTransfer, requiresGatepass } = require('../report/classifier');
 const { composeRelease } = require('../email/composer');
 const importersDb = require('../db/importers');
 const shipments = require('../db/shipments');
@@ -27,7 +27,7 @@ const contacts = require('../db/contacts');
 
 // pending_approval — תור אישור אנושי; awaiting_gatepass — מסלול העברה שאושר לשליחה
 // אוטומטית וממתין להגעת ה-gatepass PDF (Task 4/6). alert — בדיקה ידנית.
-const STATUS = { ALERT: 'alert', PENDING: 'pending_approval', AWAITING_GATEPASS: 'awaiting_gatepass' };
+const STATUS = { ALERT: 'alert', PENDING: 'pending_approval', AWAITING_GATEPASS: 'awaiting_gatepass', RELEASED: 'שוחרר באשדוד', AWAITING_PDF: shipments.AWAITING_PDF_STATUS };
 const TRANSFER_ROUTES = new Set(['co_loader', 'terminal']);
 
 // כלל scope קבוע (config.report_scope): רק LCL + הנציג הנבחר + רשימת לקוחות ההעברה
@@ -37,7 +37,9 @@ function normRep(s) {
 }
 function inScope(rec) {
   const s = config.report_scope || {};
-  if (s.fcl_lcl && String(rec.fcl_lcl || '').trim() !== s.fcl_lcl) return false;
+  // (2026-07-13, אישור משתמש) גם תיקי FCL של אשדוד נכנסים למעקב לתצוגה בדשבורד —
+  // ה-fcl_lcl כבר אינו מסנן החוצה. הוא קובע רק זכאות *טיוטה* (isHaifaTransfer דורש LCL).
+  // אשדוד-בלבד (תחנת מכס 2) נאכף ע"י כלל ה-no_op במסווג; FCL מסלולי ההעברה נספרים בלבד.
   if (s.service_rep && normRep(rec.service_rep) !== normRep(s.service_rep)) return false;
   // רק 19 לקוחות ההעברה לחיפה — מקור אמת יחיד ב-scope.js (משותף לשכבת ההגשה)
   if (!scope.isWhitelisted(rec.customer_name)) return false;
@@ -124,8 +126,8 @@ async function commit() {
 
   const records = scanCache.records || [];
   const summary = {
-    total: records.length, out_of_scope: 0, no_op: 0, queued: 0, alerts: 0,
-    skipped_tracked: 0, auto_sent: 0, awaiting_gatepass: 0, errors: 0,
+    total: records.length, out_of_scope: 0, no_op: 0, queued: 0, awaiting_pdf: 0, alerts: 0,
+    tracked_released: 0, skipped_tracked: 0, auto_sent: 0, awaiting_gatepass: 0, errors: 0,
   };
 
   for (const rec of records) {
@@ -169,6 +171,7 @@ async function commit() {
           transfer_performer: perf || null,
           performer_unknown: performerUnknown,
           site_des: rec.site_des || null,
+          fcl_lcl: rec.fcl_lcl || null,
           hazardous: rec.hazardous,
           draft_payload: { decision },
         });
@@ -176,8 +179,8 @@ async function commit() {
         continue;
       }
 
-      // מסלול פעיל — בניית טיוטה
-      const email = composeRelease(rec, decision, importer);
+      // שדות המעקב המשותפים — נשמרים לכל תיק אשדוד לתצוגה בדשבורד, בין אם מקבל
+      // טיוטה ובין אם נספר בלבד. draft_payload מתווסף רק לתיקי ההעברה לחיפה האמיתיים.
       const base = {
         file_number: rec.file_number,
         customer_name: rec.customer_name,
@@ -190,22 +193,41 @@ async function commit() {
         transfer_performer: perf || null,
         performer_unknown: performerUnknown,
         site_des: rec.site_des || null,
+        fcl_lcl: rec.fcl_lcl || null,
         hazardous: rec.hazardous,
         wg_reshimon_no: rec.wg_reshimon_no || null,
         type: importer?.type || null,
         agent_name: importer?.service_rep || null,
+      };
+
+      // האם התיק הוא "העברה לחיפה" אמיתית (LCL + מסלול co_loader/terminal/direct +
+      // מסוף שאינו הנמל עצמו)? רק אז בונים טיוטה. אחרת (prepaid / FCL / שחרור בנמל
+      // עצמו) — נספר בדשבורד כ"שוחרר באשדוד" בלבד, ללא טיוטה וללא מייל (החלטת משתמש
+      // 2026-07-13). prepaid לעולם אינו מקבל מייל.
+      if (!isHaifaTransfer(rec, decision)) {
+        shipments.upsert({ ...base, status: STATUS.RELEASED });
+        summary.tracked_released += 1;
+        continue;
+      }
+
+      // מסלול העברה לחיפה — בניית טיוטה (חסימת השליחה בלי gatepass PDF נאכפת באישור)
+      const email = composeRelease(rec, decision, importer);
+      const withDraft = {
+        ...base,
         draft_payload: { route: decision.route, needs_review: !!decision.needs_review, email, alerts: decision.alerts || [] },
       };
 
       // Task 6 — שליחה אוטומטית רק למסלולי ההעברה לחיפה (co_loader/terminal), מאחורי דגל.
-      // prepaid/direct נשארים בתור האישור האנושי כמקודם.
       if (autoSendEnabled(decision.route)) {
         // הרשומה חייבת להתקיים לפני חיפוש ה-gatepass (setGatepass מבצע UPDATE)
-        shipments.upsert({ ...base, status: STATUS.AWAITING_GATEPASS });
+        shipments.upsert({ ...withDraft, status: STATUS.AWAITING_GATEPASS });
         await sendOrDefer(rec.file_number, email, summary);
       } else {
-        shipments.upsert({ ...base, status: STATUS.PENDING });
-        summary.queued += 1;
+        // הטיוטה נבנית מיד, אך מוחזקת מחוץ לתור האישורים עד שיצורף gatepass PDF
+        // (אוטומטית ב-gatepassFetcher או ידנית מכרטיס התיק). setGatepass יעביר אז
+        // אוטומטית ל-pending_approval. עד אז — נראית רק בדשבורד/כרטיס, ללא שליחה.
+        shipments.upsert({ ...withDraft, status: STATUS.AWAITING_PDF });
+        summary.awaiting_pdf += 1;
       }
     } catch (e) {
       summary.errors += 1;
@@ -220,8 +242,30 @@ function record(r) {
   return r;
 }
 
+/**
+ * מיגרציה חד-פעמית: תיקי pending_approval ישנים של מסלול העברה לחיפה שאין להם עדיין
+ * gatepass PDF (מהמודל הישן, לפני החזקת הטיוטה במצב "ממתין ל-PDF") מועברים למצב החדש,
+ * כדי שלא יופיעו בתור האישורים בלי PDF. תזכורות (draft_payload.reminder) אינן מושפעות.
+ * אידמפוטנטי — אחרי ריצה ראשונה אין עוד תיקים כאלה.
+ */
+function migrateAwaitingPdf() {
+  let moved = 0;
+  for (const r of shipments.byStatus(STATUS.PENDING)) {
+    if (r.gatepass_pdf_path) continue;
+    if (!requiresGatepass(r.route)) continue;
+    let payload = null;
+    try { payload = r.draft_payload ? JSON.parse(r.draft_payload) : null; } catch { /* ignore */ }
+    if (payload && payload.reminder) continue; // תזכורת אינה דורשת gatepass
+    shipments.upsert({ file_number: r.file_number, status: STATUS.AWAITING_PDF, notes: r.notes });
+    moved += 1;
+  }
+  if (moved) console.log(`[reportWatcher] מיגרציה: ${moved} טיוטות ללא PDF הועברו ל"${STATUS.AWAITING_PDF}"`);
+  return moved;
+}
+
 // ---------- הרצה ידנית (manual): סריקה + קומיט מיידיים, עוקף את שני השעונים ----------
 async function runNow() {
+  migrateAwaitingPdf();
   scanOnce();
   return commit();
 }
@@ -258,6 +302,7 @@ function scheduleNextCommit() {
 
 function start() {
   if (scanTimer || commitTimer) return;
+  migrateAwaitingPdf();                // מיגרציה חד-פעמית של טיוטות ישנות ללא PDF
   const scanMs = (config.poll_interval_minutes || 10) * 60 * 1000;
   scanOnce();                          // סריקה ראשונית מיידית
   scanTimer = setInterval(scanOnce, scanMs);
@@ -280,7 +325,7 @@ function status() {
 
 module.exports = {
   // ליבה
-  scanOnce, commit, runNow,
+  scanOnce, commit, runNow, migrateAwaitingPdf,
   runOnce: runNow, // תאימות לאחור (reset-shipments / endpoint ידני) — הרצה מלאה מיידית
   // תזמון
   start, stop, status,

@@ -9,17 +9,19 @@ export type StatusKey = keyof DashboardCounts | 'other';
 
 export const STATUS_META: { key: keyof DashboardCounts; label: string; cssVar: string }[] = [
   { key: 'alert', label: 'דורש בדיקה', cssVar: 'var(--st-alert)' },
+  { key: 'awaiting_pdf', label: 'ממתין ל-PDF', cssVar: 'var(--st-awaiting-pdf)' },
   { key: 'pending_approval', label: 'ממתין לאישור', cssVar: 'var(--st-pending)' },
   { key: 'in_transit', label: 'בדרך לחיפה', cssVar: 'var(--st-transit)' },
   { key: 'arrived_haifa', label: 'הגיע לחיפה', cssVar: 'var(--st-arrived)' },
   { key: 'delivered', label: 'נמסר ללקוח', cssVar: 'var(--st-delivered)' },
 ];
 
-// סדר ברירת המחדל בטבלה: התראה → ממתין → בדרך → הגיע → נמסר
-export const STATUS_ORDER: StatusKey[] = ['alert', 'pending_approval', 'in_transit', 'arrived_haifa', 'delivered', 'other'];
+// סדר ברירת המחדל בטבלה: התראה → ממתין ל-PDF → ממתין לאישור → בדרך → הגיע → נמסר
+export const STATUS_ORDER: StatusKey[] = ['alert', 'awaiting_pdf', 'pending_approval', 'in_transit', 'arrived_haifa', 'delivered', 'other'];
 
 export function statusKeyOf(s: Pick<Shipment, 'status'>): StatusKey {
   switch (s.status) {
+    case 'ממתין ל-PDF': return 'awaiting_pdf';
     case 'pending_approval': return 'pending_approval';
     case 'alert': return 'alert';
     // "בדרך לחיפה": שוחרר/נשלח באשדוד + יצא לחיפה
@@ -36,6 +38,7 @@ export function statusKeyOf(s: Pick<Shipment, 'status'>): StatusKey {
 // תווית עברית לסטטוס הגולמי (כולל סטטוסים לוגיים באנגלית)
 export function statusLabel(raw: string): string {
   return ({
+    'ממתין ל-PDF': 'טיוטה מוכנה — ממתין ל-gatepass PDF',
     pending_approval: 'ממתין לאישור שליחת מייל',
     awaiting_gatepass: 'ממתין לגייטפס',
     sent: 'נשלח - ממתין לאישור העברה',
@@ -46,6 +49,22 @@ export function statusLabel(raw: string): string {
 
 // סטטוסי מעקב לעדכון ידני (whitelist בצד השרת)
 export const MANUAL_STATUSES = ['שוחרר באשדוד', 'יצא לחיפה', 'התקבל בחיפה', 'נמסר ללקוח'];
+
+// מסלולי ההעברה לחיפה — מחייבים gatepass PDF לפני שליחה (עקבי עם classifier בצד השרת)
+const HAIFA_TRANSFER_ROUTES = ['co_loader', 'terminal', 'direct'];
+
+/** האם לתיק זה נדרש gatepass PDF לפני שליחה? (מסלול העברה לחיפה, ולא תזכורת) */
+export function requiresGatepass(s: Pick<Shipment, 'route' | 'draft'>): boolean {
+  if (s.draft?.reminder) return false;
+  const route = s.draft?.route || s.route;
+  return HAIFA_TRANSFER_ROUTES.includes(route);
+}
+
+/** האם ניתן לשלוח את הטיוטה כעת? (יש טיוטה, ואם נדרש PDF — הוא קיים) */
+export function canSend(s: Pick<Shipment, 'route' | 'draft' | 'gatepass_pdf_path'>): boolean {
+  if (!s.draft?.email) return false;
+  return !requiresGatepass(s) || !!s.gatepass_pdf_path;
+}
 
 /* ---------- זמן ---------- */
 export function hoursSince(iso?: string | null): number | null {

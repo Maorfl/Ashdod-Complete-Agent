@@ -20,6 +20,7 @@
   --st-delivered: #3a9d5a;
   --st-alert: #c4502f;
   --st-pending: #b07d1e;
+  --st-awaiting-pdf: #8a6d3b;  /* טיוטה מוכנה, ממתינה ל-gatepass PDF (לא ניתנת לשליחה) */
 
   --radius: 10px;
   --radius-sm: 7px;
@@ -45,7 +46,11 @@ button { font-family: var(--font); cursor: pointer; }
 
 /* ---------- shell ---------- */
 .shell { display: grid; grid-template-columns: 1fr 232px; }
-.main { padding: 28px 34px 60px; max-width: 100%; }
+/* min-width:0 — .main הוא פריט grid ב-.shell; ברירת המחדל min-width:auto מאפשרת
+   לתוכן הרחב שלו (טבלה עם min-width:860, פס סטטוסים בשורה אחת) להרחיב אותו מעבר
+   לרוחב המסך ולגלוש אופקית במסך צר. עם 0 הוא נדחס לרוחב ה-viewport, וה-.table-scroll
+   (overflow-x:auto) גולל את הטבלה בתוכו במקום להרחיב את הדף. */
+.main { padding: 28px 34px 60px; max-width: 100%; min-width: 0; }
 
 .topbar {
   grid-column: 1 / -1;
@@ -95,10 +100,16 @@ button { font-family: var(--font); cursor: pointer; }
 .page-head p { margin: 4px 0 0; color: var(--muted); font-size: 14px; }
 
 /* ---------- status strip ---------- */
-.strip { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; margin-bottom: 26px; }
+/* פס הסטטוסים — תמיד שורה אחת, ללא מספר עמודות קשיח: grid-auto-flow:column עם
+   grid-auto-columns:1fr מייצר עמודה שווה לכל כפתור שקיים (5 היום, 6+ בעתיד),
+   ותמיד נדחס לרוחב המכל בכל גודל מסך (ראו גם media query צר להקטנת ריווח/גופן). */
+.strip { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 14px; margin-bottom: 26px; }
 .stat {
   background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius);
   padding: 16px 16px 14px; box-shadow: var(--shadow); position: relative; overflow: hidden;
+  /* min-width:0 מבטל את min-width:auto של פריט grid — בלעדיו עמודות ה-1fr לא מצטמצמות
+     מתחת לרוחב-התוכן ופס הסטטוסים גולש אופקית במסך צר. עם 0 הן נדחסות לרוחב המכל. */
+  min-width: 0;
 }
 .stat::before { content: ''; position: absolute; inset-inline-start: 0; top: 0; bottom: 0; width: 4px; background: var(--c); }
 .stat .n { font-size: 30px; font-weight: 800; font-family: var(--mono); line-height: 1; }
@@ -391,11 +402,18 @@ td.mono, .mono { font-family: var(--mono); }
   /* במסך צר ה-nav הוא פס אופקי וה-topbar בגובה משתנה — sticky היה גורם לחפיפות
      ולבזבוז שטח מסך; חוזרים לזרימה רגילה (degradation מכוון). */
   .nav { flex-direction: row; flex-wrap: wrap; position: static; height: auto; overflow-y: visible; }
-  .strip { grid-template-columns: repeat(2, 1fr); }
   .row { grid-template-columns: 1fr; gap: 6px; }
   .topbar { flex-wrap: wrap; height: auto; padding: 10px 16px; gap: 10px; position: static; }
   .agent-switch { order: 3; width: 100%; justify-content: stretch; }
   .agent-switch .seg { flex: 1; justify-content: center; }
+}
+/* מסך צר — פס הסטטוסים נשאר שורה אחת (grid-auto-flow:column), אך מקטינים ריווח/גופן
+   כדי שהמספר והתווית לא ייחתכו כשהעמודות נעשות צרות (עד ~375px). */
+@media (max-width: 560px) {
+  .strip { gap: 8px; }
+  .stat { padding: 10px 8px; }
+  .stat .n { font-size: 20px; }
+  .stat .l { font-size: 10px; margin-top: 4px; overflow-wrap: anywhere; }
 }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
 

@@ -60,6 +60,41 @@ function isHazardous(rec) {
   return /^yes$/i.test(rec.hazardous) || /dangerous/i.test(rec.hazardous) || /מסוכן/.test(rec.hazardous);
 }
 
+// "נמל אשדוד"/"נמל הדרום" = הנמל עצמו (לא מסוף) — שחרור ישיר בנמל אינו "העברה לחיפה".
+const PORT_SITES = new Set(['נמל אשדוד', 'נמל הדרום']);
+// מסלולי "העברה לחיפה" האמיתיים — היחידים שזכאים לטיוטת מייל (וממותנים ב-gatepass PDF
+// בשלב השליחה). prepaid לעולם אינו מקבל מייל; alert/no_op בבדיקה ידנית/לא נשמרים.
+const HAIFA_TRANSFER_ROUTES = new Set(['co_loader', 'terminal', 'direct']);
+
+function isPortSite(site) {
+  return PORT_SITES.has(String(site || '').trim());
+}
+
+// האם למסלול זה נדרש gatepass PDF לפני שליחה? (נאכף ב-routes/approvals + בקליינט)
+function requiresGatepass(route) {
+  return HAIFA_TRANSFER_ROUTES.has(route);
+}
+
+/**
+ * isHaifaTransfer — האם התיק הוא "העברה לחיפה" אמיתית שזכאית לטיוטת מייל.
+ * אמת רק כשכל התנאים מתקיימים:
+ *   - שוחרר באשדוד (Customs Station Code = 2)
+ *   - FCL/LCL = LCL (רק LCL עובר העברה לחיפה; FCL נספר לתצוגה בלבד)
+ *   - מסוף שחרור (site_des) קיים ואינו הנמל עצמו (נמל אשדוד/נמל הדרום)
+ *   - המסלול הוא co_loader/terminal/direct (לא prepaid/alert/no_op)
+ * הימצאות ה-gatepass PDF אינה חלק מכאן — היא נאכפת בשלב השליחה (routes/approvals),
+ * לפי החלטת המשתמש 2026-07-13 (חוסמים שליחה בלי PDF, לא בונים טיוטה מאוחר).
+ */
+function isHaifaTransfer(rec, decision) {
+  if (!decision || !HAIFA_TRANSFER_ROUTES.has(decision.route)) return false;
+  if (String(rec.customs_station_code) !== String(config.relevant_customs_station_code)) return false;
+  const lclTarget = config.report_scope?.fcl_lcl || 'LCL';
+  if (String(rec.fcl_lcl || '').trim() !== lclTarget) return false;
+  const site = String(rec.site_des || '').trim();
+  if (!site || isPortSite(site)) return false;
+  return true;
+}
+
 /**
  * transferPerformer — "מבצע העברה לחיפה": מי מבצע בפועל את ההעברה אשדוד→חיפה.
  * מושג נפרד ממוביל ההמשך בחיפה (continuation). סדר עדיפות מדויק:
@@ -200,4 +235,7 @@ function uniq(arr) {
   return [...new Set((arr || []).filter(Boolean))];
 }
 
-module.exports = { classify, isHazardous, isCaspiForwarder, resolveContinuation, transferPerformer };
+module.exports = {
+  classify, isHazardous, isCaspiForwarder, resolveContinuation, transferPerformer,
+  isHaifaTransfer, requiresGatepass, isPortSite, HAIFA_TRANSFER_ROUTES,
+};

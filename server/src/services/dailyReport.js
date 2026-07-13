@@ -102,6 +102,107 @@ function buildDeptEmail(dept, list) {
   };
 }
 
+// ---------- סיכום מונים יומי (15:00 בלבד) ----------
+// מסלולי ההעברה לחיפה — לספירת "העברות לחיפה היום" (עקבי עם classifier.HAIFA_TRANSFER_ROUTES)
+const HAIFA_TRANSFER_ROUTES = new Set(['co_loader', 'terminal', 'direct']);
+
+// תחילת היום המקומי כ-timestamp (ms) — "היום" לצורך הספירות
+function startOfToday(now = Date.now()) {
+  const d = new Date(now);
+  d.setHours(0, 0, 0, 0);
+  return d.getTime();
+}
+
+/**
+ * collectCounts — לכל מחלקה, מוני היום:
+ *   released       — תיקים שנצפו לראשונה היום (כל תיק שמור הוא אשדוד/תחנת מכס 2)
+ *   transfers      — מתוכם, תיקי מסלול העברה לחיפה (co_loader/terminal/direct)
+ *   statusChanges  — שינויי סטטוס היום (status_history) לתיקי המחלקה
+ *   attention      — תיקים ב"יצא לחיפה" 2+ ימים (טבלת ההזדקנות, אותה לוגיקה כמו collectStale)
+ */
+function collectCounts(now = Date.now()) {
+  const start = startOfToday(now);
+  const byDept = {};
+  for (const d of DEPTS) byDept[d] = { released: 0, transfers: 0, statusChanges: 0, attention: 0 };
+
+  for (const s of shipments.all()) {
+    if (!byDept[s.department]) continue;
+    if (s.first_seen && Date.parse(s.first_seen) >= start) {
+      byDept[s.department].released += 1;
+      if (HAIFA_TRANSFER_ROUTES.has(s.route)) byDept[s.department].transfers += 1;
+    }
+  }
+
+  for (const h of shipments.statusChangesSince(new Date(start).toISOString())) {
+    const rec = shipments.get(h.file_number);
+    if (rec && byDept[rec.department]) byDept[rec.department].statusChanges += 1;
+  }
+
+  const stale = collectStale(now);
+  for (const d of DEPTS) byDept[d].attention = (stale[d] || []).length;
+  return byDept;
+}
+
+// בונה את מייל סיכום המונים למחלקה בודדת (נשלח תמיד, גם כשכל המונים 0)
+function buildCountsEmail(dept, c) {
+  const to = config.departments?.[dept]?.email;
+  const deptName = config.departments?.[dept]?.name || dept.toUpperCase();
+  const row = (label, n) => `
+      <tr>
+        <td style="padding:6px 12px;border:1px solid #ddd;">${esc(label)}</td>
+        <td style="padding:6px 12px;border:1px solid #ddd;font-family:monospace;text-align:center;font-weight:bold;">${n}</td>
+      </tr>`;
+  const bodyHtml = `<div style="font-family:Arial;font-size:12pt;direction:rtl;text-align:right;">
+    <p>שלום ${esc(deptName)},</p>
+    <p>סיכום יומי (15:00) לפעילות המחלקה היום:</p>
+    <table style="border-collapse:collapse;font-size:11pt;">
+      <tbody>
+        ${row('שוחררו באשדוד היום', c.released)}
+        ${row('העברות לחיפה היום', c.transfers)}
+        ${row('שינויי סטטוס היום', c.statusChanges)}
+        ${row('דורש טיפול ("יצא לחיפה" ' + AGE_DAYS + '+ ימים)', c.attention)}
+      </tbody>
+    </table>
+    <p style="color:#667;font-size:10pt;">דוח אוטומטי — סוכן כספי אשדוד. סיכום מונים נשלח פעם ביום ב-15:00.</p>
+  </div>`;
+  return {
+    from: config.sender_mailbox,
+    to: to ? [to] : [],
+    cc: [],
+    subject: `סיכום יומי 15:00 — ${deptName} (${dept.toUpperCase()})`,
+    bodyHtml,
+  };
+}
+
+// מריץ את סיכום המונים (15:00): שולח לכל מחלקה תמיד — גם אם כל המונים 0.
+async function runCountsReport(now = Date.now()) {
+  if (!isEnabled()) {
+    console.log('[dailyReport] הדגל daily_report כבוי — דילוג (סיכום מונים)');
+    return { skipped: 'feature_off', at: new Date().toISOString() };
+  }
+  const byDept = collectCounts(now);
+  const results = [];
+  for (const dept of DEPTS) {
+    const c = byDept[dept];
+    const email = buildCountsEmail(dept, c);
+    if (!email.to.length) {
+      console.warn(`[dailyReport] אין כתובת מייל למחלקה ${dept} — דילוג (סיכום מונים)`);
+      continue;
+    }
+    try {
+      await graph.sendMail(email);
+      console.log(`[dailyReport] נשלח סיכום מונים ל-${dept} (${email.to[0]}) — שוחררו ${c.released}, העברות ${c.transfers}, שינויי סטטוס ${c.statusChanges}, לטיפול ${c.attention}`);
+      results.push({ dept, to: email.to[0], counts: c, ok: true });
+    } catch (e) {
+      console.error(`[dailyReport] כשל שליחת סיכום מונים ל-${dept}: ${e.message}`);
+      results.push({ dept, to: email.to[0], counts: c, ok: false, error: e.message });
+    }
+  }
+  const summary = { kind: 'counts', sent: results.filter((r) => r.ok).length, results, at: new Date().toISOString() };
+  lastCountsRun = summary;
+  return summary;
+}
+
 // מריץ את הדוח: שולח מייל נפרד לכל מחלקה עם תיקים. מחזיר סיכום, ורושם ללוג.
 async function runReport() {
   if (!isEnabled()) {
@@ -136,6 +237,7 @@ async function runReport() {
 // ---------- תזמון ----------
 let timer = null;
 let lastRun = null;
+let lastCountsRun = null;
 let nextRunAt = null;
 
 // ms עד ה-09:00/15:00 הקרוב, מחושב תמיד מ-now אמיתי (יישור לשעון קיר)
@@ -154,7 +256,12 @@ function schedule() {
   const delay = msUntilNextRun();
   nextRunAt = new Date(Date.now() + delay).toISOString();
   timer = setTimeout(async () => {
+    // דוח ההזדקנות ("יצא לחיפה" 2+ ימים) — בשני החלונות (09:00 ו-15:00)
     try { await runReport(); } catch (e) { console.error('[dailyReport]', e.message); }
+    // סיכום המונים — רק בחלון 15:00 (נשלח תמיד, גם כשריק)
+    if (new Date().getHours() === 15) {
+      try { await runCountsReport(); } catch (e) { console.error('[dailyReport counts]', e.message); }
+    }
     schedule(); // רה-תזמון מ-now טרי — שומר יישור ל-09:00/15:00
   }, delay);
 }
@@ -170,11 +277,11 @@ function stop() {
 }
 
 function status() {
-  return { last: lastRun, nextRunAt, enabled: isEnabled() };
+  return { last: lastRun, lastCounts: lastCountsRun, nextRunAt, enabled: isEnabled() };
 }
 
 module.exports = {
-  start, stop, status, runReport,
+  start, stop, status, runReport, runCountsReport,
   // חשוף לבדיקות
-  collectStale, buildDeptEmail, msUntilNextRun, isEnabled,
+  collectStale, collectCounts, buildDeptEmail, buildCountsEmail, msUntilNextRun, isEnabled,
 };

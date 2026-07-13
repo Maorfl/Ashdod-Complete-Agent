@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { api, Shipment } from '../api';
 import { useAgentFilter, matchesAgent } from '../context/AgentFilterContext';
+import { requiresGatepass } from '../status';
 import ConfirmModal from '../components/ConfirmModal';
 import EmailListEditor from '../components/EmailListEditor';
 
@@ -79,9 +80,9 @@ export default function Approvals() {
                   {s.hazardous === 'Yes' && <span style={{ marginInlineStart: 10 }} title="חומר מסוכן">⚠</span>}
                 </div>
                 <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-                  {(s.route === 'co_loader' || s.route === 'terminal') && (
+                  {requiresGatepass(s) && (
                     <span className={'gatepass-tag ' + (s.gatepass_pdf_path ? 'ok' : 'pending')}>
-                      {s.gatepass_pdf_path ? '📎 PDF מצורף ✓' : '⚠ טרם התקבל PDF'}
+                      {s.gatepass_pdf_path ? '📎 PDF מצורף ✓' : '⚠ טרם התקבל PDF — חובה לשליחה'}
                     </span>
                   )}
                   {s.real_recipients && <span className="review-flag" title="אישור ישלח מייל אמיתי לנמען אמיתי — לא לכתובת ה-override">📮 נמענים אמיתיים</span>}

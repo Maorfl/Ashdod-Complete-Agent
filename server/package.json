@@ -16,6 +16,7 @@
     "cors": "^2.8.5",
     "express": "^4.21.2",
     "iconv-lite": "^0.4.24",
+    "multer": "^2.2.0",
     "tesseract.js": "^5.1.1",
     "xlsx": "^0.18.5"
   }

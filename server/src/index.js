@@ -77,7 +77,7 @@ app.listen(PORT, HOST, async () => {
     console.log(`  Microsoft Graph מחובר — שליחה באישור + מעקב הגעות + איתור gatepass (כל ${graph.settings().pollMinutes} דק').`);
     if (dailyReport.isEnabled()) {
       dailyReport.start();
-      console.log('  דוח מחלקתי פעיל — פעמיים ביום (09:00, 15:00): "יצא לחיפה" 2+ ימים לכל מחלקה.\n');
+      console.log('  דוח מחלקתי פעיל — "יצא לחיפה" 2+ ימים פעמיים ביום (09:00, 15:00) + סיכום מונים יומי ב-15:00.\n');
     } else {
       console.log('  דוח מחלקתי כבוי (feature_flags.daily_report=false).\n');
     }

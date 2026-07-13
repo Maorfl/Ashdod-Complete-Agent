@@ -16,9 +16,10 @@ const MANUAL_STATUSES = ['שוחרר באשדוד', 'יצא לחיפה', 'התק
 
 // מיפוי סטטוסים ל-5 מונים לדשבורד
 function dashboardCounts(items) {
-  const c = { pending_approval: 0, in_transit: 0, arrived_haifa: 0, delivered: 0, alert: 0 };
+  const c = { awaiting_pdf: 0, pending_approval: 0, in_transit: 0, arrived_haifa: 0, delivered: 0, alert: 0 };
   for (const r of items) {
     switch (r.status) {
+      case 'ממתין ל-PDF': c.awaiting_pdf += 1; break;
       case 'pending_approval': c.pending_approval += 1; break;
       case 'alert': c.alert += 1; break;
       case 'sent':

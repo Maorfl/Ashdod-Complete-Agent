@@ -67,6 +67,7 @@ const AGENT_COLUMNS = {
   transfer_performer: 'TEXT', // "מבצע העברה לחיפה" — קו-לואדר / משלח לא-כספי / מסוף (classifier.transferPerformer)
   performer_unknown: 'INTEGER', // 1 = מבצע ההעברה אינו ישות מוכרת ב-co_loaders/terminals (Task 8)
   site_des: 'TEXT', // מסוף השחרור (Cust. Stor. Site Des) — קובע את יעד ההגעה בחיפה (haifa_arrival)
+  fcl_lcl: 'TEXT', // FCL/LCL מהדוח — נספר לתצוגה בדשבורד; רק LCL זכאי להעברה לחיפה
 };
 (function ensureAgentColumns() {
   const existing = new Set(db.prepare('PRAGMA table_info(shipments)').all().map((c) => c.name));
@@ -77,6 +78,9 @@ const AGENT_COLUMNS = {
 
 const OWNS_STATUSES = new Set(config.tracking?.owns_file_statuses || ['sent']);
 const SENT_STATUS = config.tracking?.sent_status || 'sent';
+// טיוטת העברה לחיפה מוכנה אך ממתינה ל-gatepass PDF — מוחזקת מחוץ לתור האישורים עד
+// שה-PDF מצורף (אוטומטית או ידנית). מקור אמת יחיד למחרוזת הסטטוס.
+const AWAITING_PDF_STATUS = 'ממתין ל-PDF';
 
 function get(fileNumber) {
   return db.prepare('SELECT * FROM shipments WHERE file_number = ?').get(String(fileNumber));
@@ -127,6 +131,7 @@ function upsert(rec) {
     transfer_performer: rec.transfer_performer ?? existing?.transfer_performer ?? null,
     performer_unknown: rec.performer_unknown ?? existing?.performer_unknown ?? 0,
     site_des: rec.site_des ?? existing?.site_des ?? null,
+    fcl_lcl: rec.fcl_lcl ?? existing?.fcl_lcl ?? null,
     hazardous: rec.hazardous ?? existing?.hazardous ?? null,
     wg_reshimon_no: rec.wg_reshimon_no ?? existing?.wg_reshimon_no ?? null,
     type: rec.type ?? existing?.type ?? null,
@@ -138,14 +143,14 @@ function upsert(rec) {
 
   db.prepare(`INSERT INTO shipments
     (file_number,customer_name,release_date,status,status_updated_at,notes,created_at,agent_name,
-     route,reason,department,co_loader_code,continuation,transfer_performer,performer_unknown,site_des,hazardous,wg_reshimon_no,type,draft_payload,agent_sent_at,first_seen,last_seen)
+     route,reason,department,co_loader_code,continuation,transfer_performer,performer_unknown,site_des,fcl_lcl,hazardous,wg_reshimon_no,type,draft_payload,agent_sent_at,first_seen,last_seen)
     VALUES (@file_number,@customer_name,@release_date,@status,@status_updated_at,@notes,@created_at,@agent_name,
-     @route,@reason,@department,@co_loader_code,@continuation,@transfer_performer,@performer_unknown,@site_des,@hazardous,@wg_reshimon_no,@type,@draft_payload,@agent_sent_at,@first_seen,@last_seen)
+     @route,@reason,@department,@co_loader_code,@continuation,@transfer_performer,@performer_unknown,@site_des,@fcl_lcl,@hazardous,@wg_reshimon_no,@type,@draft_payload,@agent_sent_at,@first_seen,@last_seen)
     ON CONFLICT(file_number) DO UPDATE SET
       customer_name=@customer_name,release_date=@release_date,status=@status,status_updated_at=@status_updated_at,
       notes=@notes,agent_name=@agent_name,route=@route,reason=@reason,department=@department,
       co_loader_code=@co_loader_code,continuation=@continuation,transfer_performer=@transfer_performer,
-      performer_unknown=@performer_unknown,site_des=@site_des,hazardous=@hazardous,wg_reshimon_no=@wg_reshimon_no,
+      performer_unknown=@performer_unknown,site_des=@site_des,fcl_lcl=@fcl_lcl,hazardous=@hazardous,wg_reshimon_no=@wg_reshimon_no,
       type=@type,draft_payload=@draft_payload,agent_sent_at=@agent_sent_at,last_seen=@last_seen`).run(merged);
 
   if (rec.status !== undefined && rec.status !== existing?.status) {
@@ -172,11 +177,17 @@ function markSent(fileNumber, notes = null, opts = {}) {
   return get(fileNumber);
 }
 
-// שמירת נתיב ה-PDF שהתקבל עבור התיק (gatepass מ-do-not-reply) — Task 6
+// שמירת נתיב ה-PDF שהתקבל עבור התיק (gatepass מ-do-not-reply / העלאה ידנית) — Task 6.
+// נקודת המעבר היחידה לתור האישורים: אם התיק היה במצב "ממתין ל-PDF", צירוף ה-PDF
+// מעביר אותו אוטומטית ל-pending_approval (אטומי, כולל רישום היסטוריה).
 function setGatepass(fileNumber, pdfPath) {
   db.prepare('UPDATE shipments SET gatepass_pdf_path=? WHERE file_number=?')
     .run(pdfPath || null, String(fileNumber));
-  return get(fileNumber);
+  const rec = get(fileNumber);
+  if (pdfPath && rec && rec.status === AWAITING_PDF_STATUS) {
+    return setStatus(fileNumber, 'pending_approval', 'gatepass התקבל — הועבר לאישור שליחה');
+  }
+  return rec;
 }
 
 /**
@@ -222,6 +233,11 @@ function history(fileNumber) {
   return db.prepare('SELECT * FROM status_history WHERE file_number = ? ORDER BY changed_at ASC').all(String(fileNumber));
 }
 
+// כל שינויי הסטטוס מאז זמן ISO נתון (לספירת "שינויי סטטוס היום" בדוח היומי)
+function statusChangesSince(sinceIso) {
+  return db.prepare('SELECT file_number, status, changed_at FROM status_history WHERE changed_at >= ? ORDER BY changed_at ASC').all(String(sinceIso));
+}
+
 // ספירות לדשבורד (5 מונים)
 function counts() {
   const rows = db.prepare('SELECT status, COUNT(*) n FROM shipments GROUP BY status').all();
@@ -248,6 +264,8 @@ module.exports = {
   all,
   byStatus,
   history,
+  statusChangesSince,
   counts,
   SENT_STATUS,
+  AWAITING_PDF_STATUS,
 };

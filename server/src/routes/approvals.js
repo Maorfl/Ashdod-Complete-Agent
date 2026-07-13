@@ -2,12 +2,29 @@
  * routes/approvals.js — תור אישורי המחלקות (human-in-the-loop).
  * שום מייל לא נשלח ללא אישור אנושי. אישור => הסוכן מסמן 'sent' (owns_file).
  */
+const fs = require('fs');
 const express = require('express');
+const multer = require('multer');
 const shipments = require('../db/shipments');
 const graph = require('../services/graphMail');
+const gatepassFetcher = require('../services/gatepassFetcher');
+const { requiresGatepass } = require('../report/classifier');
 const scope = require('../scope');
 const { config } = require('../config');
 const router = express.Router();
+
+// העלאת gatepass PDF ידנית — בזיכרון בלבד (עד 15MB), נשמר דרך gatepassFetcher
+const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 15 * 1024 * 1024 } });
+
+// האם לתיק זה נדרש gatepass PDF לפני שליחה? (מסלולי ההעברה לחיפה; לא תזכורות)
+function needsGatepass(rec, payload) {
+  if (payload && payload.reminder) return false;
+  const route = (payload && payload.route) || rec.route;
+  return requiresGatepass(route);
+}
+function hasGatepass(rec) {
+  return !!(rec.gatepass_pdf_path && fs.existsSync(rec.gatepass_pdf_path));
+}
 
 // פירוק draft_payload (JSON) + סימון whitelisted (defense in depth, מקור אמת יחיד scope.js)
 // + real_recipients: הטיוטה נושאת נמענים אמיתיים (לא override) — שהמאשר לא יופתע.
@@ -21,9 +38,14 @@ function withDraft(r) {
   return { ...r, draft, whitelisted: scope.isWhitelisted(r.customer_name), real_recipients: realRecipients };
 }
 
-// תור אישורים — תיקים שממתינים להחלטת מחלקה
+// תור אישורים — תיקים שממתינים להחלטת מחלקה. טיוטת העברה לחיפה ללא gatepass PDF
+// לעולם אינה מופיעה כאן (היא מוחזקת במצב "ממתין ל-PDF" ונראית רק בדשבורד/כרטיס);
+// הסינון כאן הוא הגנה נוספת גם על רשומות ישנות שנותרו ב-pending_approval בלי PDF.
 router.get('/', (req, res) => {
-  res.json(shipments.byStatus('pending_approval').map(withDraft));
+  const list = shipments.byStatus('pending_approval')
+    .map(withDraft)
+    .filter((r) => !needsGatepass(r, r.draft) || hasGatepass(r));
+  res.json(list);
 });
 
 // תיק בודד עם הטיוטה
@@ -62,6 +84,13 @@ router.post('/:file/decision', async (req, res) => {
       shipments.upsert({ file_number: rec.file_number, draft_payload: payload });
     }
     const email = payload.email;
+
+    // חסימת שליחה בלי gatepass PDF (Task 5, החלטת משתמש 2026-07-13): מיילי ההעברה
+    // לחיפה חייבים צרופת gatepass. אין PDF (או שנמחק מהדיסק) → דוחים במקום לשלוח בלי צרופה.
+    // ניתן לצרף ידנית דרך POST /approvals/:file/gatepass-upload.
+    if (needsGatepass(rec, payload) && !hasGatepass(rec)) {
+      return res.status(400).json({ error: 'לא ניתן לשלוח ללא gatepass PDF — נא לצרף ידנית (העלאת קובץ) או להמתין לקבלתו.', missing_gatepass: true });
+    }
 
     if (graph.isEnabled() && graph.settings().sendOnApprove && email) {
       // צירוף ה-gatepass PDF שאותר עבור התיק, אם קיים (Task 6)
@@ -103,6 +132,24 @@ router.post('/:file/decision', async (req, res) => {
   }
 
   res.status(400).json({ error: 'החלטה לא חוקית (approve|reject|edit)' });
+});
+
+// העלאת gatepass PDF ידנית לתיק (Task 5) — כשה-PDF לא הגיע אוטומטית מ-do-not-reply.
+// שומר לפי אותה מוסכמת נתיב כמו הצרופה הנכנסת ומעדכן gatepass_pdf_path.
+router.post('/:file/gatepass-upload', upload.single('file'), (req, res) => {
+  const rec = shipments.get(req.params.file);
+  if (!rec) return res.status(404).json({ error: 'תיק לא נמצא' });
+  if (!req.file || !req.file.buffer?.length) return res.status(400).json({ error: 'לא צורף קובץ' });
+  // אימות PDF: סוג MIME או חתימת הקובץ (%PDF-) — לא סומכים על הסיומת בלבד
+  const buf = req.file.buffer;
+  const isPdf = req.file.mimetype === 'application/pdf' || buf.slice(0, 5).toString('latin1') === '%PDF-';
+  if (!isPdf) return res.status(400).json({ error: 'הקובץ אינו PDF תקין' });
+  try {
+    const dest = gatepassFetcher.saveUploadedPdf(rec.file_number, buf, req.file.originalname);
+    res.json({ ok: true, path: dest });
+  } catch (e) {
+    res.status(500).json({ error: `שמירת ה-PDF נכשלה: ${e.message}` });
+  }
 });
 
 module.exports = router;

@@ -13,7 +13,7 @@ import ShipmentNotesModal from '../components/ShipmentNotesModal';
 import EmailListEditor from '../components/EmailListEditor';
 import {
   STATUS_META, STATUS_ORDER, statusKeyOf, statusLabel, MANUAL_STATUSES,
-  formatDateHe, formatDuration, timeSeverity, StatusKey,
+  formatDateHe, formatDuration, timeSeverity, canSend, StatusKey,
 } from '../status';
 
 export default function Dashboard() {
@@ -62,7 +62,7 @@ export default function Dashboard() {
   const agentItems = useMemo(() => (items || []).filter((s) => matchesAgent(s, agent)), [items, agent]);
 
   const counts = useMemo(() => {
-    const c: DashboardCounts = { pending_approval: 0, in_transit: 0, arrived_haifa: 0, delivered: 0, alert: 0 };
+    const c: DashboardCounts = { awaiting_pdf: 0, pending_approval: 0, in_transit: 0, arrived_haifa: 0, delivered: 0, alert: 0 };
     for (const s of agentItems) {
       const k = statusKeyOf(s);
       if (k !== 'other') c[k] += 1;
@@ -249,7 +249,7 @@ export default function Dashboard() {
             <table className="ship-table">
               <thead>
                 <tr>
-                  <th>תיק</th><th>לקוח</th><th>תאריך שחרור</th><th>סטטוס</th>
+                  <th>תיק</th><th>לקוח</th><th>FCL/LCL</th><th>תאריך שחרור</th><th>סטטוס</th>
                   <th>מבצע העברה לחיפה</th><th>מחלקה</th><th>זמן בסטטוס</th><th>פעולות</th>
                 </tr>
               </thead>
@@ -264,6 +264,7 @@ export default function Dashboard() {
                         {s.file_number}{s.hazardous === 'Yes' && <span title="חומר מסוכן"> ⚠</span>}
                       </td>
                       <td className="cust-cell">{s.customer_name || '—'}</td>
+                      <td className="mono">{s.fcl_lcl || '—'}</td>
                       <td className="mono"><span dir="ltr">{(() => {
                         const parts = formatDateHe(s.release_date).split('/');
                         return parts.length === 3 ? `${parts[1]}/${parts[0]}/${parts[2]}` : formatDateHe(s.release_date);
@@ -280,8 +281,13 @@ export default function Dashboard() {
                       <td className={'mono time-cell' + (sev ? ' time-' + sev : '')}>{formatDuration(s.status_updated_at)}</td>
                       <td className="actions-cell" onClick={(e) => e.stopPropagation()}>
                         <div className="row-actions">
+                          {s.status === 'ממתין ל-PDF' && (
+                            <button className="btn icon" title="טיוטה מוכנה — ממתינה ל-gatepass PDF. לחצו לצירוף בכרטיס התיק." aria-label="צירוף gatepass PDF" onClick={() => setOpenFile(s.file_number)}>📎</button>
+                          )}
                           {s.status === 'pending_approval' && s.draft?.email && (
-                            <button className="btn icon" title="שליחת מייל (אישור עם עריכת נמענים/גוף)" aria-label="שליחת מייל" onClick={() => openSend(s)}>📧</button>
+                            canSend(s)
+                              ? <button className="btn icon" title="שליחת מייל (אישור עם עריכת נמענים/גוף)" aria-label="שליחת מייל" onClick={() => openSend(s)}>📧</button>
+                              : <button className="btn icon" title="שליחה חסומה — חסר gatepass PDF. לחצו לצירוף בכרטיס התיק." aria-label="שליחה חסומה — חסר gatepass" onClick={() => setOpenFile(s.file_number)}>📧🔒</button>
                           )}
                           {s.status !== 'נמסר ללקוח' && (
                             <button className="btn icon" title="סימון כנמסר" aria-label="סימון כנמסר" onClick={() => deliver(s)}>✅</button>
