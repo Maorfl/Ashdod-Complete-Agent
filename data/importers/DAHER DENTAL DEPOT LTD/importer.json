@@ -2,17 +2,24 @@
   "name": "DAHER DENTAL DEPOT LTD",
   "company_id": "",
   "emails": [
-    "maorfl14@gmail.com"
+    "daherexp10@bezeqint.net",
+    "daherdental4@gmail.com"
   ],
   "address": "",
   "notes": "",
   "department": "cus3",
   "service_rep": "אביהוא עבדי",
-  "type": "unknown",
-  "dangerous_rule": false,
-  "cont_general": "",
-  "cont_general_emails": [],
-  "cont_dangerous_emails": [],
+  "type": "haifa_cont",
+  "dangerous_rule": true,
+  "cont_general": "גולד בונד",
+  "contact_names": "",
+  "cont_general_emails": [
+    "hlcl@goldbond.co.il"
+  ],
+  "cont_dangerous_emails": [
+    "tls.iliab@gmail.com",
+    "tls@tls.co.il"
+  ],
   "aliases": [],
   "seen_stations": [
     "2",

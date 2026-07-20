@@ -22,6 +22,8 @@ const TRANSIT_STATUS = 'יצא לחיפה';
 const AGE_DAYS = 2;
 const DAY_MS = 24 * 60 * 60 * 1000;
 const RUN_HOURS = [9, 15]; // 09:00 ו-15:00, אישור משתמש
+// כתובת כניסה לדשבורד — מוצגת ככפתור בתחתית סיכום ה-15:00 (New Task 3, 2026-07-15)
+const DASHBOARD_URL = 'http://192.168.15.75:4000/';
 
 const DEPTS = ['cus1', 'cus2', 'cus3'];
 
@@ -49,6 +51,13 @@ function ageText(iso) {
 
 const esc = (s) => String(s == null ? '' : s)
   .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+// תאריך מלא dd/mm/yyyy — לכותרת סיכום המונים (עקבי בפורמט עם fmtDate, אך עם שנה מלאה)
+function fmtFullDate(now = Date.now()) {
+  const d = new Date(now);
+  const p = (n) => String(n).padStart(2, '0');
+  return `${p(d.getDate())}/${p(d.getMonth() + 1)}/${d.getFullYear()}`;
+}
 
 // אוסף את התיקים ב'יצא לחיפה' 2+ ימים, מקובצים לפי מחלקה (רק המחלקות המוכרות)
 function collectStale(now = Date.now()) {
@@ -105,6 +114,9 @@ function buildDeptEmail(dept, list) {
 // ---------- סיכום מונים יומי (15:00 בלבד) ----------
 // מסלולי ההעברה לחיפה — לספירת "העברות לחיפה היום" (עקבי עם classifier.HAIFA_TRANSFER_ROUTES)
 const HAIFA_TRANSFER_ROUTES = new Set(['co_loader', 'terminal', 'direct']);
+// "פעיל בדשבורד" = כל תיק שטרם נמסר ללקוח (עקבי עם statusKeyOf בקליינט, שמסתיר 'delivered'
+// מברירת המחדל "הכל"). מוצג ברצועה הכהה בתחתית הדוח (New Task 4, 2026-07-14).
+const DELIVERED_STATUS = 'נמסר ללקוח';
 
 // תחילת היום המקומי כ-timestamp (ms) — "היום" לצורך הספירות
 function startOfToday(now = Date.now()) {
@@ -119,14 +131,16 @@ function startOfToday(now = Date.now()) {
  *   transfers      — מתוכם, תיקי מסלול העברה לחיפה (co_loader/terminal/direct)
  *   statusChanges  — שינויי סטטוס היום (status_history) לתיקי המחלקה
  *   attention      — תיקים ב"יצא לחיפה" 2+ ימים (טבלת ההזדקנות, אותה לוגיקה כמו collectStale)
+ *   activeTotal    — סה"כ תיקים פעילים כרגע בדשבורד (לא נמסרו) עבור המחלקה (New Task 4)
  */
 function collectCounts(now = Date.now()) {
   const start = startOfToday(now);
   const byDept = {};
-  for (const d of DEPTS) byDept[d] = { released: 0, transfers: 0, statusChanges: 0, attention: 0 };
+  for (const d of DEPTS) byDept[d] = { released: 0, transfers: 0, statusChanges: 0, attention: 0, activeTotal: 0 };
 
   for (const s of shipments.all()) {
     if (!byDept[s.department]) continue;
+    if (s.status !== DELIVERED_STATUS) byDept[s.department].activeTotal += 1;
     if (s.first_seen && Date.parse(s.first_seen) >= start) {
       byDept[s.department].released += 1;
       if (HAIFA_TRANSFER_ROUTES.has(s.route)) byDept[s.department].transfers += 1;
@@ -143,28 +157,66 @@ function collectCounts(now = Date.now()) {
   return byDept;
 }
 
+// עיצוב ג׳ (New Task 4, 2026-07-14, אישור משתמש) — HTML מבוסס טבלאות (תאימות לתוכנות
+// מייל, לא flex/grid) עם צבעי hex קבועים (אין תמיכה ב-CSS variables/dark-mode במייל):
+//   כותרת כחול-כהה (#0F2A3F) עם כותרת לבנה + שורת תאריך/שעה בהירה,
+//   רשת 2×2 של אריחי מונים צבעוניים, ורצועה כהה בתחתית עם "סה״כ תיקים פעילים
+//   בדשבורד" — המספר בפונט בהיר (#ffffff) על הרקע הכהה כדי שיהיה קריא (הערת משתמש).
+const TILE = (bg, fg, n, label) => `
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${bg};border-radius:8px;">
+        <tr><td style="padding:14px 16px;">
+          <div style="font-family:'Courier New',Courier,monospace;font-size:26px;font-weight:800;color:${fg};line-height:1;">${n}</div>
+          <div style="font-size:12px;color:${fg};margin-top:6px;font-weight:600;">${esc(label)}</div>
+        </td></tr>
+      </table>`;
+
 // בונה את מייל סיכום המונים למחלקה בודדת (נשלח תמיד, גם כשכל המונים 0)
 function buildCountsEmail(dept, c) {
   const to = config.departments?.[dept]?.email;
   const deptName = config.departments?.[dept]?.name || dept.toUpperCase();
-  const row = (label, n) => `
-      <tr>
-        <td style="padding:6px 12px;border:1px solid #ddd;">${esc(label)}</td>
-        <td style="padding:6px 12px;border:1px solid #ddd;font-family:monospace;text-align:center;font-weight:bold;">${n}</td>
-      </tr>`;
-  const bodyHtml = `<div style="font-family:Arial;font-size:12pt;direction:rtl;text-align:right;">
-    <p>שלום ${esc(deptName)},</p>
-    <p>סיכום יומי (15:00) לפעילות המחלקה היום:</p>
-    <table style="border-collapse:collapse;font-size:11pt;">
-      <tbody>
-        ${row('שוחררו באשדוד היום', c.released)}
-        ${row('העברות לחיפה היום', c.transfers)}
-        ${row('שינויי סטטוס היום', c.statusChanges)}
-        ${row('דורש טיפול ("יצא לחיפה" ' + AGE_DAYS + '+ ימים)', c.attention)}
-      </tbody>
+  const dateStr = fmtFullDate();
+
+  const bodyHtml = `<div dir="rtl" style="font-family:Arial,Helvetica,sans-serif;max-width:560px;margin:0 auto;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#0F2A3F;border-radius:10px 10px 0 0;">
+      <tr><td style="padding:20px 24px;">
+        <div style="color:#ffffff;font-size:18px;font-weight:700;">סיכום יומי · סוכן אשדוד</div>
+        <div style="color:#B9C6D1;font-size:12px;margin-top:4px;">${esc(dateStr)} · שעה 15:00</div>
+      </td></tr>
     </table>
-    <p style="color:#667;font-size:10pt;">דוח אוטומטי — סוכן כספי אשדוד. סיכום מונים נשלח פעם ביום ב-15:00.</p>
+
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#ffffff;border-left:1px solid #e2e2e2;border-right:1px solid #e2e2e2;">
+      <tr><td style="padding:16px 24px 4px;color:#333333;font-size:13px;">שלום ${esc(deptName)}, להלן סיכום הפעילות שלכם היום:</td></tr>
+      <tr><td style="padding:8px 16px 16px;">
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
+          <td width="50%" style="padding:6px;">${TILE('#E1F5EE', '#0F6E56', c.released, 'שוחררו באשדוד היום')}</td>
+          <td width="50%" style="padding:6px;">${TILE('#E6F1FB', '#185FA5', c.transfers, 'העברות לחיפה היום')}</td>
+        </tr><tr>
+          <td width="50%" style="padding:6px;">${TILE('#F1EFE8', '#444441', c.statusChanges, 'שינויי סטטוס היום')}</td>
+          <td width="50%" style="padding:6px;">${TILE('#FAECE7', '#993C1D', c.attention, `דורש טיפול ("יצא לחיפה" ${AGE_DAYS}+ ימים)`)}</td>
+        </tr></table>
+      </td></tr>
+    </table>
+
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#0F2A3F;">
+      <tr><td style="padding:16px 24px;">
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
+          <td style="color:#CFE0EC;font-size:13px;vertical-align:middle;">סה״כ תיקים פעילים בדשבורד</td>
+          <td align="left" style="color:#ffffff;font-family:'Courier New',Courier,monospace;font-size:22px;font-weight:800;vertical-align:middle;">${c.activeTotal}</td>
+        </tr></table>
+      </td></tr>
+    </table>
+
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#ffffff;border-left:1px solid #e2e2e2;border-right:1px solid #e2e2e2;">
+      <tr><td align="center" style="padding:18px 24px;">
+        <a href="${DASHBOARD_URL}" style="display:inline-block;background:#0F2A3F;color:#ffffff;font-size:13px;font-weight:700;text-decoration:none;padding:10px 28px;border-radius:6px;">כניסה למערכת סוכן כספי</a>
+      </td></tr>
+    </table>
+
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#ffffff;border:1px solid #e2e2e2;border-top:none;border-radius:0 0 10px 10px;">
+      <tr><td style="padding:12px 24px;color:#8a8a8a;font-size:10px;">דוח אוטומטי — סוכן כספי אשדוד. סיכום מונים נשלח מדי יום ב-15:00.</td></tr>
+    </table>
   </div>`;
+
   return {
     from: config.sender_mailbox,
     to: to ? [to] : [],
@@ -191,7 +243,7 @@ async function runCountsReport(now = Date.now()) {
     }
     try {
       await graph.sendMail(email);
-      console.log(`[dailyReport] נשלח סיכום מונים ל-${dept} (${email.to[0]}) — שוחררו ${c.released}, העברות ${c.transfers}, שינויי סטטוס ${c.statusChanges}, לטיפול ${c.attention}`);
+      console.log(`[dailyReport] נשלח סיכום מונים ל-${dept} (${email.to[0]}) — שוחררו ${c.released}, העברות ${c.transfers}, שינויי סטטוס ${c.statusChanges}, לטיפול ${c.attention}, פעילים בדשבורד ${c.activeTotal}`);
       results.push({ dept, to: email.to[0], counts: c, ok: true });
     } catch (e) {
       console.error(`[dailyReport] כשל שליחת סיכום מונים ל-${dept}: ${e.message}`);

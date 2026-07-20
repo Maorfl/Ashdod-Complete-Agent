@@ -2,16 +2,22 @@
   "name": "A S R GRAPHICS LTD",
   "company_id": "",
   "emails": [
-    "maorfl14@gmail.com"
+    "import@asrgraph.com",
+    "sarit@asrgraph.com",
+    "omri@asrgraph.com"
   ],
   "address": "",
   "notes": "",
   "department": "cus3",
   "service_rep": "אביהוא עבדי",
-  "type": "unknown",
+  "type": "tls",
   "dangerous_rule": false,
   "cont_general": "",
-  "cont_general_emails": [],
+  "contact_names": "",
+  "cont_general_emails": [
+    "tls.iliab@gmail.com",
+    "tls@tls.co.il"
+  ],
   "cont_dangerous_emails": [],
   "aliases": [],
   "seen_stations": [

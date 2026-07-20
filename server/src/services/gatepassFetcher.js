@@ -85,25 +85,33 @@ function saveUploadedPdf(fileNumber, buffer, originalName) {
 }
 
 /**
- * fetchForFile — מחפש את ה-gatepass של תיק בודד ושומר אותו.
- * מחזיר { file, path } בהצלחה, או { file, skipped } אם לא נמצא.
+ * fetchGatepassMessages — שליפת הודעות do-not-reply (טווח gatepass_lookback_days),
+ * תחומה פעם אחת. משותפת לכל קוראי ה-gatepass (fetchForFile / runOnce / הסריקה המקדימה
+ * ב-reportWatcher.commit) כדי שלא כל תיק יבצע חיפוש mailbox נפרד.
  */
-async function fetchForFile(fileNumber) {
+async function fetchGatepassMessages() {
+  return graph.searchFrom(config.sender_mailbox, GATEPASS_SENDER, {
+    sinceDays: graph.settings().gatepassLookbackDays,
+  });
+}
+
+/**
+ * attachFromMessages — ליבת ההתאמה/ההורדה המשותפת: מנסה לאתר gatepass PDF לתיק נתון
+ * מתוך רשימת הודעות שכבר נשלפה (ולא לבצע חיפוש mailbox נפרד לכל תיק), ואם נמצא —
+ * שומר ומעדכן gatepass_pdf_path (setGatepass מבצע גם את המעבר "ממתין ל-PDF" →
+ * pending_approval אם רלוונטי — נקודת המעבר היחידה, ראו db/shipments.js).
+ * מחזיר { file, path } / { file, path, cached:true } / { file, skipped }.
+ */
+async function attachFromMessages(fileNumber, messages) {
   // אנטי-רה-טריגר (Task 3): תיק שכבר טופל/נשלח (status ∈ owns_file_statuses) לא יעודכן
   // שוב — לא gatepass_pdf_path ולא סטטוס — ולא משנה מי השולח של הודעה נכנסת מאוחרת.
-  // החיפוש ממילא תחום ל-GATEPASS_SENDER, אבל זו אכיפה מפורשת וגלויה בקוד.
   if (shipments.ownsFile(fileNumber)) return { file: fileNumber, skipped: 'already_owned' };
-  if (!graph.isEnabled()) return { file: fileNumber, skipped: 'graph_disabled' };
   const existing = shipments.get(fileNumber);
   if (existing?.gatepass_pdf_path && fs.existsSync(existing.gatepass_pdf_path)) {
     return { file: fileNumber, path: existing.gatepass_pdf_path, cached: true };
   }
 
-  // חיפוש תחום לטווח הימים האחרונים (gatepass_lookback_days) — לא $top שטוח לא-ממוין
-  const messages = await graph.searchFrom(config.sender_mailbox, GATEPASS_SENDER, {
-    sinceDays: graph.settings().gatepassLookbackDays,
-  });
-  const match = messages.find((m) => m.hasAttachments && messageMatchesFile(m, fileNumber));
+  const match = (messages || []).find((m) => m.hasAttachments && messageMatchesFile(m, fileNumber));
   if (!match) return { file: fileNumber, skipped: 'no_match' };
 
   const attachments = await graph.listAttachments(config.sender_mailbox, match.id);
@@ -114,6 +122,17 @@ async function fetchForFile(fileNumber) {
   if (!saved) return { file: fileNumber, skipped: 'not_file_attachment' };
   shipments.setGatepass(fileNumber, saved);
   return { file: fileNumber, path: saved };
+}
+
+/**
+ * fetchForFile — מחפש את ה-gatepass של תיק בודד ושומר אותו (חיפוש mailbox עצמאי).
+ * מחזיר { file, path } בהצלחה, או { file, skipped } אם לא נמצא.
+ */
+async function fetchForFile(fileNumber) {
+  if (shipments.ownsFile(fileNumber)) return { file: fileNumber, skipped: 'already_owned' };
+  if (!graph.isEnabled()) return { file: fileNumber, skipped: 'graph_disabled' };
+  const messages = await fetchGatepassMessages();
+  return attachFromMessages(fileNumber, messages);
 }
 
 /**
@@ -136,10 +155,7 @@ async function runOnce() {
 
   let messages;
   try {
-    // תחום לטווח הימים האחרונים — מגיע להודעות החדשות באמת (ראו הערה ב-searchFrom)
-    messages = await graph.searchFrom(config.sender_mailbox, GATEPASS_SENDER, {
-      sinceDays: graph.settings().gatepassLookbackDays,
-    });
+    messages = await fetchGatepassMessages();
   } catch (e) {
     return record({ ...summary, errors: pending.length, fatal: e.message, at: new Date().toISOString() });
   }
@@ -147,18 +163,11 @@ async function runOnce() {
 
   for (const rec of pending) {
     try {
-      // אנטי-רה-טריגר (Task 3) — גם אם תיק כבר טופל/נשלח נכנס לכאן בטעות, לא נוגעים בו
-      if (shipments.ownsFile(rec.file_number)) continue;
-      const match = messages.find((m) => m.hasAttachments && messageMatchesFile(m, rec.file_number));
-      if (!match) continue;
-      const attachments = await graph.listAttachments(config.sender_mailbox, match.id);
-      const pdf = attachments.find((a) => /pdf$/i.test(a.name || '') || a.contentType === 'application/pdf');
-      if (!pdf) continue;
-      const saved = await saveAttachment(rec.file_number, pdf);
-      if (!saved) continue;
-      shipments.setGatepass(rec.file_number, saved);
-      summary.found += 1;
-      summary.details.push({ file: rec.file_number, path: saved });
+      const r = await attachFromMessages(rec.file_number, messages);
+      if (r.path && !r.cached) {
+        summary.found += 1;
+        summary.details.push({ file: rec.file_number, path: r.path });
+      }
     } catch (e) {
       summary.errors += 1;
       summary.details.push({ file: rec.file_number, error: e.message });
@@ -178,4 +187,7 @@ function start() {
 
 function stop() { if (timer) clearInterval(timer); timer = null; }
 
-module.exports = { runOnce, fetchForFile, saveUploadedPdf, start, stop, status: () => lastRun, GATEPASS_SENDER };
+module.exports = {
+  runOnce, fetchForFile, saveUploadedPdf, start, stop, status: () => lastRun, GATEPASS_SENDER,
+  fetchGatepassMessages, attachFromMessages,
+};

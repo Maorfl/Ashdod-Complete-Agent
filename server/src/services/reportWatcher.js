@@ -126,9 +126,27 @@ async function commit() {
 
   const records = scanCache.records || [];
   const summary = {
-    total: records.length, out_of_scope: 0, no_op: 0, queued: 0, awaiting_pdf: 0, alerts: 0,
+    total: records.length, out_of_scope: 0, no_op: 0, queued: 0, awaiting_pdf: 0, pdf_preloaded: 0, alerts: 0,
     tracked_released: 0, skipped_tracked: 0, auto_sent: 0, awaiting_gatepass: 0, errors: 0,
   };
+
+  // סריקה מקדימה של הודעות ה-gatepass (Task 1, 2026-07-14): נשלפת פעם אחת, עצלנית —
+  // רק בפעם הראשונה שנדרשת בקומיט הזה — כדי שקובץ חדש שה-PDF שלו כבר יושב בתיבה יעבור
+  // ל-pending_approval באותו מחזור, ולא ימתין למחזור ה-poller הנפרד (gatepassFetcher).
+  let gatepassMessages; // undefined = טרם נשלף במחזור הזה; null = לא זמין (Graph כבוי/כשל)
+  async function preloadedGatepass(fileNumber) {
+    if (gatepassMessages === undefined) {
+      if (!graph.isEnabled()) {
+        gatepassMessages = null;
+      } else {
+        try { gatepassMessages = await gatepass.fetchGatepassMessages(); }
+        catch (e) { gatepassMessages = null; }
+      }
+    }
+    if (!gatepassMessages) return null;
+    try { return await gatepass.attachFromMessages(fileNumber, gatepassMessages); }
+    catch (e) { return null; }
+  }
 
   for (const rec of records) {
     try {
@@ -227,7 +245,12 @@ async function commit() {
         // (אוטומטית ב-gatepassFetcher או ידנית מכרטיס התיק). setGatepass יעביר אז
         // אוטומטית ל-pending_approval. עד אז — נראית רק בדשבורד/כרטיס, ללא שליחה.
         shipments.upsert({ ...withDraft, status: STATUS.AWAITING_PDF });
-        summary.awaiting_pdf += 1;
+        // Task 1 (2026-07-14) — בדיקה מקדימה מיידית: אם ה-PDF כבר יושב בתיבה, התיק
+        // עובר ל-pending_approval באותו מחזור קומיט (attachFromMessages/setGatepass
+        // מבצעים את המעבר). אם לא נמצא — נשאר "ממתין ל-PDF" כרגיל.
+        const preload = await preloadedGatepass(rec.file_number);
+        if (preload && preload.path) summary.pdf_preloaded += 1;
+        else summary.awaiting_pdf += 1;
       }
     } catch (e) {
       summary.errors += 1;

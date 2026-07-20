@@ -2,15 +2,16 @@
   "name": "ROSENFELD INDUSTRIAL PACKAING LTD",
   "company_id": "",
   "emails": [
-    "maorfl14@gmail.com"
+    "sandy@rosenfeld-d.com"
   ],
   "address": "",
   "notes": "",
   "department": "cus3",
   "service_rep": "אביהוא עבדי",
-  "type": "unknown",
+  "type": "haifa_self",
   "dangerous_rule": false,
   "cont_general": "",
+  "contact_names": "סנדי",
   "cont_general_emails": [],
   "cont_dangerous_emails": [],
   "aliases": [],

@@ -2,7 +2,8 @@
   "name": "ISBIR BULK BAG ISRAEL., LTD",
   "company_id": "",
   "emails": [
-    "maorfl14@gmail.com"
+    "hanna.waizman@isbirisrael.com",
+    "jacob.soker@isbirisrael.com"
   ],
   "address": "",
   "notes": "",
@@ -11,7 +12,10 @@
   "type": "unknown",
   "dangerous_rule": false,
   "cont_general": "",
-  "cont_general_emails": [],
+  "contact_names": "",
+  "cont_general_emails": [
+    "hlcl@goldbond.co.il"
+  ],
   "cont_dangerous_emails": [],
   "aliases": [],
   "seen_stations": [

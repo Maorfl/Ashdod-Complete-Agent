@@ -297,7 +297,10 @@ td.mono, .mono { font-family: var(--mono); }
 .ship-row .time-cell { white-space: nowrap; font-size: 13px; }
 .time-warn { color: #b45309; font-weight: 700; }
 .time-alert { color: #b91c1c; font-weight: 800; }
-.actions-cell { cursor: default; }
+/* דוחפים את קבוצת הפעולות לצמוד לקצה השמאלי הפיזי של התא (justify-content:left —
+   ערך פיזי, לא לוגי כמו flex-start/flex-end — כדי לא להסתמך על כיווניות RTL/LTR
+   ולא לשנות את סדר האייקונים הפנימי, רק את מיקום הקבוצה כולה בתוך התא) */
+.actions-cell { cursor: default; display: flex; justify-content: left; align-items: center; }
 
 .st-badge {
   display: inline-block; font-size: 12px; font-weight: 700; padding: 3px 11px; border-radius: 20px;

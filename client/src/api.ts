@@ -54,6 +54,8 @@ export interface Shipment {
   status: string;
   status_updated_at: string;
   release_date: string;
+  first_seen?: string | null; // תאריך ההוספה למעקב/דשבורד — מוצג בעמודת "תאריך שחרור" (Task 3, 2026-07-14)
+  created_at?: string | null; // גיבוי ל-first_seen (רשומות ישנות)
   notes: string;
   agent_name: string;
   route: string;

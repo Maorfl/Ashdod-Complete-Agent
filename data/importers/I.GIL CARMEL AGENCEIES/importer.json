@@ -2,7 +2,9 @@
   "name": "I.GIL CARMEL AGENCEIES",
   "company_id": "",
   "emails": [
-    "maorfl14@gmail.com"
+    "sharon@igil.co.il",
+    "yossi@igil.co.il",
+    "michal@igil.co.il"
   ],
   "address": "",
   "notes": "",
@@ -11,7 +13,10 @@
   "type": "unknown",
   "dangerous_rule": false,
   "cont_general": "",
-  "cont_general_emails": [],
+  "contact_names": "",
+  "cont_general_emails": [
+    "hlcl@goldbond.co.il"
+  ],
   "cont_dangerous_emails": [],
   "aliases": [],
   "seen_stations": [

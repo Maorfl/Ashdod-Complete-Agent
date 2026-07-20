@@ -8,6 +8,7 @@ const multer = require('multer');
 const shipments = require('../db/shipments');
 const graph = require('../services/graphMail');
 const gatepassFetcher = require('../services/gatepassFetcher');
+const { toBodyHtml } = require('../email/composer');
 const { requiresGatepass } = require('../report/classifier');
 const scope = require('../scope');
 const { config } = require('../config');
@@ -67,6 +68,21 @@ function sanitizeEdited(edited) {
   return clean;
 }
 
+/**
+ * mergeEditedEmail — ממזג עריכה לתוך email קיים, ותמיד משאיר bodyHtml מסונכרן עם body.
+ * הבאג שתוקן (2026-07-15): graphMail.sendMail מעדיף bodyHtml על פני body כשקיים
+ * (composer.toBodyHtml מייצר אותו בזמן הרכבת הטיוטה) — עריכת body בלבד השאירה את
+ * ה-bodyHtml הישן, כך שהשליחה בפועל תמיד יצאה עם הטקסט המקורי, לא הערוך. מחדשים
+ * bodyHtml מה-body הערוך רק כשה-email המקורי כבר נשא bodyHtml (כלומר, נועד להישלח
+ * כ-HTML) — מיילים שמלכתחילה טקסט-בלבד (prepaid/direct/reminder) נשארים טקסט.
+ */
+function mergeEditedEmail(email, edited) {
+  const clean = sanitizeEdited(edited);
+  const merged = { ...(email || {}), ...clean };
+  if ('body' in clean && email?.bodyHtml) merged.bodyHtml = toBodyHtml(merged.body);
+  return merged;
+}
+
 // החלטת מחלקה: approve | reject | edit
 router.post('/:file/decision', async (req, res) => {
   const { decision, edited, notes } = req.body || {};
@@ -80,7 +96,7 @@ router.post('/:file/decision', async (req, res) => {
     // עריכות אחרונות (to/cc/body) שהגיעו עם האישור עצמו — ממוזגות ונשמרות לפני
     // השליחה, בבקשה אחת אטומית (לא edit ואז approve נפרדים שעלולים להתפצל).
     if (edited && payload.email) {
-      payload.email = { ...payload.email, ...sanitizeEdited(edited) };
+      payload.email = mergeEditedEmail(payload.email, edited);
       shipments.upsert({ file_number: rec.file_number, draft_payload: payload });
     }
     const email = payload.email;
@@ -125,7 +141,7 @@ router.post('/:file/decision', async (req, res) => {
     if (edited) {
       // עריכת נמענים (to/cc) — אפשרות זמנית: קיימת כי השליחה עדיין בשער אישור אנושי.
       // בתוכנית עתידית של שליחה אוטומטית מלאה ייתכן שהעריכה הידנית תוסר/תצטמצם.
-      payload.email = { ...(payload.email || {}), ...sanitizeEdited(edited) };
+      payload.email = mergeEditedEmail(payload.email, edited);
     }
     shipments.upsert({ file_number: rec.file_number, status: 'pending_approval', draft_payload: payload, notes: notes || rec.notes });
     return res.json({ ok: true, status: 'edited' });

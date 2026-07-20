@@ -2,15 +2,16 @@
   "name": "RIVULIS PLASTRO LTD",
   "company_id": "",
   "emails": [
-    "maorfl14@gmail.com"
+    "zita.roy@rivulis.com"
   ],
   "address": "",
   "notes": "",
   "department": "cus3",
   "service_rep": "אביהוא עבדי",
-  "type": "unknown",
+  "type": "tls",
   "dangerous_rule": false,
-  "cont_general": "",
+  "cont_general": "טי אל אס ",
+  "contact_names": "",
   "cont_general_emails": [],
   "cont_dangerous_emails": [],
   "aliases": [],

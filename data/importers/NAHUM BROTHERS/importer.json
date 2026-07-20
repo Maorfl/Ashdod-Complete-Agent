@@ -2,16 +2,20 @@
   "name": "NAHUM BROTHERS",
   "company_id": "",
   "emails": [
-    "maorfl14@gmail.com"
+    "import@nbi.co.il",
+    "info@nbi.co.il"
   ],
   "address": "",
   "notes": "",
   "department": "cus3",
   "service_rep": "אביהוא עבדי",
-  "type": "unknown",
+  "type": "haifa_cont",
   "dangerous_rule": false,
-  "cont_general": "",
-  "cont_general_emails": [],
+  "cont_general": "גולד בונד ",
+  "contact_names": "",
+  "cont_general_emails": [
+    "hlcl@goldbond.co.il"
+  ],
   "cont_dangerous_emails": [],
   "aliases": [],
   "seen_stations": [

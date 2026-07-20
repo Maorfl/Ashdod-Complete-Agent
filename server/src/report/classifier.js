@@ -137,6 +137,18 @@ function classify(rec, importer) {
   // מוביל המשך + כלל חומר מסוכן (משותף ל-co_loader/terminal/direct)
   const continuation = resolveContinuation(rec, importer, alerts);
 
+  // האם ליבואן הזה יש בפועל מוביל המשך מוגדר? (2026-07-15, אישור משתמש) כשאין —
+  // resolveContinuation עדיין נופל לברירת המחדל (גולד בונד/סמא) לצורך המשך הלוגיקה
+  // הפנימית, אך זו נפילה טכנית בלבד ואסור שתוסיף נמען אמיתי לרשימת ה-To: אין להוסיף
+  // "מוביל המשך" ל-recipients כשליבואן אין כזה בפועל. הערה: composer.js כבר מטפל
+  // נכון בגוף המייל למקרה הזה (isSelf — כשאין cont_general, נעשה שימוש בשם/אנשי-קשר
+  // הלקוח במקום "צוות {מוביל}"), כך שאין צורך בשינוי שם ב-composer.
+  const importerHasContinuation = !!(importer && (
+    String(importer.cont_general || '').trim() ||
+    (Array.isArray(importer.cont_general_emails) && importer.cont_general_emails.length)
+  ));
+  const continuationRecipientEmails = importerHasContinuation ? continuation.rawEmails : [];
+
   // "מבצע העברה לחיפה" ומייליו לפי שם (Task 1) — כולל ישות ללא קוד בדוח (למשל MASTER CARGO)
   const performer = transferPerformer(rec);
   const performerEmails = contacts.emailsFor(performer);
@@ -152,8 +164,9 @@ function classify(rec, importer) {
       route: 'co_loader',
       handler: { kind: 'co_loader', code: rec.co_loader_code, name: cl.name, gender: cl.gender, number: cl.number },
       continuation,
-      // נמענים אמיתיים (Task 4): קו-לואדר + מבצע-לפי-שם + היבואן
-      recipients: { to: realTo(cl.emails, performerEmails, realImporterEmails(importer)), cc: deptCc(importer) },
+      // נמענים אמיתיים (Task 4): קו-לואדר + מבצע-לפי-שם + היבואן + מוביל ההמשך לחיפה,
+      // רק כשליבואן יש בפועל מוביל המשך מוגדר (2026-07-14/15, אישור משתמש)
+      recipients: { to: realTo(cl.emails, performerEmails, realImporterEmails(importer), continuationRecipientEmails), cc: deptCc(importer) },
       needs_review: !!cl.needs_review,
       alerts,
       needs_email: true,
@@ -171,8 +184,9 @@ function classify(rec, importer) {
       route: 'terminal',
       handler: { kind: 'terminal', site: rec.site_des, key: term.key, downloader: term.downloader },
       continuation,
-      // נמענים אמיתיים (Task 4): מסוף + מבצע-לפי-שם + היבואן
-      recipients: { to: realTo(term.emails, performerEmails, realImporterEmails(importer)), cc: deptCc(importer) },
+      // נמענים אמיתיים (Task 4): מסוף + מבצע-לפי-שם + היבואן + מוביל ההמשך לחיפה,
+      // רק כשליבואן יש בפועל מוביל המשך מוגדר (2026-07-14/15, אישור משתמש)
+      recipients: { to: realTo(term.emails, performerEmails, realImporterEmails(importer), continuationRecipientEmails), cc: deptCc(importer) },
       needs_review: !!term.needs_review,
       alerts,
       needs_email: true,
@@ -209,10 +223,12 @@ function resolveContinuation(rec, importer, alerts) {
 
   if (!importer) alerts.push({ type: 'unknown_customer', customer: rec.customer_name });
   const carrier = continuationCarriers[name] || {};
+  const rawEmails = Array.isArray(carrier.emails) ? carrier.emails : (carrier.emails ? [carrier.emails] : []);
   return {
     name,
     hazardous,
     emails: routeExternal(carrier.emails),
+    rawEmails, // כתובות המוביל לפני override — למיזוג ב-recipients.to של co_loader/terminal (ראו realTo)
     gender: carrier.gender || 'm',
     number: carrier.number || 'p',
     contact: carrier.contact || '',

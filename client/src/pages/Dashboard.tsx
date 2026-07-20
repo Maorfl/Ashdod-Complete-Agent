@@ -265,9 +265,12 @@ export default function Dashboard() {
                       </td>
                       <td className="cust-cell">{s.customer_name || '—'}</td>
                       <td className="mono">{s.fcl_lcl || '—'}</td>
-                      <td className="mono"><span dir="ltr">{(() => {
-                        const parts = formatDateHe(s.release_date).split('/');
-                        return parts.length === 3 ? `${parts[1]}/${parts[0]}/${parts[2]}` : formatDateHe(s.release_date);
+                      {/* "תאריך שחרור" מציג את תאריך ההוספה למעקב (first_seen), לא release_date
+                          מהדוח — הרבה שורות מגיעות בלי release_date (Task 3, 2026-07-14) */}
+                      <td className="mono" title="תאריך הוספה למעקב"><span dir="ltr">{(() => {
+                          const added = s.first_seen || s.created_at;
+                          const parts = formatDateHe(added).split('/');
+                          return parts.length === 3 ? `${parts[0]}/${parts[1]}/${parts[2]}` : formatDateHe(added);
                         })()}</span></td>
                       <td>
                         <span className="st-badge" style={{ ['--c' as any]: meta?.cssVar || 'var(--muted)' }}>{statusLabel(s.status)}</span>
