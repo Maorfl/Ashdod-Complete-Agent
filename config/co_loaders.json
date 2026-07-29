@@ -2,9 +2,9 @@
   "_comment": "טבלת קודי CO-LOADER. כל כתובות המייל הוחלפו ל-maorfl14@gmail.com (external_email_override). gender: m/f, number: s/p קובעים את הניסוח (טיפולך/טיפולכם/טיפולכן). קודים עם needs_review=true ממתינים לפרטי קשר אמיתיים (OPEN GAP).",
   "co_loaders": {
     "232": {
-      "name": "אלדן מטענים 2000 בע\"מ",
+      "name": "אלדן מטעני 0002 בע\"מ",
       "name_en": "ELDAN CARGO",
-      "contact": "אתי (Etil)",
+      "contact": "אתי",
       "gender": "f",
       "number": "s",
       "emails": [
@@ -163,6 +163,15 @@
         "Malka.Ashuel@MasterCargo.co.il"
       ],
       "notes": "אין קוד Co Loader בדוח — מגיע רק דרך חיפוש לפי שם (מבצע העברה לחיפה). מפתח לא-מספרי כדי שלא יתנגש בקודי הדוח."
+    },
+    "אייבי טרנס לוגיסטיקה בע\"מ": {
+      "emails": [
+        "tiful@abetrans.net",
+        "etim@abetrans.net"
+      ],
+      "name": "אייבי טרנס לוגיסטיקה בע\"מ",
+      "name_en": "ABETRANS LOGISTIC",
+      "contact": "אתי"
     }
   }
 }

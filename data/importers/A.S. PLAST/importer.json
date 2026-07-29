@@ -1,16 +1,17 @@
 {
   "name": "A.S. PLAST",
-  "company_id": "",
+  "company_id": "511926990",
   "emails": [
-    "maorfl14@gmail.com"
+    "office@asplast.co.il"
   ],
   "address": "",
-  "notes": "",
+  "notes": "אין העברות לחיפה",
   "department": "cus2",
   "service_rep": "דורון רימה",
   "type": "unknown",
   "dangerous_rule": false,
   "cont_general": "",
+  "contact_names": "",
   "cont_general_emails": [],
   "cont_dangerous_emails": [],
   "aliases": [],

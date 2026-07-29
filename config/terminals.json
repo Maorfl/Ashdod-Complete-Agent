@@ -49,7 +49,7 @@
       ],
       "always_with_coloader": true,
       "location": "אשדוד",
-      "role": "מסוף אחסון בלבד (CO-LOADER תמיד אחראי להורדה)",
+      "role": "מסוף אחסון ",
       "delivery_place": "MASOF 207",
       "notes": "53 תיקים בדוח. לעולם לא שולחים ישירות — CO-LOADER מטפל",
       "aliases": [
@@ -131,7 +131,7 @@
       ],
       "always_with_coloader": true,
       "location": "אשדוד",
-      "role": "מסוף אחסון בלבד (CO-LOADER תמיד אחראי להורדה)",
+      "role": "מסוף אחסון ",
       "delivery_place": "MASOF 207",
       "notes": "53 תיקים בדוח. לעולם לא שולחים ישירות — CO-LOADER מטפל",
       "aliases": [

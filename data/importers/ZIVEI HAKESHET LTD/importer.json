@@ -2,15 +2,17 @@
   "name": "ZIVEI HAKESHET LTD",
   "company_id": "",
   "emails": [
-    "maorfl14@gmail.com"
+    "leayac@smithtools.co.il",
+    "dikla@smithtools.co.il"
   ],
   "address": "",
   "notes": "",
   "department": "cus1",
   "service_rep": "משה רוסו",
-  "type": "unknown",
+  "type": "haifa_self",
   "dangerous_rule": false,
   "cont_general": "",
+  "contact_names": "דיקלה וליה",
   "cont_general_emails": [],
   "cont_dangerous_emails": [],
   "aliases": [],

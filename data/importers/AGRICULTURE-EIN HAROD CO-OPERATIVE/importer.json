@@ -1,16 +1,17 @@
 {
   "name": "AGRICULTURE-EIN HAROD CO-OPERATIVE",
-  "company_id": "",
+  "company_id": "570060509",
   "emails": [
-    "maorfl14@gmail.com"
+    "michveret@einharodm.co.il"
   ],
-  "address": "",
-  "notes": "",
+  "address": "קיבוץ עין חרוד מאוחד 1896500",
+  "notes": "אין העברות לחיפה",
   "department": "cus2",
   "service_rep": "דורון רימה",
   "type": "unknown",
   "dangerous_rule": false,
   "cont_general": "",
+  "contact_names": "",
   "cont_general_emails": [],
   "cont_dangerous_emails": [],
   "aliases": [],

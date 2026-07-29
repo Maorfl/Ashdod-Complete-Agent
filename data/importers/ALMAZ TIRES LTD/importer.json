@@ -1,16 +1,17 @@
 {
   "name": "ALMAZ TIRES LTD",
-  "company_id": "",
+  "company_id": "516245008",
   "emails": [
-    "maorfl14@gmail.com"
+    "hmodizoa.vip@gmail.com"
   ],
-  "address": "",
-  "notes": "",
+  "address": "רחוב 3004 מספר 12",
+  "notes": "אין העברות לחיפה",
   "department": "cus2",
   "service_rep": "דורון רימה",
   "type": "unknown",
   "dangerous_rule": false,
   "cont_general": "",
+  "contact_names": "",
   "cont_general_emails": [],
   "cont_dangerous_emails": [],
   "aliases": [],
