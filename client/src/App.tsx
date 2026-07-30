@@ -6,6 +6,7 @@ import Importers from "./pages/Importers";
 import Approvals from "./pages/Approvals";
 import SentEmails from "./pages/SentEmails";
 import TerminalsForwarders from "./pages/TerminalsForwarders";
+import Automation from "./pages/Automation";
 import PasswordGate from "./components/PasswordGate";
 import { AgentFilterProvider, useAgentFilter, AGENTS } from "./context/AgentFilterContext";
 import { ToastProvider } from "./components/Toasts";
@@ -72,6 +73,7 @@ function Shell() {
                     <Route path="/" element={<Dashboard />} />
                     <Route path="/importers" element={<Importers />} />
                     <Route path="/approvals" element={<Approvals />} />
+                    <Route path="/automation" element={<PasswordGate title="אוטומציה"><Automation /></PasswordGate>} />
                     <Route path="/sent-emails" element={<SentEmails />} />
                     <Route path="/terminals-forwarders" element={<PasswordGate><TerminalsForwarders /></PasswordGate>} />
                 </Routes>
@@ -89,11 +91,15 @@ function Shell() {
                 <NavLink to="/importers" className={nav}>
                     <span className="ic">▦</span> ניהול יבואנים
                 </NavLink>
-                <NavLink to="/terminals-forwarders" className={nav}>
-                    <span className="ic">▤</span> ניהול מסופים ומשלחים
-                </NavLink>
                 <NavLink to="/sent-emails" className={nav}>
                     <span className="ic">✉</span> מיילים שנשלחו
+                </NavLink>
+                <div className="grp">הנהלה</div>
+                <NavLink to="/automation" className={nav}>
+                    <span className="ic">⚙</span> אוטומציה
+                </NavLink>
+                <NavLink to="/terminals-forwarders" className={nav}>
+                    <span className="ic">▤</span> ניהול מסופים ומשלחים
                 </NavLink>
             </nav>
         </div>

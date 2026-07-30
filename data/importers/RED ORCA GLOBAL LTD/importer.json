@@ -2,15 +2,16 @@
   "name": "RED ORCA GLOBAL LTD",
   "company_id": "",
   "emails": [
-    "maorfl14@gmail.com"
+    "raed@ro-global.com"
   ],
   "address": "",
   "notes": "",
   "department": "cus1",
   "service_rep": "משה רוסו",
-  "type": "unknown",
+  "type": "haifa_self",
   "dangerous_rule": false,
   "cont_general": "",
+  "contact_names": "ראעד",
   "cont_general_emails": [],
   "cont_dangerous_emails": [],
   "aliases": [],

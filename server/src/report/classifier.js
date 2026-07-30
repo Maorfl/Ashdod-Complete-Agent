@@ -210,9 +210,26 @@ function classify(rec, importer) {
   return { route: 'alert', reason: 'unknown_terminal', site: rec.site_des, alerts, needs_email: false };
 }
 
+const SELF_COLLECT_NAME = 'אוסף בעצמו';
+
 // מוביל המשך לחיפה + override חומר מסוכן (גולד בונד → סמא)
 function resolveContinuation(rec, importer, alerts) {
   const hazardous = isHazardous(rec);
+
+  // יבואן "אוסף בעצמו" (haifa_self) — אין מוביל המשך צד-שלישי בכלל, גם כשהמטען מסוכן:
+  // אין ליפול לברירת המחדל (גולד בונד)/override חומ"ס, כי אין המשך שלישי לדבר עליו.
+  if (importer && importer.type === 'haifa_self') {
+    return {
+      name: SELF_COLLECT_NAME,
+      hazardous,
+      emails: [],
+      rawEmails: [],
+      gender: 'm',
+      number: 'p',
+      contact: '',
+    };
+  }
+
   let name = (importer && importer.cont_general) || dangerousGoods.default_carrier;
 
   // כלל חומ"ס: גולד בונד אינה מורידה חומר מסוכן. אם המוביל הוא ברירת המחדל (גולד בונד)

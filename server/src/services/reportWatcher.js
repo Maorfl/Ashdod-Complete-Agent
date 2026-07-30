@@ -24,6 +24,7 @@ const graph = require('./graphMail');
 const gatepass = require('./gatepassFetcher');
 const scope = require('../scope');
 const contacts = require('../db/contacts');
+const automation = require('./automation');
 
 // pending_approval — תור אישור אנושי; awaiting_gatepass — מסלול העברה שאושר לשליחה
 // אוטומטית וממתין להגעת ה-gatepass PDF (Task 4/6). alert — בדיקה ידנית.
@@ -74,9 +75,34 @@ function scanCacheStale() {
   return (Date.now() - Date.parse(scanCache.scannedAt)) > staleMs;
 }
 
-// האם מסלול זה זכאי לשליחה אוטומטית? (Task 6: co_loader/terminal + דגל + Graph מחובר)
-function autoSendEnabled(route) {
-  return !!config.feature_flags?.auto_send_haifa_transfer && TRANSFER_ROUTES.has(route) && graph.isEnabled();
+/**
+ * מצב האוטומציה של מחלקה: off / dry_run / on — נקרא חי מ-services/automation.js
+ * (data/automation.json), לא מ-config.json. kill switch גלובלי הופך הכל ל-off
+ * (automation.effectiveDeptMode כבר מטפל בזה).
+ * off — לא רץ בכלל; dry_run — רץ במלואו, כולל בניית המייל, אך לא שולח ולא מסמן נשלח
+ * (רק רושם ל-dry_run_log); on — שליחה אמיתית כרגיל (Task 6).
+ */
+function autoSendModeForDept(dept) {
+  return automation.effectiveDeptMode(dept);
+}
+
+/**
+ * האם מסלול+מחלקה זכאים לאוטומציה (dry_run או on)?
+ *   route ∈ co_loader/terminal + Graph מחובר + מצב המחלקה ≠ off + auto_send_excluded=false
+ * (automation.isEligible — מנגנון יחיד, ראו services/automation.js).
+ * dry_run *אינו* תלוי בחיבור Graph בפועל לשליחה (אין שליחה), אך כן דורש אותו כדי
+ * שסימולציה תשקף במדויק את מה שהיה קורה בפועל (למשל אם Graph כבוי, on לא היה שולח בכלל).
+ *
+ * shipmentRec — הרשומה מה-DB (חייבת את השדה auto_send_excluded). כשמדובר בתיק חדש
+ * שטרם נכתב ל-DB באותו מחזור, יש להעביר את הרשומה *אחרי* ה-upsert הראשוני (ראו קריאה
+ * ב-commit למטה) — כך שהשדה קיים ולא undefined.
+ */
+function autoSendEnabled(route, dept, shipmentRec) {
+  const mode = autoSendModeForDept(dept);
+  if (mode === 'off') return false;
+  if (!TRANSFER_ROUTES.has(route)) return false;
+  if (!automation.isEligible(shipmentRec)) return false; // חסימה קבועה — לעולם לא על תיקים ישנים/לא-ודאיים
+  return graph.isEnabled();
 }
 
 /**
@@ -84,9 +110,15 @@ function autoSendEnabled(route) {
  * הרשומה חייבת להתקיים ב-DB לפני החיפוש (gatepass.setGatepass מבצע UPDATE).
  * מדיניות (Task 4): לא שולחים בלי ה-gatepass PDF — משאירים awaiting_gatepass, וניסיון
  * חוזר בקומיט הבא. שליחה נעשית עם ה-PDF כצרופה אמיתית; הנמענים כבר עברו override במסווג.
- * מחזיר 'auto_sent' | 'awaiting_gatepass' | 'error'.
+ *
+ * dry_run (תוספת אוטומציה, נפרדת/ניתנת-להסרה): כשהמצב הוא dry_run, מריצים את כל
+ * הבדיקה (כולל gatepass) אך *לא* קוראים ל-graph.sendMail ו*לא* מסמנים נשלח — התיק
+ * נשאר בתור הרגיל לטיפול אנושי. נרשם ל-dry_run_log כסימולציה מלאה (נמענים/גוף/PDF).
+ *
+ * מחזיר 'auto_sent' | 'dry_run' | 'awaiting_gatepass' | 'error'.
  */
-async function sendOrDefer(fileNumber, email, summary) {
+async function sendOrDefer(fileNumber, email, summary, dept) {
+  const mode = autoSendModeForDept(dept);
   let res;
   try {
     res = await gatepass.fetchForFile(fileNumber); // { path } בהצלחה, אחרת { skipped }
@@ -99,6 +131,18 @@ async function sendOrDefer(fileNumber, email, summary) {
     return 'awaiting_gatepass'; // ממתין ל-PDF — יישאר גלוי ויינסה שוב בקומיט הבא
   }
   const outgoing = { ...email, attachments: [res.path] };
+
+  if (mode === 'dry_run') {
+    // סימולציה מלאה — Graph.sendMail לעולם לא נקרא כאן, ואין markSent.
+    const shipped = shipments.get(fileNumber);
+    shipments.logDryRun({
+      file_number: fileNumber, customer_name: shipped?.customer_name, route: shipped?.route,
+      email: outgoing, wouldAttachGatepass: true,
+    });
+    summary.dry_run = (summary.dry_run || 0) + 1;
+    return 'dry_run';
+  }
+
   try {
     // צירוף ה-gatepass כ-fileAttachment אמיתי (graphMail תומך במערך נתיבים)
     await graph.sendMail(outgoing);
@@ -127,7 +171,7 @@ async function commit() {
   const records = scanCache.records || [];
   const summary = {
     total: records.length, out_of_scope: 0, no_op: 0, queued: 0, awaiting_pdf: 0, pdf_preloaded: 0, alerts: 0,
-    tracked_released: 0, skipped_tracked: 0, auto_sent: 0, awaiting_gatepass: 0, errors: 0,
+    tracked_released: 0, skipped_tracked: 0, auto_sent: 0, dry_run: 0, awaiting_gatepass: 0, errors: 0,
   };
 
   // סריקה מקדימה של הודעות ה-gatepass (Task 1, 2026-07-14): נשלפת פעם אחת, עצלנית —
@@ -165,9 +209,22 @@ async function commit() {
       const existing = shipments.get(rec.file_number);
       if (existing) {
         // תיק שממתין ל-gatepass — ניסיון שליחה חוזר (לא "כבר טופל")
-        if (existing.status === STATUS.AWAITING_GATEPASS && autoSendEnabled(decision.route)) {
+        const existingDept = existing.department || importer?.department || null;
+        if (existing.status === STATUS.AWAITING_GATEPASS && autoSendEnabled(decision.route, existingDept, existing)) {
           const email = composeRelease(rec, decision, importer);
-          await sendOrDefer(rec.file_number, email, summary);
+          await sendOrDefer(rec.file_number, email, summary, existingDept);
+          continue;
+        }
+        // הערכה חוזרת חד-פעמית, CUS1 בלבד (2026-07-30, אישור משתמש מפורש): תיקי CUS1
+        // שכבר יושבים ב-pending_approval (נבנו לפני שהאוטומציה חלה עליהם/שוחררו ידנית
+        // מ-auto_send_excluded) לא היו עוברים דרך ה-retry הרגיל, שמוגבל ל-AWAITING_GATEPASS
+        // בלבד — לכן תיק ששוחרר מ-release-cus1-ready.js לא היה נשלח אוטומטית לעולם.
+        // מכוון במפורש למחלקת cus1 בקוד (לא existingDept דינמי) כדי שלא יתרחב בטעות
+        // למחלקה אחרת אם מצב האוטומציה שלה ישונה בעתיד. ניתן להסרה נקייה — לא נוגע
+        // בגייט הכללי (autoSendEnabled) ולא במסלול ה-AWAITING_GATEPASS למעלה.
+        if (existing.status === 'pending_approval' && existingDept === 'cus1' && autoSendEnabled(decision.route, existingDept, existing)) {
+          const email = composeRelease(rec, decision, importer);
+          await sendOrDefer(rec.file_number, email, summary, existingDept);
           continue;
         }
         // תיק קיים אחר — משלימים release_date מהדוח אם חסר (לא נוגעים בסטטוס/היסטוריה)
@@ -234,17 +291,32 @@ async function commit() {
         ...base,
         draft_payload: { route: decision.route, needs_review: !!decision.needs_review, email, alerts: decision.alerts || [] },
       };
+      const dept = importer?.department || null;
 
-      // Task 6 — שליחה אוטומטית רק למסלולי ההעברה לחיפה (co_loader/terminal), מאחורי דגל.
-      if (autoSendEnabled(decision.route)) {
-        // הרשומה חייבת להתקיים לפני חיפוש ה-gatepass (setGatepass מבצע UPDATE)
-        shipments.upsert({ ...withDraft, status: STATUS.AWAITING_GATEPASS });
-        await sendOrDefer(rec.file_number, email, summary);
+      // חתך-גיל האוטומציה (Task 1, תוספת per-department): נכתב תמיד ל-DB *לפני* בדיקת
+      // הזכאות לאוטומציה, כדי ש-first_seen יהיה קיים ברשומה בזמן הבדיקה (תיק חדש
+      // שנוצר באותו מחזור קומיט חייב first_seen אמיתי — לא ניתן להעריך חתך-גיל בלעדיו).
+      // ברירת מחדל: AWAITING_PDF (המסלול הרגיל) — משודרג בהמשך אם אוטומציה זכאית.
+      const savedRec = shipments.upsert({ ...withDraft, status: STATUS.AWAITING_PDF });
+
+      // Task 6 — שליחה אוטומטית רק למסלולי ההעברה לחיפה (co_loader/terminal), מאחורי
+      // מצב-מחלקה + חתך-גיל (auto_send_excluded + epoch, services/automation.js).
+      // dry_run (תוספת אוטומציה): מריצים את כל הבדיקה/סימולציה, אך התיק *נשאר* בנתיב
+      // הרגיל (AWAITING_PDF -> pending_approval) — לא עובר ל-AWAITING_GATEPASS, כדי
+      // שלא ייצא מתור האישורים הרגיל וימתין לטיפול אנושי כרגיל.
+      if (autoSendModeForDept(dept) === 'dry_run' && autoSendEnabled(decision.route, dept, savedRec)) {
+        await sendOrDefer(rec.file_number, email, summary, dept); // רושם סימולציה ל-dry_run_log בלבד
+        const preload = await preloadedGatepass(rec.file_number);
+        if (preload && preload.path) summary.pdf_preloaded += 1;
+        else summary.awaiting_pdf += 1;
+      } else if (autoSendEnabled(decision.route, dept, savedRec)) {
+        // הרשומה כבר קיימת (upsert למעלה) — נדרש לפני חיפוש ה-gatepass (setGatepass מבצע UPDATE)
+        shipments.upsert({ file_number: rec.file_number, status: STATUS.AWAITING_GATEPASS });
+        await sendOrDefer(rec.file_number, email, summary, dept);
       } else {
         // הטיוטה נבנית מיד, אך מוחזקת מחוץ לתור האישורים עד שיצורף gatepass PDF
         // (אוטומטית ב-gatepassFetcher או ידנית מכרטיס התיק). setGatepass יעביר אז
         // אוטומטית ל-pending_approval. עד אז — נראית רק בדשבורד/כרטיס, ללא שליחה.
-        shipments.upsert({ ...withDraft, status: STATUS.AWAITING_PDF });
         // Task 1 (2026-07-14) — בדיקה מקדימה מיידית: אם ה-PDF כבר יושב בתיבה, התיק
         // עובר ל-pending_approval באותו מחזור קומיט (attachFromMessages/setGatepass
         // מבצעים את המעבר). אם לא נמצא — נשאר "ממתין ל-PDF" כרגיל.
@@ -343,6 +415,7 @@ function status() {
     last: lastRun,
     scan: scanCache ? { scannedAt: scanCache.scannedAt, count: scanCache.count ?? (scanCache.records || []).length, error: scanCache.error } : null,
     nextCommitAt,
+    automation: automation.getState(),
   };
 }
 
@@ -352,6 +425,8 @@ module.exports = {
   runOnce: runNow, // תאימות לאחור (reset-shipments / endpoint ידני) — הרצה מלאה מיידית
   // תזמון
   start, stop, status,
+  // אוטומציה — off/dry_run/on (מצב לכל מחלקה, ראו services/automation.js)
+  autoSendModeForDept, autoSendEnabled, sendOrDefer,
   // חשוף לבדיקות
   inScope, msUntilNextCommit,
 };

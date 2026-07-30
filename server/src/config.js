@@ -41,6 +41,20 @@ const config = load('config.json');
 const coLoadersRaw = load('co_loaders.json');
 const terminalsRaw = load('terminals.json');
 
+/**
+ * מיגרציה בזיכרון (legacy — לא בשימוש עוד ע"י שער האוטומציה): auto_send_haifa_transfer
+ * עובר מ-boolean למחרוזת תלת-מצבית off/dry_run/on. true (ישן) -> on, false/חסר -> off.
+ * לא כותב בחזרה לקובץ. הוחלף במצב per-department ב-data/automation.json
+ * (services/automation.js) — הדגל הגלובלי הזה נשאר כאן רק לתאימות/מסמכים היסטוריים.
+ */
+(function migrateAutoSendMode() {
+  const ff = config.feature_flags || (config.feature_flags = {});
+  const raw = ff.auto_send_haifa_transfer;
+  if (raw === true) ff.auto_send_haifa_transfer = 'on';
+  else if (raw === false || raw === undefined || raw === null) ff.auto_send_haifa_transfer = 'off';
+  // כבר מחרוזת (off/dry_run/on) — נשאר כפי שהוא
+})();
+
 // override סביבתי קל (PORT/HOST/REPORT_PATH) מעל config.json
 const PORT = Number(process.env.PORT || config.server?.port || 4000);
 const HOST = process.env.HOST || config.server?.host || '0.0.0.0';

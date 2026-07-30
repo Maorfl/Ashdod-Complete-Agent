@@ -71,6 +71,7 @@ export interface Shipment {
   type: string;
   gatepass_pdf_path?: string | null;
   auto_sent?: number; // 1 = נשלח אוטומטית (העברה לחיפה) ללא אישור אנושי (Task 6)
+  auto_send_excluded?: number; // 1 = חסום קבוע מאוטומציה (תיק שהיה קיים לפני הפעלת חתך-הגיל)
   whitelisted?: boolean; // מחושב בשרת (scope.js): האם הלקוח ברשימת CUS1 — defense in depth
   real_recipients?: boolean; // הטיוטה נושאת נמענים אמיתיים (לא override) — אישור ישלח מייל אמיתי
   draft?: Draft | null;
@@ -172,7 +173,22 @@ export const api = {
   coLoaders: () => req<Record<string, ContactEntry>>('/co-loaders'),
   saveCoLoaders: (data: Record<string, ContactEntry>) =>
     req<Record<string, ContactEntry>>('/co-loaders', { method: 'PUT', body: JSON.stringify(data) }),
+
+  // אוטומציה (העברה לחיפה) — מצב לכל מחלקה + kill switch, חי מ-data/automation.json
+  automationState: () => req<AutomationState>('/automation'),
+  setAutomationDept: (dept: string, mode: AutomationMode) =>
+    req<AutomationState>('/automation/department/' + encodeURIComponent(dept), { method: 'PUT', body: JSON.stringify({ mode }) }),
+  setAutomationKillSwitch: (on: boolean) =>
+    req<AutomationState>('/automation/kill-switch', { method: 'PUT', body: JSON.stringify({ on }) }),
 };
+
+// מצב האוטומציה (העברה לחיפה) — לכל מחלקה off/dry_run/on, + kill switch + epoch
+export type AutomationMode = 'off' | 'dry_run' | 'on';
+export interface AutomationState {
+  killSwitch: boolean;
+  departments: Record<'cus1' | 'cus2' | 'cus3', AutomationMode>;
+  epoch: string | null;
+}
 
 // entry גמיש — שדות משתנים בין מסוף לקו-לואדר; emails משותף לשניהם
 export interface ContactEntry {

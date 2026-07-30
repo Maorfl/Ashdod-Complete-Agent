@@ -17,6 +17,7 @@
 const { config } = require('../config');
 const shipments = require('../db/shipments');
 const graph = require('./graphMail');
+const automation = require('./automation');
 
 const TRANSIT_STATUS = 'יצא לחיפה';
 const AGE_DAYS = 2;
@@ -125,6 +126,43 @@ function startOfToday(now = Date.now()) {
   return d.getTime();
 }
 
+// ---------- בלוק אוטומציה (תוספת, נפרדת/ניתנת-להסרה) ----------
+// סף "תקוע" עקבי עם client/src/status.ts (isStaleHold) — ניתן לשינוי עתידי דרך config.
+const STALE_HOLD_HOURS = Number(config.feature_flags?.stale_hold_threshold_hours || 24);
+const HELD_STATUSES = new Set(['awaiting_gatepass', shipments.AWAITING_PDF_STATUS]);
+
+/**
+ * collectAutomationStats — לכל מחלקה, ב-24 השעות האחרונות:
+ *   autoSent  — תיקים שנשלחו אוטומטית היום (auto_sent=1, agent_sent_at היום)
+ *   heldNow   — תיקים המוחזקים כעת (awaiting_gatepass / ממתין ל-PDF), כולם — סיבת
+ *               ההחזקה היחידה כיום היא חוסר gatepass PDF
+ *   staleNow  — מתוך heldNow, כמה חוצים את סף ה"תקוע" (24 שעות כברירת מחדל)
+ *   mode      — מצב האוטומציה האפקטיבי של אותה מחלקה עצמה (off/dry_run/on, אחרי
+ *               מתג-הכיבוי הגלובלי) — per-department, לא גלובלי (services/automation.js)
+ */
+function collectAutomationStats(now = Date.now()) {
+  const dayAgo = now - DAY_MS;
+  const byDept = {};
+  for (const d of DEPTS) byDept[d] = { autoSent: 0, heldNow: 0, staleNow: 0, mode: 'off' };
+
+  for (const s of shipments.all()) {
+    if (!byDept[s.department]) continue;
+    if (s.auto_sent && s.agent_sent_at && Date.parse(s.agent_sent_at) >= dayAgo) {
+      byDept[s.department].autoSent += 1;
+    }
+    if (HELD_STATUSES.has(s.status)) {
+      byDept[s.department].heldNow += 1;
+      const h = s.status_updated_at ? (now - Date.parse(s.status_updated_at)) / 3600000 : null;
+      if (h !== null && h >= STALE_HOLD_HOURS) byDept[s.department].staleNow += 1;
+    }
+  }
+
+  for (const d of DEPTS) {
+    try { byDept[d].mode = automation.effectiveDeptMode(d); } catch { /* לא זמין בבדיקות מבודדות */ }
+  }
+  return { byDept };
+}
+
 /**
  * collectCounts — לכל מחלקה, מוני היום:
  *   released       — תיקים שנצפו לראשונה היום (כל תיק שמור הוא אשדוד/תחנת מכס 2)
@@ -170,8 +208,36 @@ const TILE = (bg, fg, n, label) => `
         </td></tr>
       </table>`;
 
+// בלוק אוטומציה (New Task, תוספת נפרדת) — עיצוב ג׳ עקבי: כותרת אפורה-כהה קטנה,
+// אריחים דקים יותר מהמונים הראשיים. off מוצג כהודעת "כבוי" מפורשת (לא "0 נשלחו")
+// כדי שלא יתפרש כתקלה. dry_run מסומן במפורש כסימולציה. מצב per-department (לא גלובלי).
+function automationBlockHtml(deptAuto) {
+  if (deptAuto.mode === 'off') {
+    return `
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#ffffff;border-left:1px solid #e2e2e2;border-right:1px solid #e2e2e2;">
+      <tr><td style="padding:4px 24px 16px;">
+        <div style="font-size:12px;color:#8a8a8a;font-weight:600;">אוטומציה (העברה לחיפה): ⏸ כבויה</div>
+      </td></tr>
+    </table>`;
+  }
+  const modeLabel = deptAuto.mode === 'dry_run' ? '🧪 סימולציה (dry run — לא נשלח בפועל)' : '🟢 פעילה';
+  return `
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#ffffff;border-left:1px solid #e2e2e2;border-right:1px solid #e2e2e2;">
+      <tr><td style="padding:4px 24px 4px;">
+        <div style="font-size:12px;color:#555555;font-weight:700;">אוטומציה (העברה לחיפה) — ${modeLabel}</div>
+      </td></tr>
+      <tr><td style="padding:4px 16px 16px;">
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>
+          <td width="33%" style="padding:4px;">${TILE('#E1F5EE', '#0F6E56', deptAuto.autoSent, deptAuto.mode === 'dry_run' ? 'היו נשלחות (סימולציה)' : 'נשלחו אוטומטית')}</td>
+          <td width="33%" style="padding:4px;">${TILE('#FFF6E0', '#8A6D1D', deptAuto.heldNow, 'ממתינים ל-gatepass PDF')}</td>
+          <td width="33%" style="padding:4px;">${TILE('#FAECE7', '#993C1D', deptAuto.staleNow, `תקועים מעל ${STALE_HOLD_HOURS} שעות`)}</td>
+        </tr></table>
+      </td></tr>
+    </table>`;
+}
+
 // בונה את מייל סיכום המונים למחלקה בודדת (נשלח תמיד, גם כשכל המונים 0)
-function buildCountsEmail(dept, c) {
+function buildCountsEmail(dept, c, deptAuto) {
   const to = config.departments?.[dept]?.email;
   const deptName = config.departments?.[dept]?.name || dept.toUpperCase();
   const dateStr = fmtFullDate();
@@ -196,6 +262,8 @@ function buildCountsEmail(dept, c) {
         </tr></table>
       </td></tr>
     </table>
+
+    ${automationBlockHtml(deptAuto)}
 
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#0F2A3F;">
       <tr><td style="padding:16px 24px;">
@@ -233,21 +301,23 @@ async function runCountsReport(now = Date.now()) {
     return { skipped: 'feature_off', at: new Date().toISOString() };
   }
   const byDept = collectCounts(now);
+  const auto = collectAutomationStats(now);
   const results = [];
   for (const dept of DEPTS) {
     const c = byDept[dept];
-    const email = buildCountsEmail(dept, c);
+    const deptAuto = auto.byDept[dept];
+    const email = buildCountsEmail(dept, c, deptAuto);
     if (!email.to.length) {
       console.warn(`[dailyReport] אין כתובת מייל למחלקה ${dept} — דילוג (סיכום מונים)`);
       continue;
     }
     try {
       await graph.sendMail(email);
-      console.log(`[dailyReport] נשלח סיכום מונים ל-${dept} (${email.to[0]}) — שוחררו ${c.released}, העברות ${c.transfers}, שינויי סטטוס ${c.statusChanges}, לטיפול ${c.attention}, פעילים בדשבורד ${c.activeTotal}`);
-      results.push({ dept, to: email.to[0], counts: c, ok: true });
+      console.log(`[dailyReport] נשלח סיכום מונים ל-${dept} (${email.to[0]}) — שוחררו ${c.released}, העברות ${c.transfers}, שינויי סטטוס ${c.statusChanges}, לטיפול ${c.attention}, פעילים בדשבורד ${c.activeTotal}, אוטומציה[${deptAuto.mode}] נשלחו ${deptAuto.autoSent} ממתינים ${deptAuto.heldNow} תקועים ${deptAuto.staleNow}`);
+      results.push({ dept, to: email.to[0], counts: c, automation: deptAuto, ok: true });
     } catch (e) {
       console.error(`[dailyReport] כשל שליחת סיכום מונים ל-${dept}: ${e.message}`);
-      results.push({ dept, to: email.to[0], counts: c, ok: false, error: e.message });
+      results.push({ dept, to: email.to[0], counts: c, automation: deptAuto, ok: false, error: e.message });
     }
   }
   const summary = { kind: 'counts', sent: results.filter((r) => r.ok).length, results, at: new Date().toISOString() };
@@ -336,4 +406,5 @@ module.exports = {
   start, stop, status, runReport, runCountsReport,
   // חשוף לבדיקות
   collectStale, collectCounts, buildDeptEmail, buildCountsEmail, msUntilNextRun, isEnabled,
+  collectAutomationStats,
 };

@@ -18,8 +18,15 @@ export default function ConfirmModal({
 }) {
   const confirmRef = useRef<HTMLButtonElement>(null);
 
+  // פוקוס ראשוני על כפתור האישור — פעם אחת בעת פתיחת המודאל בלבד. לא תלוי ב-onCancel,
+  // כדי שהורה שמעביר onCancel כפונקציית inline חדשה בכל render (כפי שקורה כשיש
+  // input בתוך המודאל וההורה מתעדכן על כל הקשה) לא יגרום לגניבת פוקוס חוזרת מהשדה.
   useEffect(() => {
     confirmRef.current?.focus();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
     const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onCancel(); };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);

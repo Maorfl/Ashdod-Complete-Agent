@@ -44,12 +44,16 @@ async function main() {
   wipe();
   console.log('  נמחקו shipments:', before, '| status_history:', histBefore);
 
-  if (config.feature_flags?.auto_send_haifa_transfer) {
-    console.warn('  ⚠ auto_send_haifa_transfer פעיל — הזריעה מחדש עלולה לשלוח אוטומטית מיילי העברה לחיפה!');
-  }
   console.log('  זורע מחדש מהדוח (scope: LCL + נציג + 19 לקוחות ההעברה לחיפה)…');
   const summary = await reportWatcher.runOnce();
   console.log('  תוצאת זריעה:', JSON.stringify(summary));
+
+  // חתך-גיל האוטומציה (Task 1): הזריעה יוצרת מחדש first_seen "עכשווי" לכל התיקים,
+  // מה שהיה עוקף את חתך-הגיל (הופך את כל הבאקלוג המשוחזר לזכאי אוטומציה, בדיוק מה
+  // שהחתך נועד למנוע). מסמנים שוב את כולם כ-auto_send_excluded=1 מיד אחרי הזריעה —
+  // אידמפוטנטי (migrateAutoSendExclusion מסמן רק שורות NULL, שזה כולן כרגע).
+  const stampedAfterReseed = shipments.migrateAutoSendExclusion();
+  console.log(`  ⚠ אוטומציה: ${stampedAfterReseed} תיקים שנזרעו מחדש סומנו כמחוץ לאוטומציה (auto_send_excluded) — הזריעה אינה "תיק חדש" לצורך חתך-הגיל.`);
 
   // 3 — שחזור סימון sent לתיקים שנקלטו שוב מהדוח
   let restored = 0;

@@ -66,6 +66,48 @@ export function canSend(s: Pick<Shipment, 'route' | 'draft' | 'gatepass_pdf_path
   return !requiresGatepass(s) || !!s.gatepass_pdf_path;
 }
 
+/**
+ * staleHold — תוספת אוטומציה (נפרדת, ניתנת להסרה): תיק ש"נתקע" בהמתנה ל-gatepass PDF
+ * (awaiting_gatepass / "ממתין ל-PDF") מעל סף שעות מוגדר מסמן פער נתונים אמיתי —
+ * לא מצב חולף. מחושב מ-status_updated_at הקיים, בלי עמודה/state חדשים בשרת.
+ * נגזר מ-hoursSince הקיים; נקה אוטומטית ברגע שהסטטוס משתנה (הזמן מתאפס איתו).
+ */
+const STALE_HOLD_STATUSES = new Set(['awaiting_gatepass', 'ממתין ל-PDF']);
+export const STALE_HOLD_THRESHOLD_HOURS = 24;
+
+export function isStaleHold(s: Pick<Shipment, 'status' | 'status_updated_at'>, thresholdHours = STALE_HOLD_THRESHOLD_HOURS): boolean {
+  if (!STALE_HOLD_STATUSES.has(s.status)) return false;
+  const h = hoursSince(s.status_updated_at);
+  return h !== null && h >= thresholdHours;
+}
+
+/** תיאור אנושי-פעולה של הסיבה שהתיק תקוע — לא קוד שגיאה פנימי */
+export function staleHoldReason(s: Pick<Shipment, 'status'>): string {
+  return 'חסר gatepass PDF — לא ניתן לשלוח עד לצירופו (ידנית בכרטיס התיק, או אוטומטית כשיתקבל)';
+}
+
+/**
+ * needsAttentionReason — עמוד האוטומציה, סעיף "נדרש לטיפול" (Task 4): תיאור אנושי-
+ * פעולה לכל תיק שאינו בטיפול שוטף תקין. מבוסס על השדות הגולמיים הקיימים בלבד —
+ * status/reason/needs_review מה-draft — לא קוד שגיאה פנימי.
+ */
+export function needsAttentionReason(s: Pick<Shipment, 'status' | 'reason' | 'draft'>): string | null {
+  if (s.status === 'alert') {
+    if (s.reason === 'unknown_co_loader') return 'קוד קו-לואדר לא מזוהה במערכת — נדרש מיפוי ב"ניהול מסופים ומשלחים"';
+    if (s.reason === 'unknown_terminal') return 'מסוף שחרור לא מזוהה במערכת — נדרש מיפוי ב"ניהול מסופים ומשלחים"';
+    if (s.reason === 'terminal_requires_co_loader') return 'המסוף מחייב קו-לואדר אך לא נמצא קוד — נדרש בדיקה ידנית';
+    if (s.reason === 'unknown_customer') return 'לקוח לא מזוהה במערכת — נדרש מיפוי ב"ניהול יבואנים"';
+    return 'סומן להתראה — נדרשת בדיקה ידנית';
+  }
+  if (s.status === 'awaiting_gatepass' || s.status === 'ממתין ל-PDF') {
+    return 'חסר gatepass PDF — לא ניתן לשלוח עד לצירופו (ידנית בכרטיס התיק, או אוטומטית כשיתקבל)';
+  }
+  if (s.draft?.needs_review) {
+    return 'פרטי הקשר של המסוף/קו-לואדר טרם אומתו — דורש בדיקה ב"ניהול מסופים ומשלחים"';
+  }
+  return null;
+}
+
 /* ---------- זמן ---------- */
 export function hoursSince(iso?: string | null): number | null {
   if (!iso) return null;
@@ -94,6 +136,37 @@ export function timeSeverity(s: Pick<Shipment, 'status' | 'status_updated_at'>):
     if (h >= 12) return 'warn';
   }
   return '';
+}
+
+// מסלולים שנחשבים "העברה לחיפה" אמיתית לצורך כלל התצוגה הבא (co_loader/terminal
+// עם מוביל המשך אמיתי — לא יבואן "אוסף בעצמו", שאין לו למעשה המשך צד-שלישי).
+const GENUINE_HAIFA_ROUTES = ['co_loader', 'terminal'];
+
+/** האם התיק במסלול העברה-לחיפה אמיתי (לא prepaid/direct/alert/אוסף-בעצמו)? */
+export function isGenuineHaifaTransfer(s: Pick<Shipment, 'route' | 'type'>): boolean {
+  return GENUINE_HAIFA_ROUTES.includes(s.route) && s.type !== 'haifa_self';
+}
+
+/**
+ * usesNonHaifaStatusDisplay — האם תיק זה כפוף לכלל התצוגה המצומצם (שני ערכים בלבד)?
+ * חל על prepaid/direct/אוסף-בעצמו — לא על alert (שממילא מוצג "דורש בדיקה" תמיד),
+ * ולא על מסלולי העברה-לחיפה אמיתיים (co_loader/terminal עם מוביל המשך אמיתי).
+ */
+export function usesNonHaifaStatusDisplay(s: Pick<Shipment, 'route' | 'type'>): boolean {
+  return s.route !== 'alert' && !isGenuineHaifaTransfer(s);
+}
+
+/**
+ * nonHaifaStatusLabel — לתיקים שאינם העברת-חיפה אמיתית (prepaid/direct/אוסף-בעצמו):
+ * תצוגת סטטוס מצומצמת לשני ערכים בלבד, בלי תלות בסטטוס הגולמי השמור:
+ *   "שוחרר באשדוד" — פחות מ-72 שעות מאז status_updated_at (או first_seen/created_at כגיבוי)
+ *   "נדרש בדיקה"   — 72 שעות ומעלה
+ */
+export function nonHaifaStatusLabel(s: Pick<Shipment, 'status_updated_at' | 'first_seen' | 'created_at'>): string {
+  const since = s.status_updated_at || s.first_seen || s.created_at;
+  const h = hoursSince(since);
+  if (h !== null && h >= 72) return 'נדרש בדיקה';
+  return 'שוחרר באשדוד';
 }
 
 /** dd/mm/yy מתאריך ISO (yyyy-mm-dd) — עם לוכסנים, שנה בת 2 ספרות (למשל 05/07/26) */

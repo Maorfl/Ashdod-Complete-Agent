@@ -274,7 +274,7 @@ td.mono, .mono { font-family: var(--mono); }
 .table-scroll { overflow-x: auto; }
 .ship-table { min-width: 860px; }
 .ship-table thead th { background: var(--ink); color: #dbe6f0; border-bottom: 0; text-transform: none; letter-spacing: .02em; font-size: 12.5px; }
-.ship-row { cursor: pointer; transition: background .12s; }
+.ship-row { transition: background .12s; }
 .ship-row:hover { background: #f4f7fa; }
 /* שורה עם הערה — רקע מובחן שאינו מתנגש עם פס הסטטוס בתא התיק */
 .ship-row.has-notes { background: var(--row-noted); }

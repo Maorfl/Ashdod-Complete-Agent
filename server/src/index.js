@@ -9,6 +9,8 @@ const os = require('os');
 const express = require('express');
 const cors = require('cors');
 const { ROOT, PORT, HOST, config } = require('./config');
+const importersDb = require('./db/importers');
+const automation = require('./services/automation');
 const reportWatcher = require('./services/reportWatcher');
 const mailTracker = require('./services/mailTracker');
 const gatepassFetcher = require('./services/gatepassFetcher');
@@ -27,6 +29,7 @@ app.use('/api/approvals', require('./routes/approvals'));
 app.use('/api/sent-emails', require('./routes/sentEmails'));
 app.use('/api', require('./routes/contacts')); // /api/terminals + /api/co-loaders
 app.use('/api/version', require('./routes/version'));
+app.use('/api/automation', require('./routes/automation'));
 
 app.get('/api/health', (req, res) => res.json({ ok: true, time: new Date().toISOString() }));
 
@@ -67,6 +70,13 @@ app.listen(PORT, HOST, async () => {
     if (v?.update_required) console.log(`  ⚠️ עדכון זמין: ${v.current} → ${v.latest}`);
     else if (v?.source === 'not_configured') console.log('  (בדיקת גרסה: github.owner לא הוגדר)');
   }
+  const migratedTypes = importersDb.migrateLegacyTypes();
+  if (migratedTypes) console.log(`  מיגרציה: ${migratedTypes} יבואנים עם סוג טיפול ישן (direct/tls) הועברו ל"לא מסווג".`);
+  // אתחול חד-פעמי של האוטומציה: אם data/automation.json טרם קיים, מסמן את כל
+  // התיקים הקיימים כמחוץ לאוטומציה וקובע epoch=now (services/automation.js).
+  // בהרצות הבאות (הקובץ כבר קיים) זו קריאה זולה שלא עושה דבר.
+  const automationState = automation.ensureInitialized();
+  console.log(`  אוטומציה: epoch=${automationState.epoch} | מחלקות: cus1=${automationState.departments.cus1} cus2=${automationState.departments.cus2} cus3=${automationState.departments.cus3}${automationState.killSwitch ? ' | ⏸ kill switch פעיל' : ''}`);
   reportWatcher.start();
   console.log(`  Report Watcher פעיל (כל ${config.poll_interval_minutes} דק').`);
   retention.start();

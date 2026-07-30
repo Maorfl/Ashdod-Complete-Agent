@@ -20,8 +20,6 @@ const TYPES = [
   { v: 'unknown', l: 'לא מסווג' },
   { v: 'haifa_cont', l: 'מוביל המשך קבוע' },
   { v: 'haifa_self', l: 'אוסף בעצמו' },
-  { v: 'tls', l: 'TLS' },
-  { v: 'direct', l: 'ישיר ללקוח' },
 ];
 
 function listToText(a?: string[]) { return (a || []).join(', '); }

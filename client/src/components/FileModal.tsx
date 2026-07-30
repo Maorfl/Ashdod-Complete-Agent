@@ -236,6 +236,16 @@ export default function FileModal({
                                 <th>חומר מסוכן</th>
                                 <td>{item.hazardous === "Yes" ? "⚠ כן" : "לא"}</td>
                             </tr>
+                            {!!item.auto_send_excluded && (
+                                <tr>
+                                    <th>אוטומציה</th>
+                                    <td>
+                                        <span className="st-badge" style={{ ["--c" as any]: "var(--muted)" }} title="תיק זה היה קיים במעקב לפני הפעלת האוטומציה — לעולם לא יישלח אוטומטית, רק ידנית דרך אישורי שליחה">
+                                            מחוץ לאוטומציה
+                                        </span>
+                                    </td>
+                                </tr>
+                            )}
                             {requiresGatepass(item) && (
                                 <tr>
                                     <th>gatepass PDF</th>

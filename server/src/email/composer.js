@@ -88,9 +88,11 @@ function composeRelease(rec, decision, importer) {
   const cont = decision.continuation || {};
   // שם הגורם המטפל באשדוד (ללא "צוות" — מתווסף בתבנית). ברירת מחדל: "המסוף".
   const handlerName = handler.contact || handler.name || handler.downloader || 'המסוף';
-  // מגדר/מספר של הנמען שאליו פונים (קו-לואדר מגיע עם נתונים; מסוף — ברירת מחדל זכר/רבים)
-  const hg = handler.gender || 'm';
-  const hn = handler.number || 'p';
+  // הפנייה לקו-לואדר/מסוף עצמו תמיד בזכר-רבים ("לטיפולכם"/"אישורכם"), ללא תלות בגדר/מספר
+  // המוגדרים בקונפיג לאותו handler — זה שונה משורת מוביל-ההמשך (continuationLine) למטה,
+  // שממשיכה להישען על גדר/מספר האמיתיים של מוביל ההמשך (למשל סמא f/s).
+  const hg = 'm';
+  const hn = 'p';
 
   // נושא לפי הנוהל: "{לקוח} \ {תיק} – העברה לחיפה"
   const transferSubject = `${rec.customer_name} \\ ${rec.file_number} – העברה לחיפה`;

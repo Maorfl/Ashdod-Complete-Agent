@@ -46,6 +46,19 @@ CREATE TABLE IF NOT EXISTS sent_emails (
   auto INTEGER,
   sent_at DATETIME
 );
+CREATE TABLE IF NOT EXISTS dry_run_log (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  file_number TEXT,
+  customer_name TEXT,
+  route TEXT,
+  from_address TEXT,
+  to_addresses TEXT,
+  cc_addresses TEXT,
+  subject TEXT,
+  body TEXT,
+  would_attach_gatepass INTEGER,
+  simulated_at DATETIME
+);
 `);
 
 // עמודות עבודה של הסוכן — מתווספות רק אם חסרות (לא הרסני)
@@ -68,6 +81,7 @@ const AGENT_COLUMNS = {
   performer_unknown: 'INTEGER', // 1 = מבצע ההעברה אינו ישות מוכרת ב-co_loaders/terminals (Task 8)
   site_des: 'TEXT', // מסוף השחרור (Cust. Stor. Site Des) — קובע את יעד ההגעה בחיפה (haifa_arrival)
   fcl_lcl: 'TEXT', // FCL/LCL מהדוח — נספר לתצוגה בדשבורד; רק LCL זכאי להעברה לחיפה
+  auto_send_excluded: 'INTEGER', // 1 = חסום קבוע מאוטומציה (חתך גיל אוטומציה — ראו migrateAutoSendExclusion)
 };
 (function ensureAgentColumns() {
   const existing = new Set(db.prepare('PRAGMA table_info(shipments)').all().map((c) => c.name));
@@ -75,6 +89,25 @@ const AGENT_COLUMNS = {
     if (!existing.has(col)) db.exec(`ALTER TABLE shipments ADD COLUMN ${col} ${type}`);
   }
 })();
+
+/**
+ * migrateAutoSendExclusion — חד-פעמי, אידמפוטנטי: מסמן קבוע auto_send_excluded=1 על
+ * כל תיק שכבר קיים ב-DB *ברגע הקריאה הראשונה* לאחר הוספת מנגנון האוטומציה per-department
+ * (חתך גיל, Task 1). תיקים חדשים (auto_send_excluded IS NULL כברירת מחדל) אינם מסומנים.
+ *
+ * אידמפוטנטיות: לאחר הריצה הראשונה, לתיקים הישנים auto_send_excluded=1 (לא NULL עוד).
+ * תיקים חדשים שנכנסים מאותו רגע ואילך נשארים NULL (=לא מסומן) גם בהרצות חוזרות —
+ * WHERE auto_send_excluded IS NULL בלבד, כך שתיק "חדש" לעולם לא נתפס בטעות אם הפונקציה
+ * נקראת שוב (למשל restart נוסף לפני שהאפיצ'ה קראה ל-markEpochNow).
+ *
+ * הקריאה בפועל (מתי "עכשיו" זה) אחראית עליה שכבת האוטומציה (services/automation.js):
+ * בפעם הראשונה שנקבע epoch (data/automation.json חסר) — קוראים לכאן ואז קובעים epoch.
+ * מחזיר את מספר השורות שסומנו (לצורך לוג/דיווח).
+ */
+function migrateAutoSendExclusion() {
+  const res = db.prepare('UPDATE shipments SET auto_send_excluded = 1 WHERE auto_send_excluded IS NULL').run();
+  return res.changes;
+}
 
 const OWNS_STATUSES = new Set(config.tracking?.owns_file_statuses || ['sent']);
 const SENT_STATUS = config.tracking?.sent_status || 'sent';
@@ -211,6 +244,27 @@ function sentEmails(limit = 200) {
   return db.prepare('SELECT * FROM sent_emails ORDER BY sent_at DESC, id DESC LIMIT ?').all(limit);
 }
 
+/**
+ * dry_run_log — לוג נפרד (append-only) של "מה היה נשלח" במצב dry_run (Task 2, תוספת
+ * אוטומציה). לא נוגע ב-sent_emails/markSent — הטיוטה נשארת בתור האישורים הרגיל.
+ * טבלה נפרדת בכוונה כדי שהמנגנון יהיה ניתן להסרה נקייה בלי לגעת בשליחה האמיתית.
+ */
+function logDryRun({ file_number, customer_name, route, email, wouldAttachGatepass = false }) {
+  db.prepare(`INSERT INTO dry_run_log
+    (file_number, customer_name, route, from_address, to_addresses, cc_addresses, subject, body, would_attach_gatepass, simulated_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`).run(
+    String(file_number || ''), customer_name || null, route || null,
+    email?.from || null,
+    JSON.stringify(email?.to || []), JSON.stringify(email?.cc || []),
+    email?.subject || null, email?.body || null,
+    wouldAttachGatepass ? 1 : 0, new Date().toISOString(),
+  );
+}
+
+function dryRunLog(limit = 200) {
+  return db.prepare('SELECT * FROM dry_run_log ORDER BY simulated_at DESC, id DESC LIMIT ?').all(limit);
+}
+
 // מחיקת תיק מהמעקב + היסטוריית הסטטוסים שלו (טרנזקציה). לניקוי רשומות שלא היו
 // אמורות להיכנס לצנרת (out-of-scope). מחזיר מספר שורות shipments שנמחקו (0/1).
 const _remove = db.transaction((fileNumber) => {
@@ -261,11 +315,14 @@ module.exports = {
   remove,
   logSentEmail,
   sentEmails,
+  logDryRun,
+  dryRunLog,
   all,
   byStatus,
   history,
   statusChangesSince,
   counts,
+  migrateAutoSendExclusion,
   SENT_STATUS,
   AWAITING_PDF_STATUS,
 };

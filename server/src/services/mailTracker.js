@@ -64,6 +64,11 @@ async function processMessage(msg) {
 
   const rec = resolveShipment(id, match.rule);
   if (!rec) return { skipped: 'not_found', id, terminal: match.key };
+  // הגעה כבר נרשמה (או שהתיק כבר נמסר) — לא בונים טיוטת תגובת-הגעה כפולה עבור אותו תיק,
+  // גם אם מגיעה הודעת הגעה נוספת מהמסוף (לדוגמה שגיאה/שכפול בצד המסוף).
+  if (rec.status === 'התקבל בחיפה' || rec.status === 'נמסר ללקוח') {
+    return { skipped: 'already_arrived', file: rec.file_number };
+  }
   if (!shipments.ownsFile(rec.file_number)) return { skipped: 'not_owned', file: rec.file_number };
 
   // עדכון מעקב + טיוטת תגובת הגעה לתור האישורים (לא נשלח דבר).

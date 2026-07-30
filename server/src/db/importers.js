@@ -125,4 +125,18 @@ function normalize(d) {
   };
 }
 
-module.exports = { list, readByFolder, findByName, create, update, remove, safeFolder, instructionsText, writeInstructions, IMP_ROOT };
+// מיגרציה חד-פעמית: סוג טיפול צומצם ל-3 אפשרויות (unknown/haifa_cont/haifa_self) —
+// יבואנים ישנים עם type=direct/tls (אפשרויות שהוסרו מה-UI) עוברים ל-unknown.
+// אידמפוטנטי — לאחר ריצה ראשונה אין עוד יבואנים כאלה.
+const LEGACY_TYPES = new Set(['direct', 'tls']);
+function migrateLegacyTypes() {
+  let moved = 0;
+  for (const imp of list()) {
+    if (!LEGACY_TYPES.has(imp.type)) continue;
+    update(imp._folder, { type: 'unknown' });
+    moved += 1;
+  }
+  return moved;
+}
+
+module.exports = { list, readByFolder, findByName, create, update, remove, safeFolder, instructionsText, writeInstructions, migrateLegacyTypes, IMP_ROOT };

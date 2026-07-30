@@ -1,0 +1,9 @@
+{
+  "killSwitch": false,
+  "departments": {
+    "cus1": "on",
+    "cus2": "off",
+    "cus3": "off"
+  },
+  "epoch": "2026-07-30T08:58:01.720Z"
+}

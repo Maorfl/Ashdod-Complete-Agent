@@ -1,0 +1,22 @@
+{
+  "name": "KAL- BINYAN LTD.",
+  "company_id": "510670425",
+  "emails": [
+    "aleksander.revzin@kalbinyan.com"
+  ],
+  "address": "",
+  "notes": "",
+  "department": "cus1",
+  "service_rep": "",
+  "type": "haifa_cont",
+  "dangerous_rule": false,
+  "cont_general": "גולד בונד",
+  "contact_names": "",
+  "cont_general_emails": [
+    "hlcl@goldbond.co.il"
+  ],
+  "cont_dangerous_emails": [],
+  "aliases": [],
+  "seen_stations": [],
+  "files": []
+}

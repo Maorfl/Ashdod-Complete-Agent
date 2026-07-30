@@ -14,6 +14,8 @@ import EmailListEditor from '../components/EmailListEditor';
 import {
   STATUS_META, STATUS_ORDER, statusKeyOf, statusLabel, MANUAL_STATUSES,
   formatDateHe, formatDuration, timeSeverity, canSend, StatusKey,
+  usesNonHaifaStatusDisplay, nonHaifaStatusLabel,
+  isStaleHold, staleHoldReason,
 } from '../status';
 
 export default function Dashboard() {
@@ -90,6 +92,10 @@ export default function Dashboard() {
   }, [agentItems, filter, q]);
 
   const openItem = useMemo(() => visible.find((s) => s.file_number === openFile) || null, [visible, openFile]);
+
+  // תיקים תקועים בהמתנה ל-gatepass מעל הסף (תוספת אוטומציה, נפרדת/ניתנת-להסרה) —
+  // מחושב מ-status_updated_at הקיים; מתעדכן אוטומטית עם רענון הדשבורד.
+  const staleHolds = useMemo(() => agentItems.filter((s) => isStaleHold(s)), [agentItems]);
 
   function toggleFilter(k: StatusKey | 'all') {
     setFilter((f) => (f === k ? 'all' : k));
@@ -201,6 +207,21 @@ export default function Dashboard() {
 
       {err && <div className="flash err">{err} — ודאו שהשרת פעיל (npm start).</div>}
 
+      {staleHolds.length > 0 && (
+        <div className="flash err" style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+          <div><b>⏰ {staleHolds.length} תיקים תקועים מעל {24} שעות — נדרש טיפול בפער נתונים:</b></div>
+          {staleHolds.slice(0, 5).map((s) => (
+            <div key={s.file_number}>
+              <button className="btn sm ghost" onClick={() => setOpenFile(s.file_number)} style={{ padding: '0 4px' }}>
+                <span className="mono">{s.file_number}</span>
+              </button>
+              {' '}({s.department ? s.department.toUpperCase() : '—'}, {formatDuration(s.status_updated_at)}) — {staleHoldReason(s)}
+            </div>
+          ))}
+          {staleHolds.length > 5 && <div>ועוד {staleHolds.length - 5}…</div>}
+        </div>
+      )}
+
       <div className="strip">
         {STATUS_META.map((m) => (
           <button
@@ -259,7 +280,7 @@ export default function Dashboard() {
                   const meta = STATUS_META.find((m) => m.key === k);
                   const sev = timeSeverity(s);
                   return (
-                    <tr key={s.file_number} className={'ship-row' + (s.notes ? ' has-notes' : '') + (s.performer_unknown ? ' performer-unknown' : '')} onClick={() => setOpenFile(s.file_number)}>
+                    <tr key={s.file_number} className={'ship-row' + (s.notes ? ' has-notes' : '') + (s.performer_unknown ? ' performer-unknown' : '')}>
                       <td className="mono file-cell" style={{ ['--c' as any]: meta?.cssVar || 'var(--line)' }}>
                         {s.file_number}{s.hazardous === 'Yes' && <span title="חומר מסוכן"> ⚠</span>}
                       </td>
@@ -273,8 +294,19 @@ export default function Dashboard() {
                           return parts.length === 3 ? `${parts[0]}/${parts[1]}/${parts[2]}` : formatDateHe(added);
                         })()}</span></td>
                       <td>
-                        <span className="st-badge" style={{ ['--c' as any]: meta?.cssVar || 'var(--muted)' }}>{statusLabel(s.status)}</span>
+                        <span className="st-badge" style={{ ['--c' as any]: meta?.cssVar || 'var(--muted)' }}>
+                          {usesNonHaifaStatusDisplay(s) ? nonHaifaStatusLabel(s) : statusLabel(s.status)}
+                        </span>
                         {s.auto_sent ? <span className="st-badge" style={{ ['--c' as any]: 'var(--st-arrived)', marginInlineStart: 4 }} title="נשלח אוטומטית ללא אישור אנושי (העברה לחיפה)">⚡ אוטומטי</span> : null}
+                        {isStaleHold(s) ? (
+                          <span
+                            className="st-badge"
+                            style={{ ['--c' as any]: 'var(--st-alert)', marginInlineStart: 4 }}
+                            title={`תקוע ${formatDuration(s.status_updated_at)} — ${staleHoldReason(s)}`}
+                          >
+                            ⏰ תקוע — נדרש טיפול
+                          </span>
+                        ) : null}
                       </td>
                       <td>
                         {s.transfer_performer || '—'}

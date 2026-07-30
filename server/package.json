@@ -9,6 +9,7 @@
     "test:pipeline": "node src/test-pipeline.js",
     "recompose": "node src/recompose-drafts.js",
     "reset-shipments": "node src/reset-shipments.js",
+    "release-cus1-ready": "node src/release-cus1-ready.js",
     "build-importers": "node ../scripts/build-importers-from-xlsx.js"
   },
   "dependencies": {

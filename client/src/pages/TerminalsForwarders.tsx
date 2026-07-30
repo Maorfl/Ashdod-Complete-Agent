@@ -6,6 +6,7 @@
  */
 import { useEffect, useMemo, useState } from 'react';
 import { api, ContactEntry } from '../api';
+import ConfirmModal from '../components/ConfirmModal';
 import EmailListEditor from '../components/EmailListEditor';
 
 type Kind = 'terminal' | 'coloader';
@@ -16,6 +17,8 @@ export default function TerminalsForwarders() {
   const [flash, setFlash] = useState<{ t: string; ok: boolean } | null>(null);
   const [editing, setEditing] = useState<{ kind: Kind; key: string; entry: ContactEntry; isNew: boolean } | null>(null);
   const [saving, setSaving] = useState(false);
+  const [activeDelete, setActiveDelete] = useState<{ kind: Kind; key: string } | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   function load() {
     api.terminals().then(setTerminals).catch((e) => setFlash({ t: e.message, ok: false }));
@@ -58,6 +61,33 @@ export default function TerminalsForwarders() {
     }
   }
 
+  function del(kind: Kind, key: string) {
+    setActiveDelete({ kind, key });
+  }
+
+  async function performDelete() {
+    if (!activeDelete) return;
+    const { kind, key } = activeDelete;
+    setDeleting(true);
+    try {
+      if (kind === 'terminal') {
+        const next = { ...terminals };
+        delete next[key];
+        setTerminals(await api.saveTerminals(next));
+      } else {
+        const next = { ...coLoaders };
+        delete next[key];
+        setCoLoaders(await api.saveCoLoaders(next));
+      }
+      setFlash({ t: 'נמחק בהצלחה', ok: true });
+    } catch (e: any) {
+      setFlash({ t: e.message, ok: false });
+    } finally {
+      setDeleting(false);
+      setActiveDelete(null);
+    }
+  }
+
   const emailsText = (e: ContactEntry) => (e.emails || []).join(', ') || '—';
 
   return (
@@ -83,7 +113,12 @@ export default function TerminalsForwarders() {
                 <td><b>{key}</b>{e.needs_review ? <span title="ממתין לאימות"> ⏳</span> : null}</td>
                 <td style={{ fontSize: 13, color: 'var(--muted)', maxWidth: 220 }}>{e.role || '—'}</td>
                 <td className="mono" style={{ fontSize: 12, color: 'var(--muted)', maxWidth: 260, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={emailsText(e)}>{emailsText(e)}</td>
-                <td><button className="btn sm" onClick={() => openEdit('terminal', key, e)}>עריכה</button></td>
+                <td>
+                  <div className="row-actions">
+                    <button className="btn sm" onClick={() => openEdit('terminal', key, e)}>עריכה</button>
+                    <button className="btn sm danger" onClick={() => del('terminal', key)}>מחיקה</button>
+                  </div>
+                </td>
               </tr>
             ))}
             {termRows.length === 0 && <tr><td colSpan={4}><div className="empty">אין מסופים.</div></td></tr>}
@@ -107,7 +142,12 @@ export default function TerminalsForwarders() {
                 <td><b>{e.name || '—'}</b>{e.needs_review ? <span title="ממתין לפרטי קשר"> ⏳</span> : null}<div style={{ fontSize: 12, color: 'var(--muted)' }}>{e.name_en}</div></td>
                 <td>{e.contact || '—'}</td>
                 <td className="mono" style={{ fontSize: 12, color: 'var(--muted)', maxWidth: 240, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={emailsText(e)}>{emailsText(e)}</td>
-                <td><button className="btn sm" onClick={() => openEdit('coloader', key, e)}>עריכה</button></td>
+                <td>
+                  <div className="row-actions">
+                    <button className="btn sm" onClick={() => openEdit('coloader', key, e)}>עריכה</button>
+                    <button className="btn sm danger" onClick={() => del('coloader', key)}>מחיקה</button>
+                  </div>
+                </td>
               </tr>
             ))}
             {coRows.length === 0 && <tr><td colSpan={5}><div className="empty">אין משלחים.</div></td></tr>}
@@ -150,6 +190,22 @@ export default function TerminalsForwarders() {
             </div>
           </div>
         </div>
+      )}
+
+      {activeDelete && (
+        <ConfirmModal
+          title={`מחיקת ${activeDelete.kind === 'terminal' ? 'מסוף' : 'משלח'} — ${activeDelete.key}`}
+          confirmLabel="מחק"
+          danger={true}
+          busy={deleting}
+          onConfirm={performDelete}
+          onCancel={() => setActiveDelete(null)}
+        >
+          האם אתה בטוח שברצונך למחוק את ה{activeDelete.kind === 'terminal' ? 'מסוף' : 'משלח'} "{activeDelete.key}"?
+          {activeDelete.kind === 'terminal'
+            ? ' תיקים המנותבים למסוף זה עלולים ליפול ל"התראה" בסריקה הבאה עד למיפוי מחדש.'
+            : ' תיקים המנותבים לקוד זה עלולים ליפול ל"התראה" בסריקה הבאה עד למיפוי מחדש.'}
+        </ConfirmModal>
       )}
     </>
   );
