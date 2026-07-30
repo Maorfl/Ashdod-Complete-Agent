@@ -27,9 +27,18 @@ export interface Importer {
   contact_names?: string; // אנשי קשר ללקוח שאוסף בעצמו (haifa_self)
   cont_general_emails: string[];
   cont_dangerous_emails: string[];
+  contacts?: ImporterContact[]; // אנשי קשר של היבואן (Task 2) — נפרד מ-emails הכלליים
   aliases: string[];
   seen_stations?: string[];
   files?: string[];
+  missing_fields?: string[]; // נגזר בשרת (Task 2): 'emails' | 'contacts' | 'type'
+  needs_completion?: boolean; // נגזר בשרת — true אם missing_fields.length > 0
+}
+
+export interface ImporterContact {
+  name: string;
+  phone?: string;
+  email?: string;
 }
 
 export interface DraftEmail {
@@ -74,6 +83,8 @@ export interface Shipment {
   auto_send_excluded?: number; // 1 = חסום קבוע מאוטומציה (תיק שהיה קיים לפני הפעלת חתך-הגיל)
   whitelisted?: boolean; // מחושב בשרת (scope.js): האם הלקוח ברשימת CUS1 — defense in depth
   real_recipients?: boolean; // הטיוטה נושאת נמענים אמיתיים (לא override) — אישור ישלח מייל אמיתי
+  importer_missing_fields?: string[] | null; // Task 2: פערי היבואן ('emails'/'contacts'/'type'), null אם אין יבואן תואם כלל
+  importer_folder?: string | null; // תיקיית היבואן — לקישור ישיר לעריכה
   draft?: Draft | null;
 }
 

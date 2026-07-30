@@ -82,6 +82,10 @@ const AGENT_COLUMNS = {
   site_des: 'TEXT', // מסוף השחרור (Cust. Stor. Site Des) — קובע את יעד ההגעה בחיפה (haifa_arrival)
   fcl_lcl: 'TEXT', // FCL/LCL מהדוח — נספר לתצוגה בדשבורד; רק LCL זכאי להעברה לחיפה
   auto_send_excluded: 'INTEGER', // 1 = חסום קבוע מאוטומציה (חתך גיל אוטומציה — ראו migrateAutoSendExclusion)
+  gatepass_deal_id: 'TEXT', // מזהה עסקה בן 16 תווים שחולץ מעמוד "תעודת משלוח" ב-PDF (services/gatepassParser)
+  gatepass_co_loader_code: 'TEXT', // תווים 11-13 של gatepass_deal_id — קוד קו-לואדר לפי ה-PDF (לא לפי הדוח)
+  gatepass_co_loader_rule: 'TEXT', // איזה כלל החלטה (Task 2) קבע את הניתוב: match/adopt/terminal/mismatch_hold/extraction_failed
+  gatepass_parsed_at: 'DATETIME', // מתי חולץ (cache — לא מפרסרים מחדש כל פעם שה-PDF כבר קיים ונותח)
 };
 (function ensureAgentColumns() {
   const existing = new Set(db.prepare('PRAGMA table_info(shipments)').all().map((c) => c.name));
@@ -224,6 +228,18 @@ function setGatepass(fileNumber, pdfPath) {
 }
 
 /**
+ * שמירת תוצאת חילוץ הקוד מה-PDF (services/gatepassParser) — cache כך שה-PDF לא
+ * מפורש מחדש בכל מחזור קומיט. rule = 'match'|'adopt'|'terminal'|'mismatch_hold'|
+ * 'extraction_failed' (Task 2, reportWatcher). dealId/coLoaderCode עשויים להיות null
+ * כשהחילוץ נכשל (rule='extraction_failed') — עדיין נשמר כדי לא לנסות שוב על אותו PDF.
+ */
+function setGatepassParseResult(fileNumber, { dealId, coLoaderCode, rule }) {
+  db.prepare('UPDATE shipments SET gatepass_deal_id=?, gatepass_co_loader_code=?, gatepass_co_loader_rule=?, gatepass_parsed_at=? WHERE file_number=?')
+    .run(dealId || null, coLoaderCode || null, rule || null, new Date().toISOString(), String(fileNumber));
+  return get(fileNumber);
+}
+
+/**
  * sent_emails — לוג append-only של מיילים שנשלחו בפועל (לא נגזר מ-draft_payload,
  * שעלול להידרס בעריכה/recompose). נכתב בכל הצלחה של graphMail.sendMail — גם במסלול
  * האישור האנושי (routes/approvals) וגם בשליחה האוטומטית (reportWatcher.sendOrDefer).
@@ -311,6 +327,7 @@ module.exports = {
   setStatus,
   markSent,
   setGatepass,
+  setGatepassParseResult,
   addHistory,
   remove,
   logSentEmail,

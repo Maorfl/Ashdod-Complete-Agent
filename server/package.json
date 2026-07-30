@@ -8,6 +8,7 @@
     "dev": "node --watch src/index.js",
     "test:pipeline": "node src/test-pipeline.js",
     "recompose": "node src/recompose-drafts.js",
+    "recompose-gatepass-coloader": "node src/recompose-gatepass-coloader.js",
     "reset-shipments": "node src/reset-shipments.js",
     "release-cus1-ready": "node src/release-cus1-ready.js",
     "build-importers": "node ../scripts/build-importers-from-xlsx.js"
@@ -18,6 +19,7 @@
     "express": "^4.21.2",
     "iconv-lite": "^0.4.24",
     "multer": "^2.2.0",
+    "pdf-parse": "^2.4.5",
     "tesseract.js": "^5.1.1",
     "xlsx": "^0.18.5"
   }

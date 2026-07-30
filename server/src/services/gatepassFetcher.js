@@ -17,6 +17,7 @@ const { config, DATA_DIR } = require('../config');
 const graph = require('./graphMail');
 const shipments = require('../db/shipments');
 const importersDb = require('../db/importers');
+const { resolveCoLoaderFromPdf } = require('./gatepassCoLoaderHook');
 
 const GATEPASS_SENDER = (config.microsoft_graph?.gatepass_sender) || 'do-not-reply@h-caspi.co.il';
 const ATTACH_ROOT = path.join(DATA_DIR, 'attachments'); // fallback בלבד — ראו saveAttachment
@@ -74,12 +75,18 @@ async function saveAttachment(fileNumber, att) {
  * saveUploadedPdf — שמירה ידנית של gatepass PDF שהועלה ע"י המשתמש (Task 5).
  * משתמש באותה מוסכמת נתיב כמו הצרופה הנכנסת (resolveDest → תיקיית היבואן / fallback),
  * ומעדכן gatepass_pdf_path ברשומת התיק. מחזיר את נתיב היעד שנשמר.
+ *
+ * לפני setGatepass (נקודת המעבר ל-pending_approval): מריצים את יישוב קוד הקו-לואדר
+ * מה-PDF (gatepassCoLoaderHook) — כך שגם PDF שהועלה ידנית מיושב/מחדש טיוטה לפני
+ * שהתיק נכנס לתור האישורים, בדיוק כמו PDF שהגיע אוטומטית ב-attachFromMessages.
  */
-function saveUploadedPdf(fileNumber, buffer, originalName) {
+async function saveUploadedPdf(fileNumber, buffer, originalName) {
   const { dir, file } = resolveDest(fileNumber, { name: originalName || `${fileNumber}.pdf` });
   fs.mkdirSync(dir, { recursive: true });
   const dest = path.join(dir, file);
   fs.writeFileSync(dest, buffer);
+  try { await resolveCoLoaderFromPdf(fileNumber, dest); }
+  catch (e) { console.error(`[gatepassFetcher] יישוב קוד קו-לואדר נכשל עבור ${fileNumber}: ${e.message}`); }
   shipments.setGatepass(fileNumber, dest);
   return dest;
 }
@@ -120,6 +127,11 @@ async function attachFromMessages(fileNumber, messages) {
 
   const saved = await saveAttachment(fileNumber, pdf);
   if (!saved) return { file: fileNumber, skipped: 'not_file_attachment' };
+  // לפני setGatepass (נקודת המעבר ל-pending_approval): יישוב קוד קו-לואדר מה-PDF —
+  // ראו saveUploadedPdf למעלה להסבר המלא. אם נכשל (למשל Graph לא זמין לקריאת דוח
+  // רענן) — לא חוסם את שמירת ה-PDF עצמה, רק מתועד ללוג.
+  try { await resolveCoLoaderFromPdf(fileNumber, saved); }
+  catch (e) { console.error(`[gatepassFetcher] יישוב קוד קו-לואדר נכשל עבור ${fileNumber}: ${e.message}`); }
   shipments.setGatepass(fileNumber, saved);
   return { file: fileNumber, path: saved };
 }

@@ -119,10 +119,67 @@ function normalize(d) {
     contact_names: d.contact_names || '', // אנשי קשר ללקוח שאוסף בעצמו (haifa_self) — במקום "צוות {מוביל}"
     cont_general_emails: d.cont_general_emails || [],
     cont_dangerous_emails: d.cont_dangerous_emails || [],
+    contacts: Array.isArray(d.contacts) ? d.contacts : [], // אנשי קשר של היבואן (שם/טלפון/מייל) — נפרד מ-emails הכלליים
     aliases: d.aliases || [],
     seen_stations: d.seen_stations || [],
     files: d.files || [],
   };
+}
+
+/**
+ * needsCompletion — נגזר תמיד מהנתונים בפועל (לא flag שיכול להתיישן), לצורך תג
+ * התצוגה "נדרש להשלים יבואן" בדשבורד בלבד — מצומצם במכוון (2026-07-31, אישור
+ * משתמש) לתנאי אחד: אין ליבואן אף כתובת מייל. חוסר אנשי-קשר/type='unknown'/מוביל
+ * המשך לא-מוגדר אינם מספיקים לתג — יבואן עם מייל אחד לפחות תמיד "שלם" מבחינת התג,
+ * גם אם חסרים לו פרטים אחרים. שער האוטומציה (reportWatcher.importerReadyForAutoSend)
+ * הוא תנאי נפרד לגמרי ואינו קורא לפונקציה הזו — צמצום התג לא אמור לצמצם את השער.
+ */
+function missingFields(imp) {
+  const hasEmails = Array.isArray(imp.emails) && imp.emails.length > 0;
+  return hasEmails ? [] : ['emails'];
+}
+function needsCompletion(imp) {
+  return missingFields(imp).length > 0;
+}
+
+/**
+ * findByNameLoose — התאמה סלחנית יותר (נרמול רווחים/פיסוק/רישיות, כמו scope.normCust)
+ * לפני יצירת יבואן חדש: מונעת יצירת תיאום כפול ("KAL- BINYAN LTD" מול "KAL BINYAN LTD").
+ * לא מחליפה את findByName (מדויק, לשימוש המסווג) — רק שער נוסף לפני create.
+ */
+function normLoose(s) {
+  return String(s || '').replace(/\s+/g, ' ').trim().toLowerCase().replace(/[.\-]+/g, ' ').replace(/\s+/g, ' ').trim();
+}
+function findByNameLoose(name) {
+  if (!name) return null;
+  const target = normLoose(name);
+  for (const imp of list()) {
+    if (normLoose(imp.name) === target) return imp;
+    if (Array.isArray(imp.aliases) && imp.aliases.some((a) => normLoose(a) === target)) return imp;
+  }
+  return null;
+}
+
+/**
+ * ensureImporter — אידמפוטנטי: אם קיים יבואן תואם (מדויק או סלחני) — מחזיר אותו
+ * ללא שינוי. אחרת יוצר יבואן חדש (type:'unknown', ללא מיילים/אנשי-קשר) במחלקה
+ * שנגזרה. בטוח לריצה חוזרת/מקבילה על אותו שם באותו מחזור קומיט (safeFolder+
+ * fs.existsSync ב-create כבר חוסמים דריסה; כאן רק נמנעים מזריקת שגיאה מיותרת).
+ */
+function ensureImporter(name, { department, service_rep } = {}) {
+  const exact = findByName(name);
+  if (exact) return { importer: exact, created: false };
+  const loose = findByNameLoose(name);
+  if (loose) return { importer: loose, created: false };
+  try {
+    const created = create({ name, department: department || '', service_rep: service_rep || '', type: 'unknown' });
+    return { importer: created, created: true };
+  } catch (e) {
+    // תנאי מירוץ: תיק אחר באותו מחזור כבר יצר את אותו יבואן בין הבדיקה ליצירה
+    const raced = findByName(name) || findByNameLoose(name);
+    if (raced) return { importer: raced, created: false };
+    throw e;
+  }
 }
 
 // מיגרציה חד-פעמית: סוג טיפול צומצם ל-3 אפשרויות (unknown/haifa_cont/haifa_self) —
@@ -139,4 +196,8 @@ function migrateLegacyTypes() {
   return moved;
 }
 
-module.exports = { list, readByFolder, findByName, create, update, remove, safeFolder, instructionsText, writeInstructions, migrateLegacyTypes, IMP_ROOT };
+module.exports = {
+  list, readByFolder, findByName, findByNameLoose, create, update, remove, safeFolder,
+  instructionsText, writeInstructions, migrateLegacyTypes, IMP_ROOT,
+  needsCompletion, missingFields, ensureImporter,
+};

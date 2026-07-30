@@ -1,14 +1,54 @@
 import { useEffect, useMemo, useState } from 'react';
-import { api, Importer } from '../api';
+import { useSearchParams } from 'react-router-dom';
+import { api, Importer, ImporterContact } from '../api';
 import { useAgentFilter, matchesAgent } from '../context/AgentFilterContext';
+import { importerGapLabel } from '../status';
 import ConfirmModal from '../components/ConfirmModal';
 import EmailListEditor from '../components/EmailListEditor';
 
 const BLANK: Partial<Importer> = {
   name: '', company_id: '', emails: [], address: '', notes: '',
   department: '', type: 'unknown', dangerous_rule: false,
-  cont_general: '', contact_names: '', cont_general_emails: [], cont_dangerous_emails: [], aliases: [],
+  cont_general: '', contact_names: '', cont_general_emails: [], cont_dangerous_emails: [], contacts: [], aliases: [],
 };
+
+// עורך אנשי-קשר פשוט (Task 2) — שם חובה, טלפון/מייל אופציונליים. מודל: ImporterContact[].
+function ContactsEditor({ contacts, onChange }: { contacts: ImporterContact[]; onChange: (next: ImporterContact[]) => void }) {
+  const [name, setName] = useState('');
+  const [phone, setPhone] = useState('');
+  const [email, setEmail] = useState('');
+
+  function add() {
+    if (!name.trim()) return;
+    onChange([...contacts, { name: name.trim(), phone: phone.trim() || undefined, email: email.trim() || undefined }]);
+    setName(''); setPhone(''); setEmail('');
+  }
+  function remove(idx: number) {
+    onChange(contacts.filter((_, i) => i !== idx));
+  }
+
+  return (
+    <div className="field">
+      <label>אנשי קשר</label>
+      {contacts.length > 0 && (
+        <div className="chips">
+          {contacts.map((c, i) => (
+            <span className="email-chip" key={c.name + i} title={[c.phone, c.email].filter(Boolean).join(' · ')}>
+              {c.name}
+              <button type="button" className="rm" aria-label={`הסרת ${c.name}`} title="הסרה" onClick={() => remove(i)}>✕</button>
+            </span>
+          ))}
+        </div>
+      )}
+      <div className="add-row" style={{ gap: 6 }}>
+        <input placeholder="שם" value={name} onChange={(e) => setName(e.target.value)} style={{ flex: 2 }} />
+        <input placeholder="טלפון" value={phone} onChange={(e) => setPhone(e.target.value)} style={{ flex: 1 }} />
+        <input placeholder="מייל" value={email} onChange={(e) => setEmail(e.target.value)} style={{ flex: 2 }} />
+        <button type="button" className="btn sm" onClick={add}>+ הוספה</button>
+      </div>
+    </div>
+  );
+}
 
 const DEPTS = [
   { v: '', l: '—' },
@@ -26,8 +66,9 @@ function listToText(a?: string[]) { return (a || []).join(', '); }
 
 export default function Importers() {
   const { agent } = useAgentFilter();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [items, setItems] = useState<Importer[]>([]);
-  const [q, setQ] = useState('');
+  const [q, setQ] = useState(() => searchParams.get('q') || '');
   const [editing, setEditing] = useState<Importer | null>(null);
   const [isNew, setIsNew] = useState(false);
   const [flash, setFlash] = useState<{ t: string; ok: boolean } | null>(null);
@@ -36,8 +77,19 @@ export default function Importers() {
   const [tempNotes, setTempNotes] = useState('');
   const [savingNotes, setSavingNotes] = useState(false);
 
-  function load() { api.importers().then(setItems).catch((e) => setFlash({ t: e.message, ok: false })); }
-  useEffect(load, []);
+  function load() { return api.importers().then(setItems).catch((e) => setFlash({ t: e.message, ok: false })); }
+  useEffect(() => { load(); }, []);
+
+  // הגעה מקישור "פרטי יבואן חסרים" בדשבורד (?open=<folder>): פותח את מגירת העריכה
+  // ישירות על היבואן הרלוונטי — לא רק ממקד את החיפוש (Task 2, "פעולה" ולא תג מת).
+  useEffect(() => {
+    const openFolder = searchParams.get('open');
+    if (openFolder && items.length) {
+      const found = items.find((i) => i._folder === openFolder);
+      if (found) { setEditing({ ...found }); setIsNew(false); }
+      setSearchParams((prev) => { prev.delete('open'); return prev; }, { replace: true });
+    }
+  }, [items, searchParams, setSearchParams]);
 
   const filtered = useMemo(() => {
     const byAgent = items.filter((i) => matchesAgent(i, agent));
@@ -108,6 +160,7 @@ export default function Importers() {
               <th>ח.פ</th>
               <th>מחלקה</th>
               <th>מיילים</th>
+              <th>פרטים</th>
               <th>הערות</th>
               <th>פעולות</th>
             </tr>
@@ -118,6 +171,7 @@ export default function Importers() {
               const truncatedEmails = emailsText.length > 30 ? `${emailsText.slice(0, 27)}...` : emailsText;
               const notesText = i.notes || '';
               const truncatedNotes = notesText.length > 30 ? `${notesText.slice(0, 27)}...` : notesText;
+              const gap = importerGapLabel(i.missing_fields);
 
               return (
                 <tr key={i._folder}>
@@ -126,6 +180,18 @@ export default function Importers() {
                   <td>{i.department ? i.department.toUpperCase() : '—'}</td>
                   <td className="mono" style={{ fontSize: 12, color: 'var(--muted)' }} title={emailsText.length > 30 ? emailsText : undefined}>
                     {truncatedEmails}
+                  </td>
+                  <td>
+                    {gap ? (
+                      <span
+                        className="st-badge"
+                        style={{ ['--c' as any]: 'var(--muted)', cursor: 'pointer' }}
+                        title={gap + ' — לחצו להשלמה'}
+                        onClick={() => openEdit(i)}
+                      >
+                        ⬦ נדרש להשלים
+                      </span>
+                    ) : <span style={{ color: 'var(--muted)' }}>✓ מלא</span>}
                   </td>
                   <td>
                     {notesText ? (
@@ -151,7 +217,7 @@ export default function Importers() {
                 </tr>
               );
             })}
-            {filtered.length === 0 && <tr><td colSpan={6}><div className="empty">לא נמצאו יבואנים תואמים.</div></td></tr>}
+            {filtered.length === 0 && <tr><td colSpan={7}><div className="empty">לא נמצאו יבואנים תואמים.</div></td></tr>}
           </tbody>
         </table>
       </div>
@@ -201,6 +267,10 @@ export default function Importers() {
                 <input type="checkbox" style={{ width: 18 }} checked={editing.dangerous_rule} onChange={(e) => set('dangerous_rule', e.target.checked)} />
                 <label style={{ margin: 0 }}>חל כלל חומר מסוכן (Hazardous → סמא)</label>
               </div>
+              <ContactsEditor
+                contacts={editing.contacts || []}
+                onChange={(next) => set('contacts', next)}
+              />
               <div className="field"><label>הערות מיוחדות</label>
                 <textarea rows={3} value={editing.notes} onChange={(e) => set('notes', e.target.value)} /></div>
             </div>

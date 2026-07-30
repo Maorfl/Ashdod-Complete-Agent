@@ -87,6 +87,19 @@ export function staleHoldReason(s: Pick<Shipment, 'status'>): string {
 }
 
 /**
+ * importerGapLabel — תג "נדרש להשלים יבואן" (Task 2, מצומצם 2026-07-31 לפי אישור
+ * משתמש): מוצג אך ורק כשליבואן אין אף כתובת מייל (missing_fields כולל 'emails').
+ * חוסר אנשי-קשר/type='unknown' אינם מספיקים יותר להצגת התג — מקור האמת היחיד הוא
+ * server/src/db/importers.js's missingFields, שמחזיר כעת רק [] או ['emails'].
+ * זהו תנאי תצוגה בלבד — שער האוטומציה (importerReadyForAutoSend, reportWatcher.js)
+ * נפרד לגמרי ואינו קורא לפונקציה הזו.
+ */
+export function importerGapLabel(missing?: string[] | null): string | null {
+  if (!missing || !missing.includes('emails')) return null;
+  return 'נדרש להשלים יבואן';
+}
+
+/**
  * needsAttentionReason — עמוד האוטומציה, סעיף "נדרש לטיפול" (Task 4): תיאור אנושי-
  * פעולה לכל תיק שאינו בטיפול שוטף תקין. מבוסס על השדות הגולמיים הקיימים בלבד —
  * status/reason/needs_review מה-draft — לא קוד שגיאה פנימי.
@@ -150,9 +163,13 @@ export function isGenuineHaifaTransfer(s: Pick<Shipment, 'route' | 'type'>): boo
 /**
  * usesNonHaifaStatusDisplay — האם תיק זה כפוף לכלל התצוגה המצומצם (שני ערכים בלבד)?
  * חל על prepaid/direct/אוסף-בעצמו — לא על alert (שממילא מוצג "דורש בדיקה" תמיד),
- * ולא על מסלולי העברה-לחיפה אמיתיים (co_loader/terminal עם מוביל המשך אמיתי).
+ * לא על מסלולי העברה-לחיפה אמיתיים (co_loader/terminal עם מוביל המשך אמיתי),
+ * ולא על תיק שקיבל עדכון סטטוס ידני (MANUAL_STATUSES) — עדכון אנושי תמיד גובר על
+ * התווית הנגזרת מהזמן (הבאג שתוקן: הכלל המצומצם הסתיר בעבר גם עדכוני סטטוס ידניים
+ * לתיקי prepaid/direct/אוסף-בעצמו, כי הוא כלל לא הביט בסטטוס הגולמי השמור).
  */
-export function usesNonHaifaStatusDisplay(s: Pick<Shipment, 'route' | 'type'>): boolean {
+export function usesNonHaifaStatusDisplay(s: Pick<Shipment, 'route' | 'type' | 'status'>): boolean {
+  if (MANUAL_STATUSES.includes(s.status)) return false;
   return s.route !== 'alert' && !isGenuineHaifaTransfer(s);
 }
 

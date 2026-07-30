@@ -5,20 +5,25 @@ const express = require('express');
 const importers = require('../db/importers');
 const router = express.Router();
 
+// מוסיף needs_completion/missing_fields נגזרים (Task 2) — לא נשמר ב-JSON, מחושב בכל בקשה
+function withCompletion(imp) {
+  return { ...imp, missing_fields: importers.missingFields(imp), needs_completion: importers.needsCompletion(imp) };
+}
+
 // רשימת כל היבואנים
-router.get('/', (req, res) => res.json(importers.list()));
+router.get('/', (req, res) => res.json(importers.list().map(withCompletion)));
 
 // יבואן בודד לפי תיקיה
 router.get('/:folder', (req, res) => {
   const imp = importers.readByFolder(req.params.folder);
   if (!imp) return res.status(404).json({ error: 'יבואן לא נמצא' });
-  res.json(imp);
+  res.json(withCompletion(imp));
 });
 
 // יצירת יבואן חדש
 router.post('/', (req, res) => {
   try {
-    res.status(201).json(importers.create(req.body));
+    res.status(201).json(withCompletion(importers.create(req.body)));
   } catch (e) {
     res.status(400).json({ error: e.message });
   }
@@ -27,7 +32,7 @@ router.post('/', (req, res) => {
 // עריכת נתוני יבואן (מיילים, הערות, כתובת, type, מחלקה, וכו')
 router.put('/:folder', (req, res) => {
   try {
-    res.json(importers.update(req.params.folder, req.body));
+    res.json(withCompletion(importers.update(req.params.folder, req.body)));
   } catch (e) {
     res.status(400).json({ error: e.message });
   }

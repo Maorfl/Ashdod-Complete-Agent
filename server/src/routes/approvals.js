@@ -152,7 +152,7 @@ router.post('/:file/decision', async (req, res) => {
 
 // העלאת gatepass PDF ידנית לתיק (Task 5) — כשה-PDF לא הגיע אוטומטית מ-do-not-reply.
 // שומר לפי אותה מוסכמת נתיב כמו הצרופה הנכנסת ומעדכן gatepass_pdf_path.
-router.post('/:file/gatepass-upload', upload.single('file'), (req, res) => {
+router.post('/:file/gatepass-upload', upload.single('file'), async (req, res) => {
   const rec = shipments.get(req.params.file);
   if (!rec) return res.status(404).json({ error: 'תיק לא נמצא' });
   if (!req.file || !req.file.buffer?.length) return res.status(400).json({ error: 'לא צורף קובץ' });
@@ -161,7 +161,7 @@ router.post('/:file/gatepass-upload', upload.single('file'), (req, res) => {
   const isPdf = req.file.mimetype === 'application/pdf' || buf.slice(0, 5).toString('latin1') === '%PDF-';
   if (!isPdf) return res.status(400).json({ error: 'הקובץ אינו PDF תקין' });
   try {
-    const dest = gatepassFetcher.saveUploadedPdf(rec.file_number, buf, req.file.originalname);
+    const dest = await gatepassFetcher.saveUploadedPdf(rec.file_number, buf, req.file.originalname);
     res.json({ ok: true, path: dest });
   } catch (e) {
     res.status(500).json({ error: `שמירת ה-PDF נכשלה: ${e.message}` });

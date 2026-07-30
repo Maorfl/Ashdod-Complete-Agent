@@ -31,8 +31,9 @@ const automation = require('./automation');
 const STATUS = { ALERT: 'alert', PENDING: 'pending_approval', AWAITING_GATEPASS: 'awaiting_gatepass', RELEASED: 'שוחרר באשדוד', AWAITING_PDF: shipments.AWAITING_PDF_STATUS };
 const TRANSFER_ROUTES = new Set(['co_loader', 'terminal']);
 
-// כלל scope קבוע (config.report_scope): רק LCL + הנציג הנבחר + רשימת לקוחות ההעברה
-// לחיפה (Task 3) נכנסים לצנרת. תחנת מכס 2 נאכפת בנפרד ע"י כלל ה-no_op במסווג.
+// כלל scope קבוע (config.report_scope): כל שלוש המחלקות/הנציגים נכנסים לצנרת (הגבלת
+// נציג בודד הוסרה - 2026-07-07 - הייתה טעות, ראו _comment ב-config.json). תחנת מכס 2
+// נאכפת בנפרד ע"י כלל ה-no_op במסווג.
 function normRep(s) {
   return String(s || '').replace(/\s+/g, ' ').trim();
 }
@@ -41,10 +42,33 @@ function inScope(rec) {
   // (2026-07-13, אישור משתמש) גם תיקי FCL של אשדוד נכנסים למעקב לתצוגה בדשבורד —
   // ה-fcl_lcl כבר אינו מסנן החוצה. הוא קובע רק זכאות *טיוטה* (isHaifaTransfer דורש LCL).
   // אשדוד-בלבד (תחנת מכס 2) נאכף ע"י כלל ה-no_op במסווג; FCL מסלולי ההעברה נספרים בלבד.
-  if (s.service_rep && normRep(rec.service_rep) !== normRep(s.service_rep)) return false;
   // רק 19 לקוחות ההעברה לחיפה — מקור אמת יחיד ב-scope.js (משותף לשכבת ההגשה)
   if (!scope.isWhitelisted(rec.customer_name)) return false;
   return true;
+}
+
+// מיפוי נציג-דוח (service_rep) -> מחלקה (cus1/cus2/cus3), לפי config.departments.
+// נבנה פעם אחת (config לא משתנה בזמן ריצה); נורמליזציה תואמת את normRep.
+let _repToDept = null;
+function repToDept(serviceRep) {
+  if (!_repToDept) {
+    _repToDept = {};
+    for (const [dept, info] of Object.entries(config.departments || {})) {
+      if (info?.name) _repToDept[normRep(info.name)] = dept;
+    }
+  }
+  return _repToDept[normRep(serviceRep)] || null;
+}
+
+/**
+ * departmentFor — קובע מחלקה לתיק: קודם מהיבואן הידוע (importer.department), ואם חסר —
+ * נגזר מ-service_rep הדוח (config.departments). כך תיק של יבואן לא-ממופה (או שהמיפוי
+ * שלו עדיין type:unknown/ריק) לא מקבל לעולם department:null ונעלם משכבת התצוגה/הסינון
+ * (AgentFilterContext.matchesAgent בצד הלקוח). לעולם אינו נוגע באוטומציה — משמש רק
+ * לתיוג/תצוגה; שער האוטומציה ממשיך להישען על automation.isEligible + מצב-מחלקה בפועל.
+ */
+function departmentFor(rec, importer) {
+  return importer?.department || repToDept(rec.service_rep) || null;
 }
 
 // ---------- Task 1: cache סריקה (ללא נגיעה ב-DB) ----------
@@ -86,22 +110,56 @@ function autoSendModeForDept(dept) {
   return automation.effectiveDeptMode(dept);
 }
 
+// כללי gatepass-coloader (report/gatepassCoLoaderDecision) שנחשבים "מאומתים" לצורך
+// זכאות אוטומציה — mismatch_hold/extraction_failed לעולם לא זכאים (וגם ריק/לא-נבדק).
+const VERIFIED_COLOADER_RULES = new Set(['match', 'adopt', 'terminal']);
+
+/**
+ * importerReadyForAutoSend — תנאי הזכאות של היבואן לשליחה אוטומטית (Task 2, נפרד
+ * במכוון מ-importersDb.needsCompletion שמניע את תג התצוגה בדשבורד — 2026-07-30,
+ * הבהרת משתמש: "צמצום התג אסור לצמצם את השער"). זכאי כש:
+ *   - יש מוביל המשך שנפתר בפועל (cont_general או cont_general_emails) — כלומר
+ *     resolveContinuation תניב נמען אמיתי, לא רק ברירת מחדל טכנית; או
+ *   - type='haifa_self' (אין מוביל המשך צד-שלישי מלכתחילה) עם מייל יבואן קיים.
+ * יבואן ללא אחד מאלה (type='unknown' בלי מוביל המשך, וכו') אינו זכאי — נשאר
+ * מוחזק לטיפול אנושי, גם אם יש לו מיילים (ולכן אינו מוצג עם התג "נדרש להשלים").
+ */
+function importerReadyForAutoSend(importer) {
+  if (!importer) return false;
+  const hasEmails = Array.isArray(importer.emails) && importer.emails.length > 0;
+  if (importer.type === 'haifa_self') return hasEmails;
+  const hasContinuation = !!(String(importer.cont_general || '').trim()
+    || (Array.isArray(importer.cont_general_emails) && importer.cont_general_emails.length));
+  return hasContinuation;
+}
+
 /**
  * האם מסלול+מחלקה זכאים לאוטומציה (dry_run או on)?
  *   route ∈ co_loader/terminal + Graph מחובר + מצב המחלקה ≠ off + auto_send_excluded=false
- * (automation.isEligible — מנגנון יחיד, ראו services/automation.js).
+ * (automation.isEligible — מנגנון יחיד, ראו services/automation.js) + קוד הקו-לואדר
+ * אומת מול ה-gatepass PDF (gatepass_co_loader_rule ∈ match/adopt/terminal — תוספת
+ * gatepass-coloader). תיק שה-PDF שלו טרם נותח, או שנותח והתגלה mismatch/כישלון חילוץ,
+ * אינו זכאי לשליחה אוטומטית — נשאר מוחזק לטיפול אנושי, ללא קשר לשאר התנאים.
  * dry_run *אינו* תלוי בחיבור Graph בפועל לשליחה (אין שליחה), אך כן דורש אותו כדי
  * שסימולציה תשקף במדויק את מה שהיה קורה בפועל (למשל אם Graph כבוי, on לא היה שולח בכלל).
  *
- * shipmentRec — הרשומה מה-DB (חייבת את השדה auto_send_excluded). כשמדובר בתיק חדש
- * שטרם נכתב ל-DB באותו מחזור, יש להעביר את הרשומה *אחרי* ה-upsert הראשוני (ראו קריאה
- * ב-commit למטה) — כך שהשדה קיים ולא undefined.
+ * shipmentRec — הרשומה מה-DB (חייבת את השדות auto_send_excluded/gatepass_co_loader_rule).
+ * כשמדובר בתיק חדש שטרם נכתב ל-DB באותו מחזור, יש להעביר את הרשומה *אחרי* ה-upsert
+ * הראשוני (ראו קריאה ב-commit למטה) — כך שהשדות קיימים ולא undefined.
+ *
+ * importer — רשומת היבואן (Task 2, 2026-07-30): נבדק דרך importerReadyForAutoSend
+ * (למעלה) — תנאי משלו, *לא* importersDb.needsCompletion (זה מניע רק את תג התצוגה
+ * בדשבורד; צמצום התג ב-2026-07-31 לא אמור לצמצם את השער — ראו הבהרת משתמש שם).
+ * importer=null/undefined (לא הועבר) נחשב "לא זכאי" גם הוא (importerReadyForAutoSend
+ * מטפל בכך).
  */
-function autoSendEnabled(route, dept, shipmentRec) {
+function autoSendEnabled(route, dept, shipmentRec, importer) {
   const mode = autoSendModeForDept(dept);
   if (mode === 'off') return false;
   if (!TRANSFER_ROUTES.has(route)) return false;
   if (!automation.isEligible(shipmentRec)) return false; // חסימה קבועה — לעולם לא על תיקים ישנים/לא-ודאיים
+  if (!VERIFIED_COLOADER_RULES.has(shipmentRec?.gatepass_co_loader_rule)) return false; // קוד לא אומת מול ה-PDF
+  if (!importerReadyForAutoSend(importer)) return false; // יבואן לא זכאי (אין מוביל המשך שנפתר / haifa_self בלי מייל)
   return graph.isEnabled();
 }
 
@@ -172,6 +230,7 @@ async function commit() {
   const summary = {
     total: records.length, out_of_scope: 0, no_op: 0, queued: 0, awaiting_pdf: 0, pdf_preloaded: 0, alerts: 0,
     tracked_released: 0, skipped_tracked: 0, auto_sent: 0, dry_run: 0, awaiting_gatepass: 0, errors: 0,
+    importers_created: 0,
   };
 
   // סריקה מקדימה של הודעות ה-gatepass (Task 1, 2026-07-14): נשלפת פעם אחת, עצלנית —
@@ -194,10 +253,25 @@ async function commit() {
 
   for (const rec of records) {
     try {
-      // כלל scope קבוע — רק LCL + הנציג + רשימת ההעברה לחיפה נכנסים לצנרת
+      // כלל scope קבוע — LCL + רשימת ההעברה לחיפה נכנסים לצנרת (כל שלוש המחלקות)
       if (!inScope(rec)) { summary.out_of_scope += 1; continue; }
 
-      const importer = importersDb.findByName(rec.customer_name);
+      let importer = importersDb.findByName(rec.customer_name);
+      // יבואן לא מוכר (לא מדויק ולא alias) — יוצרים רשומה אוטומטית (Task 2), במחלקה
+      // שנגזרת מ-service_rep, כדי שהתיק לעולם לא ייעלם מאחורי department:null וכדי
+      // שיהיה מקום מיידי להשלים אליו מיילים/אנשי-קשר. type:'unknown' עד השלמה ידנית —
+      // needsCompletion (db/importers.js) יסמן זאת בדשבורד. לא רץ על no_op (לא רלוונטי
+      // לאשדוד כלל) — נבדק לפני היצירה כדי לא ליצור יבואנים סרק לרשומות לא-אשדוד.
+      if (!importer && rec.customs_station_code === String(config.relevant_customs_station_code) && rec.customer_name) {
+        const { importer: ensured, created } = importersDb.ensureImporter(rec.customer_name, {
+          department: repToDept(rec.service_rep) || '', service_rep: rec.service_rep || '',
+        });
+        importer = ensured;
+        if (created) {
+          summary.importers_created += 1;
+          console.log(`[reportWatcher] יבואן חדש נוצר אוטומטית: "${rec.customer_name}" (תיק ${rec.file_number}, מחלקה ${importer.department || '—'})`);
+        }
+      }
       const decision = classify(rec, importer);
 
       if (decision.route === 'no_op') { summary.no_op += 1; continue; } // לא נשמר
@@ -205,12 +279,13 @@ async function commit() {
       // Task 8 — "מבצע העברה לחיפה" ואם הוא ישות מוכרת ב-co_loaders/terminals
       const perf = transferPerformer(rec);
       const performerUnknown = perf && !contacts.isKnown(perf) ? 1 : 0;
+      const dept = departmentFor(rec, importer);
 
       const existing = shipments.get(rec.file_number);
       if (existing) {
         // תיק שממתין ל-gatepass — ניסיון שליחה חוזר (לא "כבר טופל")
-        const existingDept = existing.department || importer?.department || null;
-        if (existing.status === STATUS.AWAITING_GATEPASS && autoSendEnabled(decision.route, existingDept, existing)) {
+        const existingDept = existing.department || dept;
+        if (existing.status === STATUS.AWAITING_GATEPASS && autoSendEnabled(decision.route, existingDept, existing, importer)) {
           const email = composeRelease(rec, decision, importer);
           await sendOrDefer(rec.file_number, email, summary, existingDept);
           continue;
@@ -222,15 +297,19 @@ async function commit() {
         // מכוון במפורש למחלקת cus1 בקוד (לא existingDept דינמי) כדי שלא יתרחב בטעות
         // למחלקה אחרת אם מצב האוטומציה שלה ישונה בעתיד. ניתן להסרה נקייה — לא נוגע
         // בגייט הכללי (autoSendEnabled) ולא במסלול ה-AWAITING_GATEPASS למעלה.
-        if (existing.status === 'pending_approval' && existingDept === 'cus1' && autoSendEnabled(decision.route, existingDept, existing)) {
+        if (existing.status === 'pending_approval' && existingDept === 'cus1' && autoSendEnabled(decision.route, existingDept, existing, importer)) {
           const email = composeRelease(rec, decision, importer);
           await sendOrDefer(rec.file_number, email, summary, existingDept);
           continue;
         }
-        // תיק קיים אחר — משלימים release_date מהדוח אם חסר (לא נוגעים בסטטוס/היסטוריה)
-        if (rec.release_date && !existing.release_date) {
-          shipments.upsert({ file_number: rec.file_number, release_date: rec.release_date });
-        }
+        // תיק קיים אחר — משלימים release_date מהדוח אם חסר, ורוענן department אם היה
+        // חסר ועכשיו ניתן לגזור (למשל יבואן שמופה מאוחר יותר — ראו departmentFor).
+        // לא נוגעים בסטטוס/היסטוריה, ולא דורסים department קיים בערך אחר.
+        const patch = {};
+        if (rec.release_date && !existing.release_date) patch.release_date = rec.release_date;
+        if (!existing.department && dept) patch.department = dept;
+        if (!existing.agent_name && importer?.service_rep) patch.agent_name = importer.service_rep;
+        if (Object.keys(patch).length) shipments.upsert({ file_number: rec.file_number, ...patch });
         summary.skipped_tracked += 1; continue; // כבר טופל/שוחרר
       }
 
@@ -242,7 +321,7 @@ async function commit() {
           route: 'alert',
           reason: decision.reason,
           release_date: rec.release_date || null,
-          department: importer?.department || null,
+          department: dept,
           transfer_performer: perf || null,
           performer_unknown: performerUnknown,
           site_des: rec.site_des || null,
@@ -262,7 +341,7 @@ async function commit() {
         route: decision.route,
         reason: decision.reason || null,
         release_date: rec.release_date || null,
-        department: importer?.department || null,
+        department: dept,
         co_loader_code: rec.co_loader_code || null,
         continuation: decision.continuation?.name || null,
         transfer_performer: perf || null,
@@ -272,7 +351,7 @@ async function commit() {
         hazardous: rec.hazardous,
         wg_reshimon_no: rec.wg_reshimon_no || null,
         type: importer?.type || null,
-        agent_name: importer?.service_rep || null,
+        agent_name: importer?.service_rep || rec.service_rep || null,
       };
 
       // האם התיק הוא "העברה לחיפה" אמיתית (LCL + מסלול co_loader/terminal/direct +
@@ -291,7 +370,6 @@ async function commit() {
         ...base,
         draft_payload: { route: decision.route, needs_review: !!decision.needs_review, email, alerts: decision.alerts || [] },
       };
-      const dept = importer?.department || null;
 
       // חתך-גיל האוטומציה (Task 1, תוספת per-department): נכתב תמיד ל-DB *לפני* בדיקת
       // הזכאות לאוטומציה, כדי ש-first_seen יהיה קיים ברשומה בזמן הבדיקה (תיק חדש
@@ -304,12 +382,12 @@ async function commit() {
       // dry_run (תוספת אוטומציה): מריצים את כל הבדיקה/סימולציה, אך התיק *נשאר* בנתיב
       // הרגיל (AWAITING_PDF -> pending_approval) — לא עובר ל-AWAITING_GATEPASS, כדי
       // שלא ייצא מתור האישורים הרגיל וימתין לטיפול אנושי כרגיל.
-      if (autoSendModeForDept(dept) === 'dry_run' && autoSendEnabled(decision.route, dept, savedRec)) {
+      if (autoSendModeForDept(dept) === 'dry_run' && autoSendEnabled(decision.route, dept, savedRec, importer)) {
         await sendOrDefer(rec.file_number, email, summary, dept); // רושם סימולציה ל-dry_run_log בלבד
         const preload = await preloadedGatepass(rec.file_number);
         if (preload && preload.path) summary.pdf_preloaded += 1;
         else summary.awaiting_pdf += 1;
-      } else if (autoSendEnabled(decision.route, dept, savedRec)) {
+      } else if (autoSendEnabled(decision.route, dept, savedRec, importer)) {
         // הרשומה כבר קיימת (upsert למעלה) — נדרש לפני חיפוש ה-gatepass (setGatepass מבצע UPDATE)
         shipments.upsert({ file_number: rec.file_number, status: STATUS.AWAITING_GATEPASS });
         await sendOrDefer(rec.file_number, email, summary, dept);
@@ -426,7 +504,7 @@ module.exports = {
   // תזמון
   start, stop, status,
   // אוטומציה — off/dry_run/on (מצב לכל מחלקה, ראו services/automation.js)
-  autoSendModeForDept, autoSendEnabled, sendOrDefer,
+  autoSendModeForDept, autoSendEnabled, sendOrDefer, importerReadyForAutoSend,
   // חשוף לבדיקות
-  inScope, msUntilNextCommit,
+  inScope, msUntilNextCommit, departmentFor,
 };

@@ -4,6 +4,7 @@
  * רענון אוטומטי כל 60 שניות. מכבד את מסנן הסוכן הגלובלי.
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { api, Shipment, DashboardCounts } from '../api';
 import { useAgentFilter, matchesAgent } from '../context/AgentFilterContext';
 import { useToast } from '../components/Toasts';
@@ -15,11 +16,12 @@ import {
   STATUS_META, STATUS_ORDER, statusKeyOf, statusLabel, MANUAL_STATUSES,
   formatDateHe, formatDuration, timeSeverity, canSend, StatusKey,
   usesNonHaifaStatusDisplay, nonHaifaStatusLabel,
-  isStaleHold, staleHoldReason,
+  isStaleHold, staleHoldReason, importerGapLabel,
 } from '../status';
 
 export default function Dashboard() {
   const { agent } = useAgentFilter();
+  const navigate = useNavigate();
   const toast = useToast();
   const [items, setItems] = useState<Shipment[] | null>(null);
   const [err, setErr] = useState('');
@@ -307,6 +309,20 @@ export default function Dashboard() {
                             ⏰ תקוע — נדרש טיפול
                           </span>
                         ) : null}
+                        {(() => {
+                          const gap = importerGapLabel(s.importer_missing_fields);
+                          if (!gap) return null;
+                          return (
+                            <span
+                              className="st-badge"
+                              style={{ ['--c' as any]: 'var(--muted)', marginInlineStart: 4, cursor: 'pointer' }}
+                              title={gap + ' — לחצו להשלמת פרטי היבואן'}
+                              onClick={(e) => { e.stopPropagation(); navigate(s.importer_folder ? `/importers?open=${encodeURIComponent(s.importer_folder)}` : '/importers'); }}
+                            >
+                              ⬦ נדרש להשלים יבואן
+                            </span>
+                          );
+                        })()}
                       </td>
                       <td>
                         {s.transfer_performer || '—'}

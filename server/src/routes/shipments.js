@@ -5,6 +5,7 @@
 const express = require('express');
 const shipments = require('../db/shipments');
 const departments = require('../db/departments');
+const importersDb = require('../db/importers');
 const { composeReminder } = require('../email/composer');
 const gatepassFetcher = require('../services/gatepassFetcher');
 const scope = require('../scope');
@@ -36,17 +37,26 @@ function dashboardCounts(items) {
 // פירוק draft_payload (JSON) + סימון whitelisted (defense in depth): מקור אמת יחיד
 // (scope.js) — לא סומכים על department לבד. + real_recipients: הטיוטה נושאת נמענים
 // אמיתיים (לא override) — מוצג בכרטיס התיק שהמאשר לא יופתע.
-function withDraft(r) {
+// importerByName — מפה (נבנית פעם אחת לבקשה, לא לכל שורה) לצירוף מצב השלמת היבואן
+// (Task 2): missing_fields/needs_completion, כדי שהדשבורד יציג "נדרש להשלים פרטי יבואן"
+// בלי לקרוא ל-fs לכל תיק בנפרד.
+function withDraft(r, importerByName) {
   let draft = null;
   try { draft = r.draft_payload ? JSON.parse(r.draft_payload) : null; } catch { /* ignore */ }
   const to = draft?.email?.to || [];
   const realRecipients = to.some((a) => a && a !== config.external_email_override);
-  return { ...r, draft, whitelisted: scope.isWhitelisted(r.customer_name), real_recipients: realRecipients };
+  const imp = importerByName?.get(String(r.customer_name || '').trim().toLowerCase());
+  return {
+    ...r, draft, whitelisted: scope.isWhitelisted(r.customer_name), real_recipients: realRecipients,
+    importer_missing_fields: imp ? importersDb.missingFields(imp) : null,
+    importer_folder: imp?._folder || null,
+  };
 }
 
 // דשבורד
 router.get('/', (req, res) => {
-  const items = shipments.all().map(withDraft);
+  const importerByName = new Map(importersDb.list().map((i) => [i.name.trim().toLowerCase(), i]));
+  const items = shipments.all().map((r) => withDraft(r, importerByName));
   res.json({ counts: dashboardCounts(items), total: items.length, items });
 });
 
@@ -111,7 +121,8 @@ router.post('/:file/gatepass', async (req, res) => {
 router.get('/:file', (req, res) => {
   const r = shipments.get(req.params.file);
   if (!r) return res.status(404).json({ error: 'תיק לא נמצא' });
-  res.json(withDraft(r));
+  const imp = r.customer_name ? importersDb.findByName(r.customer_name) : null;
+  res.json(withDraft(r, imp ? new Map([[imp.name.trim().toLowerCase(), imp]]) : null));
 });
 
 module.exports = router;
