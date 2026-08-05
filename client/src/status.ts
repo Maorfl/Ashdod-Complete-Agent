@@ -100,25 +100,68 @@ export function importerGapLabel(missing?: string[] | null): string | null {
 }
 
 /**
- * needsAttentionReason — עמוד האוטומציה, סעיף "נדרש לטיפול" (Task 4): תיאור אנושי-
- * פעולה לכל תיק שאינו בטיפול שוטף תקין. מבוסס על השדות הגולמיים הקיימים בלבד —
- * status/reason/needs_review מה-draft — לא קוד שגיאה פנימי.
+ * needsAttentionCategory / needsAttentionReason — עמוד האוטומציה, סעיף "נדרש לטיפול"
+ * (Task 4, הורחב ב-Task 5 לקיבוץ לפי סיבה): מקור אמת יחיד לענפי ההסתעפות — הקטגוריה
+ * נגזרת פעם אחת, והתווית האנושית ממופה ממנה, כדי שלא יהיו שני עותקים עצמאיים של
+ * אותה לוגיקה שעלולים לסטות זה מזה.
  */
-export function needsAttentionReason(s: Pick<Shipment, 'status' | 'reason' | 'draft'>): string | null {
+export type NeedsAttentionCategory =
+  | 'unknown_co_loader'
+  | 'unknown_terminal'
+  | 'terminal_requires_co_loader'
+  | 'unknown_customer'
+  | 'alert_other'
+  | 'awaiting_gatepass'
+  | 'needs_review';
+
+export function needsAttentionCategory(s: Pick<Shipment, 'status' | 'reason' | 'draft'>): NeedsAttentionCategory | null {
   if (s.status === 'alert') {
-    if (s.reason === 'unknown_co_loader') return 'קוד קו-לואדר לא מזוהה במערכת — נדרש מיפוי ב"ניהול מסופים ומשלחים"';
-    if (s.reason === 'unknown_terminal') return 'מסוף שחרור לא מזוהה במערכת — נדרש מיפוי ב"ניהול מסופים ומשלחים"';
-    if (s.reason === 'terminal_requires_co_loader') return 'המסוף מחייב קו-לואדר אך לא נמצא קוד — נדרש בדיקה ידנית';
-    if (s.reason === 'unknown_customer') return 'לקוח לא מזוהה במערכת — נדרש מיפוי ב"ניהול יבואנים"';
-    return 'סומן להתראה — נדרשת בדיקה ידנית';
+    if (s.reason === 'unknown_co_loader') return 'unknown_co_loader';
+    if (s.reason === 'unknown_terminal') return 'unknown_terminal';
+    if (s.reason === 'terminal_requires_co_loader') return 'terminal_requires_co_loader';
+    if (s.reason === 'unknown_customer') return 'unknown_customer';
+    return 'alert_other';
   }
   if (s.status === 'awaiting_gatepass' || s.status === 'ממתין ל-PDF') {
-    return 'חסר gatepass PDF — לא ניתן לשלוח עד לצירופו (ידנית בכרטיס התיק, או אוטומטית כשיתקבל)';
+    return 'awaiting_gatepass';
   }
   if (s.draft?.needs_review) {
-    return 'פרטי הקשר של המסוף/קו-לואדר טרם אומתו — דורש בדיקה ב"ניהול מסופים ומשלחים"';
+    return 'needs_review';
   }
   return null;
+}
+
+const NEEDS_ATTENTION_LABEL: Record<NeedsAttentionCategory, string> = {
+  unknown_co_loader: 'קוד קו-לואדר לא מזוהה במערכת — נדרש מיפוי ב"ניהול מסופים ומשלחים"',
+  unknown_terminal: 'מסוף שחרור לא מזוהה במערכת — נדרש מיפוי ב"ניהול מסופים ומשלחים"',
+  terminal_requires_co_loader: 'המסוף מחייב קו-לואדר אך לא נמצא קוד — נדרש בדיקה ידנית',
+  unknown_customer: 'לקוח לא מזוהה במערכת — נדרש מיפוי ב"ניהול יבואנים"',
+  alert_other: 'סומן להתראה — נדרשת בדיקה ידנית',
+  awaiting_gatepass: 'חסר gatepass PDF — לא ניתן לשלוח עד לצירופו (ידנית בכרטיס התיק, או אוטומטית כשיתקבל)',
+  needs_review: 'פרטי הקשר של המסוף/קו-לואדר טרם אומתו — דורש בדיקה ב"ניהול מסופים ומשלחים"',
+};
+
+// כותרות קבוצה בעמוד האוטומציה (Task 5) — נטיה שונה מהתווית הפר-שורה (ריבוי/ניסוח
+// כותרת), לכן מפה נפרדת ולא שימוש חוזר ב-NEEDS_ATTENTION_LABEL כפי שהיא.
+export const NEEDS_ATTENTION_GROUP_LABEL: Record<NeedsAttentionCategory, string> = {
+  unknown_co_loader: 'קוד קו-לואדר לא מזוהה',
+  unknown_terminal: 'מסוף שחרור לא מזוהה',
+  terminal_requires_co_loader: 'מסוף מחייב קו-לואדר',
+  unknown_customer: 'לקוח לא מזוהה',
+  alert_other: 'התראה אחרת',
+  awaiting_gatepass: 'ממתין ל-gatepass PDF',
+  needs_review: 'פרטי קשר טרם אומתו',
+};
+
+// סדר תצוגה קבוע לקבוצות (Task 5) — סיבות alert תחילה, ואז awaiting_gatepass/needs_review
+export const NEEDS_ATTENTION_CATEGORY_ORDER: NeedsAttentionCategory[] = [
+  'unknown_co_loader', 'unknown_terminal', 'terminal_requires_co_loader', 'unknown_customer', 'alert_other',
+  'awaiting_gatepass', 'needs_review',
+];
+
+export function needsAttentionReason(s: Pick<Shipment, 'status' | 'reason' | 'draft'>): string | null {
+  const cat = needsAttentionCategory(s);
+  return cat ? NEEDS_ATTENTION_LABEL[cat] : null;
 }
 
 /* ---------- זמן ---------- */

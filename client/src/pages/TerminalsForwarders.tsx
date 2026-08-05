@@ -19,6 +19,7 @@ export default function TerminalsForwarders() {
   const [saving, setSaving] = useState(false);
   const [activeDelete, setActiveDelete] = useState<{ kind: Kind; key: string } | null>(null);
   const [deleting, setDeleting] = useState(false);
+  const [activeDeleteCount, setActiveDeleteCount] = useState<{ active: number; total: number } | 'error' | null>(null);
 
   function load() {
     api.terminals().then(setTerminals).catch((e) => setFlash({ t: e.message, ok: false }));
@@ -61,8 +62,13 @@ export default function TerminalsForwarders() {
     }
   }
 
+  // Task 6 — לפני פתיחת אישור המחיקה, שולפים כמה תיקים פעילים משויכים לרשומה זו
+  // (לא חוסם את פתיחת המודל אם השליפה נכשלת — מידע נוסף בלבד, לא תנאי).
   function del(kind: Kind, key: string) {
     setActiveDelete({ kind, key });
+    setActiveDeleteCount(null);
+    const fetchCount = kind === 'terminal' ? api.countByTerminal(key) : api.countByCoLoader(key);
+    fetchCount.then(setActiveDeleteCount).catch(() => setActiveDeleteCount('error'));
   }
 
   async function performDelete() {
@@ -85,6 +91,7 @@ export default function TerminalsForwarders() {
     } finally {
       setDeleting(false);
       setActiveDelete(null);
+      setActiveDeleteCount(null);
     }
   }
 
@@ -201,10 +208,18 @@ export default function TerminalsForwarders() {
           onConfirm={performDelete}
           onCancel={() => setActiveDelete(null)}
         >
-          האם אתה בטוח שברצונך למחוק את ה{activeDelete.kind === 'terminal' ? 'מסוף' : 'משלח'} "{activeDelete.key}"?
-          {activeDelete.kind === 'terminal'
-            ? ' תיקים המנותבים למסוף זה עלולים ליפול ל"התראה" בסריקה הבאה עד למיפוי מחדש.'
-            : ' תיקים המנותבים לקוד זה עלולים ליפול ל"התראה" בסריקה הבאה עד למיפוי מחדש.'}
+          <p style={{ margin: 0 }}>
+            האם אתה בטוח שברצונך למחוק את ה{activeDelete.kind === 'terminal' ? 'מסוף' : 'משלח'} "{activeDelete.key}"?
+          </p>
+          <p style={{ marginTop: 8 }}>
+            {activeDeleteCount === null && 'בודק תיקים משויכים…'}
+            {activeDeleteCount === 'error' && 'לא ניתן היה לבדוק תיקים משויכים — ייתכן ויש תיקים פעילים המושפעים מהמחיקה.'}
+            {activeDeleteCount !== null && activeDeleteCount !== 'error' && (
+              activeDeleteCount.active > 0
+                ? <b style={{ color: 'var(--st-alert)' }}>{activeDeleteCount.active} תיקים פעילים משויכים לרשומה זו ויחזרו למצב חסום ("התראה") בסריקה הבאה.</b>
+                : 'אין תיקים פעילים המשויכים לרשומה זו — ניתן למחוק בבטחה.'
+            )}
+          </p>
         </ConfirmModal>
       )}
     </>

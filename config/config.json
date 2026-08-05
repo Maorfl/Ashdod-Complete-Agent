@@ -92,6 +92,10 @@
   "ocr": {
     "enabled": true,
     "lang": "heb+eng",
-    "note": "tesseract.js מקומי למקרי קצה. אפס תלות ב-LLM בזמן ריצה."
+    "max_pages": 3,
+    "scale": 2,
+    "note": "tesseract.js מקומי למקרי קצה. אפס תלות ב-LLM בזמן ריצה.",
+    "scale_comment": "PDF מרונדר ל-PNG לפני OCR (tesseract לא קורא PDF). scale 2 = ~1190x1684 ל-A4; ב-scale 1 הטקסט קטן מדי ו-OCR מחזיר רעש.",
+    "max_pages_comment": "מספר העמודים הראשונים שעוברים OCR. תעודת המשלוח היא תמיד בעמודים הראשונים; מגביל זמן ריצה בקבצים ארוכים."
   }
 }

@@ -176,6 +176,9 @@ export const api = {
     req<{ ok: boolean; path?: string; skipped?: string }>('/shipments/' + encodeURIComponent(file) + '/gatepass', {
       method: 'POST',
     }),
+  // Task 6 — ספירת תיקים פעילים המשויכים לקוד קו-לואדר/מסוף, לאזהרת מחיקה מראש
+  countByCoLoader: (code: string) => req<{ total: number; active: number }>('/shipments/count-by-co-loader/' + encodeURIComponent(code)),
+  countByTerminal: (site: string) => req<{ total: number; active: number }>('/shipments/count-by-terminal/' + encodeURIComponent(site)),
 
   // ניהול מסופים ומשלחים (Task 3) — object keyed by name (terminals) / code (co-loaders)
   terminals: () => req<Record<string, ContactEntry>>('/terminals'),

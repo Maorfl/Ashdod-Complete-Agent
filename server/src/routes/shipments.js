@@ -117,6 +117,23 @@ router.post('/:file/gatepass', async (req, res) => {
   }
 });
 
+// Task 6 — ספירת תיקים פעילים המשויכים לקוד קו-לואדר/מסוף נתון, לאזהרת מחיקה
+// בעמוד "ניהול מסופים ומשלחים". "פעיל" = לא בסטטוס סגור/נמסר (owns_file_statuses,
+// מקור האמת הקיים היחיד ל"תיק כבר טופל/הגיע ליעד" — לא רשימה שנייה). ממוקם לפני
+// GET /:file (catch-all) כדי שלא ייבלע כ-file_number.
+router.get('/count-by-co-loader/:code', (req, res) => {
+  const rows = shipments.byCoLoaderCode(req.params.code);
+  const closed = shipments.ownsStatuses();
+  const active = rows.filter((r) => !closed.has(r.status));
+  res.json({ total: rows.length, active: active.length });
+});
+router.get('/count-by-terminal/:site', (req, res) => {
+  const rows = shipments.bySiteDes(req.params.site);
+  const closed = shipments.ownsStatuses();
+  const active = rows.filter((r) => !closed.has(r.status));
+  res.json({ total: rows.length, active: active.length });
+});
+
 // תיק בודד
 router.get('/:file', (req, res) => {
   const r = shipments.get(req.params.file);

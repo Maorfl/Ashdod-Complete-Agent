@@ -1,18 +1,20 @@
 {
-  "name": "THE RED SEA BAY LAUNDROMAT EILAT LT",
+  "name": "CAMIN CENTER LTD",
   "company_id": "",
   "emails": [
-    "office@redsea-laundry.co.il"
+    "liat@camincenter.co.il"
   ],
   "address": "",
   "notes": "",
-  "department": "cus1",
-  "service_rep": "משה רוסו",
-  "type": "unknown",
+  "department": "cus3",
+  "service_rep": "אביהוא עבדי",
+  "type": "haifa_cont",
   "dangerous_rule": false,
   "cont_general": "",
   "contact_names": "",
-  "cont_general_emails": [],
+  "cont_general_emails": [
+    "hlcl@goldbond.co.il"
+  ],
   "cont_dangerous_emails": [],
   "contacts": [],
   "aliases": [],

@@ -113,8 +113,22 @@ function migrateAutoSendExclusion() {
   return res.changes;
 }
 
-const OWNS_STATUSES = new Set(config.tracking?.owns_file_statuses || ['sent']);
-const SENT_STATUS = config.tracking?.sent_status || 'sent';
+/**
+ * clearAutoSendExclusion — שחרור חד-פעמי וממוקד של תיק בודד מחתך-הגיל (Task 2/3,
+ * reportWatcher.js): נקרא רק כשתיק שהיה תקוע ב-alert נפתר בסיווג מחדש למסלול
+ * co_loader/terminal אמיתי. לא נוגע בתיקים אחרים — שחרור נקודתי, לא גורף. שער
+ * האוטומציה (automation.isEligible) הוא רק תנאי אחד מני רבים ב-autoSendEnabled;
+ * שחרור הדגל אינו עוקף שום תנאי שער אחר (מחלקה/Graph/gatepass/יבואן).
+ */
+function clearAutoSendExclusion(fileNumber) {
+  db.prepare('UPDATE shipments SET auto_send_excluded = 0 WHERE file_number = ?').run(String(fileNumber));
+  return get(fileNumber);
+}
+
+// פונקציות ולא consts קבועים (Task 1, סנכרון חי): config.tracking עשוי להשתנות בזמן
+// ריצה (config.js מרענן לפי mtime) — נגזרות בכל קריאה, לא נשמרות ב-cache מודול.
+function ownsStatuses() { return new Set(config.tracking?.owns_file_statuses || ['sent']); }
+function sentStatus() { return config.tracking?.sent_status || 'sent'; }
 // טיוטת העברה לחיפה מוכנה אך ממתינה ל-gatepass PDF — מוחזקת מחוץ לתור האישורים עד
 // שה-PDF מצורף (אוטומטית או ידנית). מקור אמת יחיד למחרוזת הסטטוס.
 const AWAITING_PDF_STATUS = 'ממתין ל-PDF';
@@ -133,7 +147,7 @@ function isTracked(fileNumber) {
  */
 function ownsFile(fileNumber) {
   const rec = get(fileNumber);
-  if (!rec || !OWNS_STATUSES.has(rec.status)) return null;
+  if (!rec || !ownsStatuses().has(rec.status)) return null;
   return rec;
 }
 
@@ -209,8 +223,8 @@ function setStatus(fileNumber, status, notes = null) {
 function markSent(fileNumber, notes = null, opts = {}) {
   const now = new Date().toISOString();
   db.prepare('UPDATE shipments SET status=?, status_updated_at=?, agent_sent_at=?, last_seen=?, auto_sent=? WHERE file_number=?')
-    .run(SENT_STATUS, now, now, now, opts.auto ? 1 : 0, String(fileNumber));
-  addHistory(fileNumber, SENT_STATUS, notes);
+    .run(sentStatus(), now, now, now, opts.auto ? 1 : 0, String(fileNumber));
+  addHistory(fileNumber, sentStatus(), notes);
   return get(fileNumber);
 }
 
@@ -299,6 +313,15 @@ function byStatus(status) {
   return db.prepare('SELECT * FROM shipments WHERE status = ? ORDER BY status_updated_at DESC').all(status);
 }
 
+// Task 6 — לצורך אזהרת מחיקה בעמוד "ניהול מסופים ומשלחים": כל התיקים המשויכים
+// לקוד קו-לואדר / מסוף נתון (כולל סגורים — הסינון ל"פעילים בלבד" נעשה בצד הקורא).
+function byCoLoaderCode(code) {
+  return db.prepare('SELECT * FROM shipments WHERE co_loader_code = ?').all(String(code));
+}
+function bySiteDes(siteDes) {
+  return db.prepare('SELECT * FROM shipments WHERE site_des = ?').all(String(siteDes));
+}
+
 function history(fileNumber) {
   return db.prepare('SELECT * FROM status_history WHERE file_number = ? ORDER BY changed_at ASC').all(String(fileNumber));
 }
@@ -336,10 +359,14 @@ module.exports = {
   dryRunLog,
   all,
   byStatus,
+  byCoLoaderCode,
+  bySiteDes,
   history,
   statusChangesSince,
   counts,
   migrateAutoSendExclusion,
-  SENT_STATUS,
+  clearAutoSendExclusion,
+  sentStatus,
+  ownsStatuses,
   AWAITING_PDF_STATUS,
 };

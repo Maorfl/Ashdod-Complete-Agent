@@ -10,7 +10,10 @@ import { useAgentFilter, matchesAgent, AGENTS } from '../context/AgentFilterCont
 import { useToast } from '../components/Toasts';
 import ConfirmModal from '../components/ConfirmModal';
 import FileModal from '../components/FileModal';
-import { formatDuration, formatDateTimeHe, needsAttentionReason, isStaleHold } from '../status';
+import {
+  formatDuration, formatDateTimeHe, needsAttentionReason, needsAttentionCategory, isStaleHold,
+  NeedsAttentionCategory, NEEDS_ATTENTION_GROUP_LABEL, NEEDS_ATTENTION_CATEGORY_ORDER,
+} from '../status';
 
 const DEPT_META: { key: 'cus1' | 'cus2' | 'cus3'; name: string; code: string }[] = [
   { key: 'cus1', name: 'משה רוסו', code: 'CUS1' },
@@ -90,8 +93,8 @@ export default function Automation() {
 
   const needsAttention = useMemo(() => {
     return agentItems
-      .map((s) => ({ s, reason: needsAttentionReason(s) }))
-      .filter((x): x is { s: Shipment; reason: string } => !!x.reason)
+      .map((s) => ({ s, reason: needsAttentionReason(s), category: needsAttentionCategory(s) }))
+      .filter((x): x is { s: Shipment; reason: string; category: NeedsAttentionCategory } => !!x.reason && !!x.category)
       .sort((a, b) => {
         const ah = isStaleHold(a.s) ? 1 : 0;
         const bh = isStaleHold(b.s) ? 1 : 0;
@@ -99,6 +102,21 @@ export default function Automation() {
         return new Date(b.s.status_updated_at || 0).getTime() - new Date(a.s.status_updated_at || 0).getTime();
       });
   }, [agentItems]);
+
+  // קיבוץ לפי סיבת חסימה (Task 5) — כל קבוצה = משימה שניתן להשלים ("תיקן את הנתונים
+  // -> כל הקבוצה מתנקה בסריקה הבאה"). סדר קבוע לפי NEEDS_ATTENTION_CATEGORY_ORDER;
+  // מדלגים על קבוצות ריקות.
+  const needsAttentionGroups = useMemo(() => {
+    const byCategory = new Map<NeedsAttentionCategory, typeof needsAttention>();
+    for (const item of needsAttention) {
+      const list = byCategory.get(item.category) || [];
+      list.push(item);
+      byCategory.set(item.category, list);
+    }
+    return NEEDS_ATTENTION_CATEGORY_ORDER
+      .map((category) => ({ category, list: byCategory.get(category) || [] }))
+      .filter((g) => g.list.length > 0);
+  }, [needsAttention]);
 
   const openItem = useMemo(() => agentItems.find((s) => s.file_number === openFile) || null, [agentItems, openFile]);
 
@@ -171,37 +189,42 @@ export default function Automation() {
         {items !== null && needsAttention.length === 0 && (
           <div className="empty"><div className="big">✓</div>אין תיקים הדורשים טיפול{agent !== 'all' ? ' עבור הסוכן שנבחר' : ''}.</div>
         )}
-        {needsAttention.length > 0 && (
-          <div className="table-scroll">
-            <table className="ship-table">
-              <thead>
-                <tr><th>תיק</th><th>לקוח</th><th>מחלקה</th><th>סיבה</th><th>זמן בסטטוס</th><th></th></tr>
-              </thead>
-              <tbody>
-                {needsAttention.map(({ s, reason }) => {
-                  const stale = isStaleHold(s);
-                  return (
-                    <tr key={s.file_number} className="ship-row" onClick={() => setOpenFile(s.file_number)}>
-                      <td className="mono file-cell" style={{ ['--c' as any]: stale ? 'var(--st-alert)' : 'var(--st-pending)' }}>
-                        {s.file_number}
-                      </td>
-                      <td className="cust-cell">{s.customer_name || '—'}</td>
-                      <td>{s.department ? s.department.toUpperCase() : '—'}</td>
-                      <td style={{ fontSize: 13 }}>
-                        {reason}
-                        {stale && <span className="st-badge" style={{ ['--c' as any]: 'var(--st-alert)', marginInlineStart: 6 }}>⏰ תקוע</span>}
-                      </td>
-                      <td className="mono time-cell" title={formatDateTimeHe(s.status_updated_at)}>{formatDuration(s.status_updated_at)}</td>
-                      <td className="actions-cell" onClick={(e) => e.stopPropagation()}>
-                        <button className="btn icon" title="כרטיס תיק" aria-label="כרטיס תיק" onClick={() => setOpenFile(s.file_number)}>👁</button>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-        )}
+        {needsAttentionGroups.map(({ category, list }) => (
+          <details key={category} className="needs-attention-group" open>
+            <summary style={{ cursor: 'pointer', padding: '10px 14px', fontWeight: 'bold' }}>
+              {NEEDS_ATTENTION_GROUP_LABEL[category]} <span style={{ color: 'var(--muted)', fontWeight: 'normal' }}>({list.length} {list.length === 1 ? 'תיק' : 'תיקים'})</span>
+            </summary>
+            <div className="table-scroll">
+              <table className="ship-table">
+                <thead>
+                  <tr><th>תיק</th><th>לקוח</th><th>מחלקה</th><th>סיבה</th><th>זמן בסטטוס</th><th></th></tr>
+                </thead>
+                <tbody>
+                  {list.map(({ s, reason }) => {
+                    const stale = isStaleHold(s);
+                    return (
+                      <tr key={s.file_number} className="ship-row" onClick={() => setOpenFile(s.file_number)}>
+                        <td className="mono file-cell" style={{ ['--c' as any]: stale ? 'var(--st-alert)' : 'var(--st-pending)' }}>
+                          {s.file_number}
+                        </td>
+                        <td className="cust-cell">{s.customer_name || '—'}</td>
+                        <td>{s.department ? s.department.toUpperCase() : '—'}</td>
+                        <td style={{ fontSize: 13 }}>
+                          {reason}
+                          {stale && <span className="st-badge" style={{ ['--c' as any]: 'var(--st-alert)', marginInlineStart: 6 }}>⏰ תקוע</span>}
+                        </td>
+                        <td className="mono time-cell" title={formatDateTimeHe(s.status_updated_at)}>{formatDuration(s.status_updated_at)}</td>
+                        <td className="actions-cell" onClick={(e) => e.stopPropagation()}>
+                          <button className="btn icon" title="כרטיס תיק" aria-label="כרטיס תיק" onClick={() => setOpenFile(s.file_number)}>👁</button>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </details>
+        ))}
       </div>
 
       {openItem && <FileModal item={openItem} onClose={() => setOpenFile(null)} onChanged={() => load()} />}

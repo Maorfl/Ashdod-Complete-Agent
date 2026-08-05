@@ -1,18 +1,29 @@
 {
   "name": "HULIOT (A.C.S) LTD.",
-  "company_id": "",
+  "company_id": "570038158",
   "emails": [
-    "maorfl14@gmail.com"
+    "estellem@huliot.com",
+    "rayaba@huliot.com",
+    "jacks@huliot.com",
+    "tzachs@huliot.com",
+    "rany@huliot.com",
+    "eliranp@huliot.com",
+    "yogevl@huliot.com"
   ],
-  "address": "",
+  "address": "קיבוץ שדה נחמיה ד.נ. גליל עליון",
   "notes": "",
   "department": "cus2",
   "service_rep": "דורון רימה",
-  "type": "unknown",
+  "type": "haifa_cont",
   "dangerous_rule": false,
-  "cont_general": "",
-  "cont_general_emails": [],
+  "cont_general": "גולד בונד",
+  "contact_names": "",
+  "cont_general_emails": [
+    "hgc@goldbond.co.il",
+    "hlcl@goldbond.co.il"
+  ],
   "cont_dangerous_emails": [],
+  "contacts": [],
   "aliases": [],
   "seen_stations": [
     "1",

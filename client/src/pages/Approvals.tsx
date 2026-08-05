@@ -1,9 +1,10 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { api, Shipment } from '../api';
 import { useAgentFilter, matchesAgent } from '../context/AgentFilterContext';
 import { requiresGatepass } from '../status';
 import ConfirmModal from '../components/ConfirmModal';
 import EmailListEditor from '../components/EmailListEditor';
+import { useLiveRefresh } from '../hooks/useLiveRefresh';
 
 export default function Approvals() {
   const { agent } = useAgentFilter();
@@ -19,8 +20,24 @@ export default function Approvals() {
   const [activeRejectItem, setActiveRejectItem] = useState<Shipment | null>(null);
   const [rejectNotes, setRejectNotes] = useState('');
 
-  function load() { api.approvals().then(setAllItems).catch((e) => setFlash({ t: e.message, ok: false })); }
-  useEffect(load, []);
+  // רענון ברקע לא יגע בעריכה פעילה (editFile) — עדיפות ל"לא לאבד הקלדה" על פני עדכניות מיידית
+  const editFileRef = useRef<string | null>(null);
+  editFileRef.current = editFile;
+
+  const load = useCallback((manual = false) => {
+    api.approvals()
+      .then(setAllItems)
+      .catch((e) => { if (manual) setFlash({ t: e.message, ok: false }); });
+  }, []);
+
+  useEffect(() => { load(true); }, [load]);
+
+  // רענון "חי": מתעורר ברגע שסבב ה-commit בשרת מסתיים (תיק שנשלח אוטומטית נעלם מהתור מייד,
+  // טיוטה חדשה מופיעה מייד) — עם רשת גיבוי. שקט, ולא נוגע בעריכה פעילה.
+  useLiveRefresh(useCallback(() => {
+    if (editFileRef.current) return; // לא לדרוס עריכה באמצע הקלדה
+    load(false);
+  }, [load]));
 
   async function decide(file: string, decision: string, edited?: any, notes?: string) {
     try {

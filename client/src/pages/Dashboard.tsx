@@ -3,11 +3,12 @@
  * כרטיסי סטטוס לחיצים + שורת פילטרים + טבלה עם פעולות + כרטיס תיק (מודאל).
  * רענון אוטומטי כל 60 שניות. מכבד את מסנן הסוכן הגלובלי.
  */
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api, Shipment, DashboardCounts } from '../api';
 import { useAgentFilter, matchesAgent } from '../context/AgentFilterContext';
 import { useToast } from '../components/Toasts';
+import { useLiveRefresh } from '../hooks/useLiveRefresh';
 import FileModal from '../components/FileModal';
 import ConfirmModal from '../components/ConfirmModal';
 import ShipmentNotesModal from '../components/ShipmentNotesModal';
@@ -41,7 +42,6 @@ export default function Dashboard() {
   const [sendCc, setSendCc] = useState<string[]>([]);
   const [sendBody, setSendBody] = useState('');
   const [sending, setSending] = useState(false);
-  const timerRef = useRef<number | null>(null);
 
   const load = useCallback((manual = false) => {
     api.dashboard()
@@ -56,11 +56,11 @@ export default function Dashboard() {
     api.watcherStatus().then((w) => setLastScan(w.scan?.scannedAt || null)).catch(() => {});
   }, [toast]);
 
-  useEffect(() => {
-    load();
-    timerRef.current = window.setInterval(load, 60000);
-    return () => { if (timerRef.current) window.clearInterval(timerRef.current); };
-  }, [load]);
+  useEffect(() => { load(); }, [load]);
+
+  // רענון "חי": מתעורר ברגע שסבב ה-commit בשרת מסתיים (לא ממתין למרווח שרירותי),
+  // עם רשת גיבוי מתוזמנת אם בדיקת הסטטוס עצמה נכשלת. שקט — בלי טוסט, בלי לגעת בגלילה/פילטרים/מודאלים.
+  const liveRefresh = useLiveRefresh(useCallback(() => load(false), [load]));
 
   // מסנן הסוכן חל על הכל — מונים, טבלה ומודאל
   const agentItems = useMemo(() => (items || []).filter((s) => matchesAgent(s, agent)), [items, agent]);
@@ -200,6 +200,11 @@ export default function Dashboard() {
           <p>מצבת תיקים — שחרור באשדוד והעברה לחיפה. {agentItems.length} תיקים במעקב.</p>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          {liveRefresh.failing && (
+            <span className="refresh-info mono" style={{ color: 'var(--st-alert)' }} title="הרענון האוטומטי נכשל כמה פעמים ברצף — הנתונים המוצגים עלולים להיות לא עדכניים">
+              ⚠ הרענון האוטומטי לא מצליח
+            </span>
+          )}
           <span className="refresh-info mono">סריקה אחרונה: {scanClock}</span>
           <span className="refresh-info mono">עדכון אחרון: {clock}</span>
           <button className="btn" onClick={() => load(true)}>🔄 רענון</button>

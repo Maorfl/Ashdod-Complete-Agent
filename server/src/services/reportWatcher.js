@@ -14,7 +14,8 @@
  * בעצמו למעט מסלולי ההעברה לחיפה כשמופעל הדגל auto_send_haifa_transfer (Task 6).
  */
 const fs = require('fs');
-const { config, REPORT_PATH } = require('../config');
+const configModule = require('../config');
+const { config, REPORT_PATH } = configModule;
 const { readReport } = require('../report/reader');
 const { classify, transferPerformer, isHaifaTransfer, requiresGatepass } = require('../report/classifier');
 const { composeRelease } = require('../email/composer');
@@ -48,16 +49,14 @@ function inScope(rec) {
 }
 
 // מיפוי נציג-דוח (service_rep) -> מחלקה (cus1/cus2/cus3), לפי config.departments.
-// נבנה פעם אחת (config לא משתנה בזמן ריצה); נורמליזציה תואמת את normRep.
-let _repToDept = null;
+// נבנה מחדש בכל קריאה (Task 1: config.json עשוי להתעדכן חי בזמן ריצה — ראו config.js
+// refreshIfChanged) — אובייקט זעיר (2-3 מחלקות), עלות מחדש הבנייה זניחה.
 function repToDept(serviceRep) {
-  if (!_repToDept) {
-    _repToDept = {};
-    for (const [dept, info] of Object.entries(config.departments || {})) {
-      if (info?.name) _repToDept[normRep(info.name)] = dept;
-    }
+  const map = {};
+  for (const [dept, info] of Object.entries(config.departments || {})) {
+    if (info?.name) map[normRep(info.name)] = dept;
   }
-  return _repToDept[normRep(serviceRep)] || null;
+  return map[normRep(serviceRep)] || null;
 }
 
 /**
@@ -216,8 +215,127 @@ async function sendOrDefer(fileNumber, email, summary, dept) {
   return 'auto_sent';
 }
 
+// ---------- תוויות עברית קצרות לסיבות alert — לצורך הערת סיווג-מחדש (Task 4) בלבד.
+// לא כפילות מכוונת של status.ts בצד הלקוח (needsAttentionReason) — שם/הקשר שונים
+// (טקסט UI לדשבורד מול הערת audit-trail ב-status_history), אין קשר תחזוקתי ביניהם.
+const ALERT_REASON_LABEL = {
+  unknown_co_loader: 'קוד קו-לואדר לא מזוהה',
+  unknown_terminal: 'מסוף שחרור לא מזוהה',
+  terminal_requires_co_loader: 'מסוף מחייב קו-לואדר',
+  unknown_customer: 'לקוח לא מזוהה',
+};
+
+/**
+ * reclassifyNote — בונה הערת audit-trail עברית לתיק שסווג מחדש (Task 4). לא נכתבת
+ * ל-status_history כשורה נפרדת — מוזנת כ-notes של אותה שורת שינוי-סטטוס שכבר נכתבת
+ * ע"י upsert() בתוך buildAndMaybeSendDraft (ראו הערה בקריאה למטה), כדי למנוע כפל
+ * שורות היסטוריה לאותו מעבר.
+ */
+function reclassifyNote(prevReason, decision) {
+  const prevLabel = ALERT_REASON_LABEL[prevReason] || 'התראה';
+  let trigger = '';
+  if (decision.route === 'co_loader' && decision.handler?.code) {
+    trigger = ` — קוד קו-לואדר ${decision.handler.code} נמצא במערכת`;
+  } else if (decision.route === 'terminal' && decision.handler?.site) {
+    trigger = ` — מסוף "${decision.handler.site}" נמצא במערכת`;
+  }
+  return `סיווג מחדש: התיק היה חסום (${prevLabel}) ועבר למסלול ${decision.route}${trigger}`;
+}
+
+/**
+ * buildAndMaybeSendDraft — Task 2: "בניית טיוטת העברה לחיפה + שליחה אוטומטית אם
+ * זכאי" — משותף לנתיב תיק-חדש ולנתיב סיווג-מחדש (תיק שהיה alert ונפתר), כדי שלוגיקת
+ * ה-branching (isHaifaTransfer / dry_run / autoSendEnabled / preloadedGatepass) לא
+ * תשוכפל בשני מקומות עצמאיים שעלולים לסטות זה מזה. preloadedGatepass מועבר כפרמטר
+ * (לא נסגר עליו מהיקף מודול) כי הוא closure פר-מחזור-קומיט שמוגדר בתוך commit() עצמה
+ * (cache עצל של הודעות gatepass לכל מחזור).
+ * מחזירה את הרשומה השמורה (savedRec).
+ */
+async function buildAndMaybeSendDraft(rec, decision, importer, dept, perf, performerUnknown, base, summary, preloadedGatepass) {
+  // האם התיק הוא "העברה לחיפה" אמיתית (LCL + מסלול co_loader/terminal/direct +
+  // מסוף שאינו הנמל עצמו)? רק אז בונים טיוטה. אחרת (prepaid / FCL / שחרור בנמל
+  // עצמו) — נספר בדשבורד כ"שוחרר באשדוד" בלבד, ללא טיוטה וללא מייל (החלטת משתמש
+  // 2026-07-13). prepaid לעולם אינו מקבל מייל.
+  if (!isHaifaTransfer(rec, decision)) {
+    const savedRec = shipments.upsert({ ...base, status: STATUS.RELEASED });
+    summary.tracked_released += 1;
+    return savedRec;
+  }
+
+  // מסלול העברה לחיפה — בניית טיוטה (חסימת השליחה בלי gatepass PDF נאכפת באישור)
+  const email = composeRelease(rec, decision, importer);
+  const withDraft = {
+    ...base,
+    draft_payload: { route: decision.route, needs_review: !!decision.needs_review, email, alerts: decision.alerts || [] },
+  };
+
+  // חתך-גיל האוטומציה (Task 1, תוספת per-department): נכתב תמיד ל-DB *לפני* בדיקת
+  // הזכאות לאוטומציה, כדי ש-first_seen יהיה קיים ברשומה בזמן הבדיקה (תיק חדש
+  // שנוצר באותו מחזור קומיט חייב first_seen אמיתי — לא ניתן להעריך חתך-גיל בלעדיו).
+  // ברירת מחדל: AWAITING_PDF (המסלול הרגיל) — משודרג בהמשך אם אוטומציה זכאית.
+  const savedRec = shipments.upsert({ ...withDraft, status: STATUS.AWAITING_PDF });
+
+  // Task 6 — שליחה אוטומטית רק למסלולי ההעברה לחיפה (co_loader/terminal), מאחורי
+  // מצב-מחלקה + חתך-גיל (auto_send_excluded + epoch, services/automation.js).
+  // dry_run (תוספת אוטומציה): מריצים את כל הבדיקה/סימולציה, אך התיק *נשאר* בנתיב
+  // הרגיל (AWAITING_PDF -> pending_approval) — לא עובר ל-AWAITING_GATEPASS, כדי
+  // שלא ייצא מתור האישורים הרגיל וימתין לטיפול אנושי כרגיל.
+  if (autoSendModeForDept(dept) === 'dry_run' && autoSendEnabled(decision.route, dept, savedRec, importer)) {
+    await sendOrDefer(rec.file_number, email, summary, dept); // רושם סימולציה ל-dry_run_log בלבד
+    const preload = await preloadedGatepass(rec.file_number);
+    if (preload && preload.path) summary.pdf_preloaded += 1;
+    else summary.awaiting_pdf += 1;
+  } else if (autoSendEnabled(decision.route, dept, savedRec, importer)) {
+    // הרשומה כבר קיימת (upsert למעלה) — נדרש לפני חיפוש ה-gatepass (setGatepass מבצע UPDATE)
+    shipments.upsert({ file_number: rec.file_number, status: STATUS.AWAITING_GATEPASS });
+    await sendOrDefer(rec.file_number, email, summary, dept);
+  } else {
+    // הטיוטה נבנית מיד, אך מוחזקת מחוץ לתור האישורים עד שיצורף gatepass PDF
+    // (אוטומטית ב-gatepassFetcher או ידנית מכרטיס התיק). setGatepass יעביר אז
+    // אוטומטית ל-pending_approval. עד אז — נראית רק בדשבורד/כרטיס, ללא שליחה.
+    // Task 1 (2026-07-14) — בדיקה מקדימה מיידית: אם ה-PDF כבר יושב בתיבה, התיק
+    // עובר ל-pending_approval באותו מחזור קומיט (attachFromMessages/setGatepass
+    // מבצעים את המעבר). אם לא נמצא — נשאר "ממתין ל-PDF" כרגיל.
+    const preload = await preloadedGatepass(rec.file_number);
+    if (preload && preload.path) {
+      summary.pdf_preloaded += 1;
+      // תיקון race מקורו-בעבר (הבאג "שני קליקים"): כשה-autoSendEnabled הראשון
+      // (למעלה) נבדק, gatepass_co_loader_rule עדיין לא היה קיים (הקוד טרם אומת
+      // מול PDF) ולכן נכשל תמיד על תיק חדש — גם אם ה-PDF זמין באותה רגע. עכשיו,
+      // אחרי ש-preloadedGatepass מצא PDF וקרא ל-resolveCoLoaderFromPdf (דרך
+      // attachFromMessages/setGatepass), הקוד כבר אומת ורשומת ה-DB עודכנה —
+      // נטענים אותה מחדש ונבדקת הזכאות פעם נוספת, באותו מחזור קומיט, כדי שהמייל
+      // ייצא מיד ולא ימתין למחזור/קליק הבא. אם עדיין לא זכאי — נשאר pending_approval
+      // כרגיל, ללא שינוי התנהגות.
+      const refreshed = shipments.get(rec.file_number);
+      if (refreshed && refreshed.status === 'pending_approval'
+        && autoSendEnabled(decision.route, dept, refreshed, importer)) {
+        // עדיפות ל-draft_payload.email העדכני על פני ה-email המקומי שהורכב למעלה:
+        // אם resolveCoLoaderFromPdf זיהה קוד קו-לואדר שונה (rule='adopt') הוא כבר
+        // חידש את הטיוטה ב-DB (gatepassCoLoaderHook.js) — שולחים את הגרסה המאומתת,
+        // לא עותק ישן שהורכב לפני שהקוד אומת מול ה-PDF בפועל.
+        let toSend = email;
+        try {
+          const payload = refreshed.draft_payload ? JSON.parse(refreshed.draft_payload) : null;
+          if (payload?.email) toSend = payload.email;
+        } catch { /* נשאר עם ה-email המקומי */ }
+        // sendOrDefer עצמו מכבד dry_run (רושם ל-dry_run_log בלבד, לא שולח/מסמן נשלח) —
+        // אותה פונקציה בדיוק כמו בענפים off-cycle/AWAITING_GATEPASS למעלה.
+        await sendOrDefer(rec.file_number, toSend, summary, dept);
+      }
+    } else {
+      summary.awaiting_pdf += 1;
+    }
+  }
+  return savedRec;
+}
+
 // ---------- Task 2: קומיט — סיווג + כתיבה ל-DB + טיוטה/שליחה ----------
 async function commit() {
+  // Task 1: קליטת עריכות config.json/terminals.json שנעשו ידנית בזמן שהשרת רץ, בלי
+  // restart — בודק mtime ומפרסר מחדש רק אם השתנה. נקרא כאן (פעם אחת למחזור קומיט),
+  // לא בתוך לולאת הרשומות, כדי לא לבצע stat() מיותר לכל רשומה.
+  configModule.refreshIfChanged();
   if (!config.feature_flags?.ashdod_release) return record({ skipped: 'feature_off', at: new Date().toISOString() });
 
   // אם אין סריקה עדיין / הסריקה נכשלה / התיישנה — סורקים כעת (inline) לפני הקומיט.
@@ -230,7 +348,7 @@ async function commit() {
   const summary = {
     total: records.length, out_of_scope: 0, no_op: 0, queued: 0, awaiting_pdf: 0, pdf_preloaded: 0, alerts: 0,
     tracked_released: 0, skipped_tracked: 0, auto_sent: 0, dry_run: 0, awaiting_gatepass: 0, errors: 0,
-    importers_created: 0,
+    importers_created: 0, re_classified: 0, outcome_changed: 0,
   };
 
   // סריקה מקדימה של הודעות ה-gatepass (Task 1, 2026-07-14): נשלפת פעם אחת, עצלנית —
@@ -302,6 +420,71 @@ async function commit() {
           await sendOrDefer(rec.file_number, email, summary, existingDept);
           continue;
         }
+
+        // Task 2 — סיווג מחדש: תיק שהיה תקוע ב-alert (למשל קוד קו-לואדר/מסוף/לקוח לא
+        // מזוהים) מסווג מחדש בכל מחזור קומיט נגד הדוח/config העדכניים ביותר. מוגבל
+        // במפורש ל-status === 'alert' בלבד — לא מורחב ל-AWAITING_PDF/awaiting_gatepass/
+        // pending_approval, שכבר יש להם מנגנוני retry משלהם (הענפים למעלה) ואינם
+        // "חסומים" באותו מובן. הגנת-משנה מפורשת: תיק ששולם/נשלח (ownsFile) לעולם לא
+        // נוגעים בו — לא אמור להיות ישים בפועל לתיק ב-alert, אך נשמר כהגנת-עומק
+        // (למשל אם owns_file_statuses ייערך ידנית בעתיד לכלול alert בטעות).
+        if (existing.status === STATUS.ALERT && !shipments.ownsFile(rec.file_number)) {
+          summary.re_classified += 1;
+          const outcomeChanged = decision.route !== 'alert';
+          if (!outcomeChanged) {
+            // התוצאה עדיין alert — רק מרעננים תוכן (סיבה/release_date/department) בלי
+            // לגעת בסטטוס, כדי לא לגרום לכתיבת שורת היסטוריה מיותרת (upsert כותב
+            // היסטוריה רק כשמפתח status מועבר ושונה מהקיים — לכן לא כולל status כאן).
+            const patch = {};
+            if (rec.release_date && !existing.release_date) patch.release_date = rec.release_date;
+            if (!existing.department && dept) patch.department = dept;
+            if (!existing.agent_name && importer?.service_rep) patch.agent_name = importer.service_rep;
+            if (decision.reason && decision.reason !== existing.reason) patch.reason = decision.reason;
+            if (Object.keys(patch).length) shipments.upsert({ file_number: rec.file_number, ...patch });
+            summary.skipped_tracked += 1; continue;
+          }
+          // התוצאה השתנתה — נפתר למסלול אמיתי (prepaid/co_loader/terminal/direct).
+          // בונים מחדש את base ומריצים את אותה לוגיקת בניית-טיוטה/שליחה-אוטומטית
+          // המשותפת לנתיב תיק-חדש (buildAndMaybeSendDraft) — ללא שכפול לוגיקה.
+          summary.outcome_changed += 1;
+          const base = {
+            file_number: rec.file_number,
+            customer_name: rec.customer_name,
+            route: decision.route,
+            reason: decision.reason || null,
+            release_date: rec.release_date || null,
+            department: dept,
+            co_loader_code: rec.co_loader_code || null,
+            continuation: decision.continuation?.name || null,
+            transfer_performer: perf || null,
+            performer_unknown: performerUnknown,
+            site_des: rec.site_des || null,
+            fcl_lcl: rec.fcl_lcl || null,
+            hazardous: rec.hazardous,
+            wg_reshimon_no: rec.wg_reshimon_no || null,
+            type: importer?.type || null,
+            agent_name: importer?.service_rep || rec.service_rep || null,
+            // Task 4 — הערת audit-trail: נכתבת לתוך אותה שורת status_history שכבר
+            // נוצרת בתוך buildAndMaybeSendDraft (upsert כותב notes לשורת ההיסטוריה
+            // בעת שינוי status) — לא קריאת addHistory נפרדת, כדי למנוע כפל שורות.
+            notes: reclassifyNote(existing.reason, decision),
+          };
+          // isHaifaTransfer/prepaid/FCL וכו' — כל ההסתעפות מטופלת בתוך buildAndMaybeSendDraft
+          // עצמה (זהה בדיוק לנתיב תיק-חדש, כולל "שוחרר באשדוד" ללא טיוטה כשלא רלוונטי).
+          await buildAndMaybeSendDraft(rec, decision, importer, dept, perf, performerUnknown, base, summary, preloadedGatepass);
+          // Task 3 — שחרור נקודתי מחתך-הגיל: רק עכשיו, אחרי שההחלטה על שליחה למחזור
+          // הזה כבר התקבלה (autoSendEnabled בתוך buildAndMaybeSendDraft נבדקה מול
+          // auto_send_excluded הישן) — כך שהשחרור בפועל חל רק מהמחזור הבא ואילך,
+          // ולא יכול לגרום לשליחה אוטומטית "באותו מחזור" שהתיק נפתר. מוגבל למסלולי
+          // האוטומציה הצרים בפועל (co_loader/terminal בלבד — TRANSFER_ROUTES המקומי
+          // כאן, לא HAIFA_TRANSFER_ROUTES הרחב יותר של המסווג שכולל גם direct).
+          if (TRANSFER_ROUTES.has(decision.route)) {
+            shipments.clearAutoSendExclusion(rec.file_number);
+            console.log(`[reportWatcher] תיק ${rec.file_number} שוחרר מחתך-גיל האוטומציה (סיווג מחדש: alert -> ${decision.route})`);
+          }
+          continue;
+        }
+
         // תיק קיים אחר — משלימים release_date מהדוח אם חסר, ורוענן department אם היה
         // חסר ועכשיו ניתן לגזור (למשל יבואן שמופה מאוחר יותר — ראו departmentFor).
         // לא נוגעים בסטטוס/היסטוריה, ולא דורסים department קיים בערך אחר.
@@ -354,54 +537,8 @@ async function commit() {
         agent_name: importer?.service_rep || rec.service_rep || null,
       };
 
-      // האם התיק הוא "העברה לחיפה" אמיתית (LCL + מסלול co_loader/terminal/direct +
-      // מסוף שאינו הנמל עצמו)? רק אז בונים טיוטה. אחרת (prepaid / FCL / שחרור בנמל
-      // עצמו) — נספר בדשבורד כ"שוחרר באשדוד" בלבד, ללא טיוטה וללא מייל (החלטת משתמש
-      // 2026-07-13). prepaid לעולם אינו מקבל מייל.
-      if (!isHaifaTransfer(rec, decision)) {
-        shipments.upsert({ ...base, status: STATUS.RELEASED });
-        summary.tracked_released += 1;
-        continue;
-      }
-
-      // מסלול העברה לחיפה — בניית טיוטה (חסימת השליחה בלי gatepass PDF נאכפת באישור)
-      const email = composeRelease(rec, decision, importer);
-      const withDraft = {
-        ...base,
-        draft_payload: { route: decision.route, needs_review: !!decision.needs_review, email, alerts: decision.alerts || [] },
-      };
-
-      // חתך-גיל האוטומציה (Task 1, תוספת per-department): נכתב תמיד ל-DB *לפני* בדיקת
-      // הזכאות לאוטומציה, כדי ש-first_seen יהיה קיים ברשומה בזמן הבדיקה (תיק חדש
-      // שנוצר באותו מחזור קומיט חייב first_seen אמיתי — לא ניתן להעריך חתך-גיל בלעדיו).
-      // ברירת מחדל: AWAITING_PDF (המסלול הרגיל) — משודרג בהמשך אם אוטומציה זכאית.
-      const savedRec = shipments.upsert({ ...withDraft, status: STATUS.AWAITING_PDF });
-
-      // Task 6 — שליחה אוטומטית רק למסלולי ההעברה לחיפה (co_loader/terminal), מאחורי
-      // מצב-מחלקה + חתך-גיל (auto_send_excluded + epoch, services/automation.js).
-      // dry_run (תוספת אוטומציה): מריצים את כל הבדיקה/סימולציה, אך התיק *נשאר* בנתיב
-      // הרגיל (AWAITING_PDF -> pending_approval) — לא עובר ל-AWAITING_GATEPASS, כדי
-      // שלא ייצא מתור האישורים הרגיל וימתין לטיפול אנושי כרגיל.
-      if (autoSendModeForDept(dept) === 'dry_run' && autoSendEnabled(decision.route, dept, savedRec, importer)) {
-        await sendOrDefer(rec.file_number, email, summary, dept); // רושם סימולציה ל-dry_run_log בלבד
-        const preload = await preloadedGatepass(rec.file_number);
-        if (preload && preload.path) summary.pdf_preloaded += 1;
-        else summary.awaiting_pdf += 1;
-      } else if (autoSendEnabled(decision.route, dept, savedRec, importer)) {
-        // הרשומה כבר קיימת (upsert למעלה) — נדרש לפני חיפוש ה-gatepass (setGatepass מבצע UPDATE)
-        shipments.upsert({ file_number: rec.file_number, status: STATUS.AWAITING_GATEPASS });
-        await sendOrDefer(rec.file_number, email, summary, dept);
-      } else {
-        // הטיוטה נבנית מיד, אך מוחזקת מחוץ לתור האישורים עד שיצורף gatepass PDF
-        // (אוטומטית ב-gatepassFetcher או ידנית מכרטיס התיק). setGatepass יעביר אז
-        // אוטומטית ל-pending_approval. עד אז — נראית רק בדשבורד/כרטיס, ללא שליחה.
-        // Task 1 (2026-07-14) — בדיקה מקדימה מיידית: אם ה-PDF כבר יושב בתיבה, התיק
-        // עובר ל-pending_approval באותו מחזור קומיט (attachFromMessages/setGatepass
-        // מבצעים את המעבר). אם לא נמצא — נשאר "ממתין ל-PDF" כרגיל.
-        const preload = await preloadedGatepass(rec.file_number);
-        if (preload && preload.path) summary.pdf_preloaded += 1;
-        else summary.awaiting_pdf += 1;
-      }
+      // בניית טיוטה/שליחה אוטומטית — משותף עם נתיב סיווג-מחדש (ראו buildAndMaybeSendDraft).
+      await buildAndMaybeSendDraft(rec, decision, importer, dept, perf, performerUnknown, base, summary, preloadedGatepass);
     } catch (e) {
       summary.errors += 1;
     }

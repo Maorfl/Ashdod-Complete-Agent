@@ -1,13 +1,11 @@
 {
-  "name": "THE RED SEA BAY LAUNDROMAT EILAT LT",
+  "name": "MIMI LUZON",
   "company_id": "",
-  "emails": [
-    "office@redsea-laundry.co.il"
-  ],
+  "emails": [],
   "address": "",
   "notes": "",
-  "department": "cus1",
-  "service_rep": "משה רוסו",
+  "department": "cus3",
+  "service_rep": "אביהוא עבדי",
   "type": "unknown",
   "dangerous_rule": false,
   "cont_general": "",

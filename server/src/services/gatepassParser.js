@@ -23,9 +23,15 @@
  */
 const fs = require('fs');
 const { PDFParse } = require('pdf-parse');
-const { coLoaders } = require('../config');
+const contacts = require('../db/contacts'); // מקור אמת יחיד ל-co-loaders (חי, ראו contacts.js)
 
+// שכבת הטקסט של ה-PDF מחזירה את המילים בסדר הפוך ("משלוח תעודת") בגלל אופן אחסון
+// רצפי RTL; OCR (מסלול הגיבוי) מחזיר את אותו כיתוב בסדר הקריאה הטבעי ("תעודת משלוח").
+// שתי הצורות תקפות ומזהות את אותו עמוד — בדיקה מול שתיהן, אחרת מסלול ה-OCR תמיד
+// ייפול על no_delivery_note_page ולעולם לא יגיע לחילוץ המזהה.
 const DELIVERY_NOTE_MARKER = 'משלוח תעודת';
+const DELIVERY_NOTE_MARKERS = [DELIVERY_NOTE_MARKER, 'תעודת משלוח'];
+const hasDeliveryNoteMarker = (text) => DELIVERY_NOTE_MARKERS.some((m) => String(text || '').includes(m));
 const DEAL_ID_RE = /[A-Za-z0-9]{16}/g;
 
 /**
@@ -35,7 +41,7 @@ const DEAL_ID_RE = /[A-Za-z0-9]{16}/g;
  * מחזיר { dealId } או { error }.
  */
 async function extractFromText(pages, fileNumber) {
-  const notePage = pages.find((p) => p.text.includes(DELIVERY_NOTE_MARKER));
+  const notePage = pages.find((p) => hasDeliveryNoteMarker(p.text));
   if (!notePage) return { error: 'no_delivery_note_page' };
 
   // אימות שה-PDF שייך לתיק הנכון (הצעת בדיקת-שפיות): מספר התיק חייב להופיע
@@ -92,7 +98,7 @@ async function parseGatepassPdf(pdfPath, fileNumber) {
   if (dealId.length !== 16) return { error: 'bad_length', dealId }; // הגנה כפולה, לא אמור לקרות
   const coLoaderCode = dealId.slice(10, 13);
 
-  if (!coLoaders[coLoaderCode]) {
+  if (!contacts.getCoLoaderByCode(coLoaderCode)) {
     // קוד לא מוכר — לעיתים תקין (למשל קוד בן 5 ספרות כמו 15373 שאינו יכול להתאים
     // לחיתוך 3-תווים) ולעיתים מעיד על פער נתונים. נרשם ללוג במפורש כדי שהדפוס יהיה
     // גלוי, לא שקוף — הקורא (Task 2) מחליט מה לעשות עם unknown_code.

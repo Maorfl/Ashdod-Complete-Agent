@@ -19,7 +19,7 @@ const shipments = require('../db/shipments');
 const importersDb = require('../db/importers');
 const { resolveCoLoaderFromPdf } = require('./gatepassCoLoaderHook');
 
-const GATEPASS_SENDER = (config.microsoft_graph?.gatepass_sender) || 'do-not-reply@h-caspi.co.il';
+function gatepassSender() { return config.microsoft_graph?.gatepass_sender || 'do-not-reply@h-caspi.co.il'; }
 const ATTACH_ROOT = path.join(DATA_DIR, 'attachments'); // fallback בלבד — ראו saveAttachment
 
 let timer = null;
@@ -97,7 +97,7 @@ async function saveUploadedPdf(fileNumber, buffer, originalName) {
  * ב-reportWatcher.commit) כדי שלא כל תיק יבצע חיפוש mailbox נפרד.
  */
 async function fetchGatepassMessages() {
-  return graph.searchFrom(config.sender_mailbox, GATEPASS_SENDER, {
+  return graph.searchFrom(config.sender_mailbox, gatepassSender(), {
     sinceDays: graph.settings().gatepassLookbackDays,
   });
 }
@@ -200,6 +200,6 @@ function start() {
 function stop() { if (timer) clearInterval(timer); timer = null; }
 
 module.exports = {
-  runOnce, fetchForFile, saveUploadedPdf, start, stop, status: () => lastRun, GATEPASS_SENDER,
+  runOnce, fetchForFile, saveUploadedPdf, start, stop, status: () => lastRun, gatepassSender,
   fetchGatepassMessages, attachFromMessages,
 };

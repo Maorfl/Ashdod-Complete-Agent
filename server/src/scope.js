@@ -15,12 +15,11 @@ function normCust(s) {
   return String(s || '').replace(/\s+/g, ' ').trim().toLowerCase().replace(/\.+$/, '').trim();
 }
 
-let _set = null;
+// נבנה מחדש בכל קריאה (Task 1: config.json עשוי להתעדכן חי בזמן ריצה — ראו config.js
+// refreshIfChanged) — רשימה של עד כמה עשרות שמות, עלות מחדש הבנייה זניחה.
 function whitelistSet() {
-  if (_set) return _set;
   const names = (config.report_scope && config.report_scope.customer_whitelist) || [];
-  _set = new Set(names.map(normCust));
-  return _set;
+  return new Set(names.map(normCust));
 }
 
 // האם הלקוח מותר תחת CUS1? כשה-whitelist ריק — אין סינון (מחזיר true).

@@ -16,8 +16,6 @@
 const { config, continuationCarriers, dangerousGoods } = require('../config');
 const contacts = require('../db/contacts'); // מקור אמת יחיד ל-CO-LOADERS/מסופים + חיפוש לפי שם
 
-const EXT = config.external_email_override; // maorfl14@gmail.com
-
 function lookupTerminal(site) {
   return contacts.getTerminal(site);
 }
@@ -25,7 +23,7 @@ function lookupTerminal(site) {
 // prepaid/direct + מובילי המשך: כל נמען חיצוני מנותב ל-override היחיד (כלל הבטיחות נשמר).
 function routeExternal(emails) {
   const list = Array.isArray(emails) ? emails : emails ? [emails] : [];
-  return list.length ? [EXT] : [EXT];
+  return [config.external_email_override];
 }
 
 // מסלולי ההעברה לחיפה (co_loader/terminal) — נמענים אמיתיים (אושר במפורש 2026-07-07):
@@ -44,7 +42,7 @@ function realTo(...emailGroups) {
       seen.add(k); out.push(v);
     }
   }
-  return out.length ? out : [EXT];
+  return out.length ? out : [config.external_email_override];
 }
 
 function realImporterEmails(importer) {
@@ -253,7 +251,7 @@ function resolveContinuation(rec, importer, alerts) {
 }
 
 function importerEmails(importer) {
-  return importer && importer.emails && importer.emails.length ? importer.emails : [EXT];
+  return importer && importer.emails && importer.emails.length ? importer.emails : [config.external_email_override];
 }
 
 // CC פנימי בלבד — נשמר כפי שהוא (לא עובר override): ashdod@ + מייל המחלקה
