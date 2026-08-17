@@ -1,0 +1,23 @@
+{
+  "name": "SEA GATE SHIPPING 2003 LTD",
+  "company_id": "513381871",
+  "emails": [
+    "chen@seagate-shipping.com"
+  ],
+  "address": "",
+  "notes": "",
+  "department": "cus3",
+  "service_rep": "אביהוא עבדי",
+  "type": "unknown",
+  "dangerous_rule": false,
+  "cont_general": "קונטרם",
+  "contact_names": "",
+  "cont_general_emails": [
+    "hlcl@goldbond.co.il"
+  ],
+  "cont_dangerous_emails": [],
+  "contacts": [],
+  "aliases": [],
+  "seen_stations": [],
+  "files": []
+}

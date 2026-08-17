@@ -2,9 +2,34 @@ import { useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { api, Importer, ImporterContact } from '../api';
 import { useAgentFilter, matchesAgent } from '../context/AgentFilterContext';
-import { importerGapLabel } from '../status';
 import ConfirmModal from '../components/ConfirmModal';
 import EmailListEditor from '../components/EmailListEditor';
+
+function normEmail(e: string): string {
+  return String(e || '').trim().toLowerCase();
+}
+
+// האם ליבואן יש לפחות מייל אמיתי אחד (לא placeholder = external_email_override)
+function hasRealEmail(emails: string[] | undefined, placeholder: string): boolean {
+  const ph = normEmail(placeholder);
+  return (emails || []).some((e) => { const n = normEmail(e); return n && n !== ph; });
+}
+
+// האם שאלת "מוביל המשך" נענתה — מוביל עם מייל אמיתי, או "אוסף בעצמו"
+function continuationAnswered(i: Importer, placeholder: string): boolean {
+  if (i.type === 'haifa_self') return true;
+  return !!String(i.cont_general || '').trim() && hasRealEmail(i.cont_general_emails, placeholder);
+}
+
+// "פרטים" — מלא רק כשיש גם מייל יבואן אמיתי וגם תשובה לשאלת מוביל ההמשך (Task, 2026-08-05).
+// שונה במכוון מ-importerGapLabel/missingFields (תג "נדרש להשלים" בדשבורד) — עמודה זו נועדה
+// לחשוף שדות שמעולם לא מולאו, לרבות placeholder ששתל את המערכת (config.external_email_override).
+function importerDetailsComplete(i: Importer, placeholder: string): { complete: boolean; reasons: string[] } {
+  const reasons: string[] = [];
+  if (!hasRealEmail(i.emails, placeholder)) reasons.push('חסר מייל יבואן');
+  if (!continuationAnswered(i, placeholder)) reasons.push('חסר מוביל המשך');
+  return { complete: reasons.length === 0, reasons };
+}
 
 const BLANK: Partial<Importer> = {
   name: '', company_id: '', emails: [], address: '', notes: '',
@@ -76,9 +101,12 @@ export default function Importers() {
   const [activeNotesImporter, setActiveNotesImporter] = useState<Importer | null>(null);
   const [tempNotes, setTempNotes] = useState('');
   const [savingNotes, setSavingNotes] = useState(false);
+  // placeholder שכל היבואנים נזרעו איתו (config.external_email_override) — לזיהוי "לא מולא" בעמודת פרטים
+  const [placeholderEmail, setPlaceholderEmail] = useState('');
 
   function load() { return api.importers().then(setItems).catch((e) => setFlash({ t: e.message, ok: false })); }
   useEffect(() => { load(); }, []);
+  useEffect(() => { api.version().then((v) => setPlaceholderEmail(v.external_email_override || '')).catch(() => {}); }, []);
 
   // הגעה מקישור "פרטי יבואן חסרים" בדשבורד (?open=<folder>): פותח את מגירת העריכה
   // ישירות על היבואן הרלוונטי — לא רק ממקד את החיפוש (Task 2, "פעולה" ולא תג מת).
@@ -171,7 +199,7 @@ export default function Importers() {
               const truncatedEmails = emailsText.length > 30 ? `${emailsText.slice(0, 27)}...` : emailsText;
               const notesText = i.notes || '';
               const truncatedNotes = notesText.length > 30 ? `${notesText.slice(0, 27)}...` : notesText;
-              const gap = importerGapLabel(i.missing_fields);
+              const { complete, reasons } = importerDetailsComplete(i, placeholderEmail);
 
               return (
                 <tr key={i._folder}>
@@ -182,16 +210,18 @@ export default function Importers() {
                     {truncatedEmails}
                   </td>
                   <td>
-                    {gap ? (
+                    {complete ? (
+                      <span style={{ color: 'var(--muted)' }}>✓ מלא</span>
+                    ) : (
                       <span
                         className="st-badge"
-                        style={{ ['--c' as any]: 'var(--muted)', cursor: 'pointer' }}
-                        title={gap + ' — לחצו להשלמה'}
+                        style={{ ['--c' as any]: 'var(--st-alert)', cursor: 'pointer' }}
+                        title={reasons.join(' · ') + ' — לחצו להשלמה'}
                         onClick={() => openEdit(i)}
                       >
-                        ⬦ נדרש להשלים
+                        ✕ חסר
                       </span>
-                    ) : <span style={{ color: 'var(--muted)' }}>✓ מלא</span>}
+                    )}
                   </td>
                   <td>
                     {notesText ? (

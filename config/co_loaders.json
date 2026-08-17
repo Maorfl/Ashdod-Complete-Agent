@@ -49,16 +49,12 @@
       "emails": []
     },
     "415": {
-      "name": "טוטל קארגו",
-      "name_en": "TOTAL CARGO",
-      "contact": "צוות טוטל",
-      "gender": "f",
-      "number": "p",
       "emails": [
         "imptcl@total-cargo.com"
       ],
-      "phrasing": "צוות טוטל, אודה לטיפולכן בהעברה לחיפה בבקשה אישורכן (:",
-      "notes": "51x בניתוח"
+      "name": "טוטל קרגו (טי.סי.אל) בע\"מ",
+      "name_en": "TOTAL CARGO (TCL)",
+      "contact": "צוות טוטל קרגו"
     },
     "484": {
       "name": "ישראל קארגו\\ICL",

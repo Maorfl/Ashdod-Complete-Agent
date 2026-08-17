@@ -1,18 +1,21 @@
 {
   "name": "S. SHOKCHA SHOPS  LTD.",
-  "company_id": "",
+  "company_id": "513950568",
   "emails": [
-    "maorfl14@gmail.com"
+    "saleem@shukha.biz",
+    "info@shukha.biz"
   ],
-  "address": "",
+  "address": "רחוב פאולוס השישי 23",
   "notes": "",
   "department": "cus2",
   "service_rep": "דורון רימה",
-  "type": "unknown",
+  "type": "haifa_self",
   "dangerous_rule": false,
   "cont_general": "",
+  "contact_names": "סלים",
   "cont_general_emails": [],
   "cont_dangerous_emails": [],
+  "contacts": [],
   "aliases": [],
   "seen_stations": [
     "2",

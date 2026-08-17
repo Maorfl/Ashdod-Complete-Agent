@@ -12,8 +12,10 @@
   "type": "haifa_self",
   "dangerous_rule": false,
   "cont_general": "",
+  "contact_names": "דיקלה וליה",
   "cont_general_emails": [],
   "cont_dangerous_emails": [],
+  "contacts": [],
   "aliases": [],
   "seen_stations": [
     "1"

@@ -1,34 +1,23 @@
 {
-  "name": "DAHER DENTAL DEPOT LTD",
+  "name": "TECHNO-UP LTD",
   "company_id": "",
   "emails": [
-    "daherexp10@bezeqint.net",
-    "daherdental4@gmail.com"
+    "sendcosta@gmail.com"
   ],
   "address": "",
   "notes": "",
   "department": "cus3",
   "service_rep": "אביהוא עבדי",
   "type": "haifa_cont",
-  "dangerous_rule": true,
+  "dangerous_rule": false,
   "cont_general": "גולד בונד",
   "contact_names": "",
   "cont_general_emails": [
     "hlcl@goldbond.co.il"
   ],
-  "cont_dangerous_emails": [
-    "tls.iliab@gmail.com",
-    "tls@tls.co.il"
-  ],
+  "cont_dangerous_emails": [],
   "contacts": [],
   "aliases": [],
-  "seen_stations": [
-    "2",
-    "4"
-  ],
-  "files": [
-    "6179464",
-    "6179489",
-    "6179613"
-  ]
+  "seen_stations": [],
+  "files": []
 }

@@ -1,18 +1,21 @@
 {
   "name": "NOURIEL CHOEN",
-  "company_id": "",
+  "company_id": "513120469",
   "emails": [
-    "maorfl14@gmail.com"
+    "yossi@nurielmd.co.il",
+    "gilad@nurielmd.co.il"
   ],
-  "address": "",
+  "address": "פרדס חנה המושב 21",
   "notes": "",
   "department": "cus2",
   "service_rep": "דורון רימה",
   "type": "unknown",
   "dangerous_rule": false,
   "cont_general": "",
+  "contact_names": "",
   "cont_general_emails": [],
   "cont_dangerous_emails": [],
+  "contacts": [],
   "aliases": [],
   "seen_stations": [
     "1",

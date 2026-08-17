@@ -122,7 +122,7 @@ export interface DashboardCounts {
 
 export const api = {
   health: () => req<{ ok: boolean }>('/health'),
-  version: () => req<{ current: string; latest: string; update_required: boolean; source: string }>('/version'),
+  version: () => req<{ current: string; latest: string; update_required: boolean; source: string; external_email_override: string }>('/version'),
 
   importers: () => req<Importer[]>('/importers'),
   importer: (folder: string) => req<Importer>('/importers/' + encodeURIComponent(folder)),

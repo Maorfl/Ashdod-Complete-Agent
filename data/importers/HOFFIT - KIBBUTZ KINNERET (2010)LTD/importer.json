@@ -1,18 +1,24 @@
 {
   "name": "HOFFIT - KIBBUTZ KINNERET (2010)LTD",
-  "company_id": "",
+  "company_id": "514454446",
   "emails": [
-    "maorfl14@gmail.com"
+    "arielah@hofit.com",
+    "eliranp@huliot.com"
   ],
-  "address": "",
+  "address": "קיבוץ כינרתד.נ.עמק הירדן מיקוד 15118",
   "notes": "",
   "department": "cus2",
   "service_rep": "דורון רימה",
-  "type": "unknown",
+  "type": "haifa_cont",
   "dangerous_rule": false,
-  "cont_general": "",
-  "cont_general_emails": [],
+  "cont_general": "גולד בונד",
+  "contact_names": "",
+  "cont_general_emails": [
+    "hlcl@goldbond.co.il",
+    "hgc@goldbond.co.il"
+  ],
   "cont_dangerous_emails": [],
+  "contacts": [],
   "aliases": [],
   "seen_stations": [
     "1"

@@ -1,18 +1,23 @@
 {
   "name": "EVEREST PAPER PRODUCTS",
-  "company_id": "",
+  "company_id": "515087120",
   "emails": [
-    "maorfl14@gmail.com"
+    "everest@bezeqint.net"
   ],
-  "address": "",
+  "address": "כפר קרע 30075",
   "notes": "",
   "department": "cus2",
   "service_rep": "דורון רימה",
-  "type": "unknown",
+  "type": "haifa_cont",
   "dangerous_rule": false,
-  "cont_general": "",
-  "cont_general_emails": [],
+  "cont_general": "אוברסיז שינוע והפצה",
+  "contact_names": "",
+  "cont_general_emails": [
+    "eliranoh@ovrs-comr.co.il",
+    "dikla@ovrs-comr.co.il"
+  ],
   "cont_dangerous_emails": [],
+  "contacts": [],
   "aliases": [],
   "seen_stations": [
     "1"

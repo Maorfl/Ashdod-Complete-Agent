@@ -1,18 +1,23 @@
 {
   "name": "PLASKOLITE ISRAEL LTD",
-  "company_id": "",
+  "company_id": "512570292",
   "emails": [
-    "maorfl14@gmail.com"
+    "rafael.klausner@plaskolite.com",
+    "moatasem.amonh@plaskolite.com",
+    "shimon.krengel@plaskolite.com",
+    "ariela.michaely@plaskolite.com"
   ],
-  "address": "",
+  "address": "קיבוץ גזית",
   "notes": "",
   "department": "cus2",
   "service_rep": "דורון רימה",
   "type": "unknown",
   "dangerous_rule": false,
-  "cont_general": "",
+  "cont_general": "צוות גולד בונד",
+  "contact_names": "",
   "cont_general_emails": [],
   "cont_dangerous_emails": [],
+  "contacts": [],
   "aliases": [],
   "seen_stations": [
     "1"
