@@ -180,10 +180,17 @@ export default function TerminalsForwarders() {
                   <div className="field"><label>שם אנגלי</label><input value={(editing.entry.name_en as string) || ''} onChange={(e) => setField('name_en', e.target.value)} /></div>
                 </div>
               )}
-              <div className="grid-2">
+              {editing.kind === 'terminal' ? (
+                <div className="grid-2">
+                  <div className="field"><label>איש קשר</label><input value={(editing.entry.contact as string) || ''} onChange={(e) => setField('contact', e.target.value)} /></div>
+                  {/* Task 4 — "תפקיד / הערת מיקום" מוסר מעורך המשלחים בלבד; נשאר כאן
+                      עבור מסופים. השדה role עצמו נשאר ב-ContactEntry/עומק הנתונים —
+                      רק הקלט מוסתר, כדי לא לאבד role קיים על רשומות משלח בשמירה. */}
+                  <div className="field"><label>תפקיד / הערת מיקום</label><input value={(editing.entry.role as string) || ''} onChange={(e) => setField('role', e.target.value)} /></div>
+                </div>
+              ) : (
                 <div className="field"><label>איש קשר</label><input value={(editing.entry.contact as string) || ''} onChange={(e) => setField('contact', e.target.value)} /></div>
-                <div className="field"><label>תפקיד / הערת מיקום</label><input value={(editing.entry.role as string) || ''} onChange={(e) => setField('role', e.target.value)} /></div>
-              </div>
+              )}
               <EmailListEditor label="מיילים" emails={editing.entry.emails || []} onChange={(next) => setField('emails', next)} />
               <div className="field"><label>הערות</label><textarea rows={3} value={(editing.entry.notes as string) || ''} onChange={(e) => setField('notes', e.target.value)} /></div>
               <div className="field" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>

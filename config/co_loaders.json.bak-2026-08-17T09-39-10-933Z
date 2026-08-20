@@ -1,0 +1,180 @@
+{
+  "_comment": "טבלת קודי CO-LOADER. כל כתובות המייל הוחלפו ל-maorfl14@gmail.com (external_email_override). gender: m/f, number: s/p קובעים את הניסוח (טיפולך/טיפולכם/טיפולכן). קודים עם needs_review=true ממתינים לפרטי קשר אמיתיים (OPEN GAP).",
+  "co_loaders": {
+    "232": {
+      "name": "אלדן מטעני 0002 בע\"מ",
+      "name_en": "ELDAN CARGO",
+      "contact": "אתי",
+      "gender": "f",
+      "number": "s",
+      "emails": [
+        "etil@Eldan-Cargo.Com",
+        "operation@eldan-cargo.com"
+      ],
+      "phrasing": "אתי, אודה לטיפולך בהעברה לחיפה בבקשה אישורך תודה (:"
+    },
+    "237": {
+      "name": "אבירם",
+      "name_en": "AVIRAM",
+      "contact": "סופיה / עומרי",
+      "gender": "m",
+      "number": "p",
+      "emails": [
+        "Sofia@aviram.co.il",
+        "ops@aviram.co.il",
+        "omri@aviram.co.il"
+      ],
+      "phrasing": "צוות אבירם, אודה לטיפולכם בהעברה לחיפה בבקשה אישורכם",
+      "notes": "237 לפי נוהל, נמצא גם כ-ops@/omri@"
+    },
+    "238": {
+      "name": "אושפיר",
+      "name_en": "OSHFIR",
+      "contact": "מריה / רומן / קייט",
+      "gender": "m",
+      "number": "p",
+      "emails": [
+        "Maria@oshfir.co.il",
+        "RomanJ@oshfir.co.il"
+      ],
+      "phrasing": "צוות אושפיר, אודה לטיפולכם בהעברה לחיפה בבקשה אישורכם",
+      "notes": "12x בניתוח"
+    },
+    "307": {
+      "name": "DSV",
+      "name_en": "DSV",
+      "contact": "אתי",
+      "gender": "f",
+      "number": "s",
+      "emails": []
+    },
+    "415": {
+      "emails": [
+        "imptcl@total-cargo.com"
+      ],
+      "name": "טוטל קרגו (טי.סי.אל) בע\"מ",
+      "name_en": "TOTAL CARGO (TCL)",
+      "contact": "צוות טוטל קרגו"
+    },
+    "484": {
+      "name": "ישראל קארגו\\ICL",
+      "name_en": "ISL CARGO / ILCARGO",
+      "contact": "סנדרה",
+      "gender": "f",
+      "number": "s",
+      "emails": [
+        "ASHDOD@ilcargo.com",
+        "sandra@ilcargo.com"
+      ],
+      "phrasing": "סנדרה, אודה לטיפולך בהעברה לחיפה בבקשה אישורך",
+      "notes": "נמצא גם כ-ישראל קארגו בדוח Focus"
+    },
+    "635": {
+      "name": "EASY CONSOL",
+      "name_en": "EASY CONSOL",
+      "contact": "אופק / ניסים",
+      "gender": "m",
+      "number": "p",
+      "emails": [
+        "TIFUL@easyconsol.com"
+      ],
+      "needs_review": true,
+      "phrasing": "אופק וניסים, אודה לטיפולכם בהעברה לחיפה",
+      "notes": "נמצא בדוח Focus — כ-4 תיקים"
+    },
+    "641": {
+      "name": "אושן לינק",
+      "name_en": "OCEAN LINK",
+      "contact": "מאלי / אתי / לירן",
+      "gender": "f",
+      "number": "p",
+      "emails": [
+        "import@ocean-link.co.il"
+      ],
+      "phrasing": "צוות אושן לינק, אודה לטיפולכן בהעברה לחיפה בבקשה אישורכן (:",
+      "notes": "נפוץ ביותר — 114x בניתוח"
+    },
+    "674": {
+      "name": "CONSOLA",
+      "name_en": "CONSOLA",
+      "contact": "עידו",
+      "gender": "m",
+      "number": "s",
+      "emails": [
+        "service@consolaa.com"
+      ],
+      "needs_review": true,
+      "phrasing": "עידו, אודה לטיפולך בהעברה לחיפה",
+      "notes": "נמצא בדוח Focus — תיק אחד"
+    },
+    "852": {
+      "name": "JOINT TRANSPORT",
+      "name_en": "JOINT TRANSPORT",
+      "contact": "אייל",
+      "gender": "m",
+      "number": "s",
+      "emails": [],
+      "notes": "נמצא בדוח Focus — תיק אחד",
+      "needs_review": true
+    },
+    "958": {
+      "name": "ישראל קארגו",
+      "name_en": "ILCargo",
+      "contact": "סנדרה",
+      "gender": "f",
+      "number": "s",
+      "emails": []
+    },
+    "997": {
+      "name": "קבוצת וריטס לוגיסטיקה בע\"מ",
+      "name_en": "VERITAS",
+      "contact": "צוות וריטס",
+      "gender": "m",
+      "number": "s",
+      "emails": [
+        "veritas-ashdod@veritas.co.il"
+      ],
+      "phrasing": "יוסי, אודה לטיפולך בהעברה לחיפה בבקשה אישורך"
+    },
+    "15373": {
+      "name": "ספרטה קארגו",
+      "name_en": "SPARTA CARGO",
+      "contact": "צוות ספרטה",
+      "gender": "m",
+      "number": "p",
+      "emails": [],
+      "needs_review": true,
+      "notes": "נמצא בדוח Focus — 30 תיקים (!), דורש טיפול דחוף"
+    },
+    "master_cargo": {
+      "name": "MASTER CARGO",
+      "name_en": "MASTER CARGO",
+      "contact": "Ran Tuvia / Malka Ashuel",
+      "gender": "m",
+      "number": "p",
+      "emails": [
+        "Ran.Tuvia@MasterCargo.co.il",
+        "Malka.Ashuel@MasterCargo.co.il"
+      ],
+      "notes": "אין קוד Co Loader בדוח — מגיע רק דרך חיפוש לפי שם (מבצע העברה לחיפה). מפתח לא-מספרי כדי שלא יתנגש בקודי הדוח."
+    },
+    "אייבי טרנס לוגיסטיקה בע\"מ": {
+      "emails": [
+        "tiful@abetrans.net",
+        "etim@abetrans.net"
+      ],
+      "name": "אייבי טרנס לוגיסטיקה בע\"מ",
+      "name_en": "ABETRANS LOGISTIC",
+      "contact": "אתי"
+    },
+    "אפסילון סחר ולוגיסטיקה בע\"מ": {
+      "emails": [
+        "anna@epsilonlogistics.com",
+        "natalia@epsilonlogistics.com",
+        "avia@epsilonlogistics.com",
+        "mishel@epsilonlogistics.com"
+      ],
+      "name": "אפסילון"
+    }
+  }
+}

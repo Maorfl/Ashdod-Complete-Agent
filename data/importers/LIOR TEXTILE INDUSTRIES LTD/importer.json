@@ -1,18 +1,24 @@
 {
   "name": "LIOR TEXTILE INDUSTRIES LTD.",
-  "company_id": "",
+  "company_id": "511071599",
   "emails": [
-    "maorfl14@gmail.com"
+    "info@lior-protective.com",
+    "itshak@lior-protective.com",
+    "haim@lior-protective.com"
   ],
-  "address": "",
+  "address": "שלומי",
   "notes": "",
   "department": "cus3",
   "service_rep": "אביהוא עבדי",
-  "type": "unknown",
+  "type": "haifa_cont",
   "dangerous_rule": false,
-  "cont_general": "",
-  "cont_general_emails": [],
+  "cont_general": "גולד בונד",
+  "contact_names": "",
+  "cont_general_emails": [
+    "hlcl@goldbond.co.il"
+  ],
   "cont_dangerous_emails": [],
+  "contacts": [],
   "aliases": [],
   "seen_stations": [
     "4"

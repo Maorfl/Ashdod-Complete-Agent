@@ -29,7 +29,7 @@ function main() {
       const rec = byFile.get(String(ship.file_number));
       if (!rec) { summary.not_in_report += 1; continue; }
 
-      const importer = imp.findByName(rec.customer_name);
+      const importer = imp.findByName(rec.customer_name, rec.service_rep);
       const decision = classify(rec, importer);
       if (decision.route !== 'co_loader' && decision.route !== 'terminal') {
         summary.route_changed += 1; continue;

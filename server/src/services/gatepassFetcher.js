@@ -87,7 +87,7 @@ async function saveUploadedPdf(fileNumber, buffer, originalName) {
   fs.writeFileSync(dest, buffer);
   try { await resolveCoLoaderFromPdf(fileNumber, dest); }
   catch (e) { console.error(`[gatepassFetcher] יישוב קוד קו-לואדר נכשל עבור ${fileNumber}: ${e.message}`); }
-  shipments.setGatepass(fileNumber, dest);
+  shipments.setGatepass(fileNumber, dest, 'upload');
   return dest;
 }
 
@@ -132,7 +132,7 @@ async function attachFromMessages(fileNumber, messages) {
   // רענן) — לא חוסם את שמירת ה-PDF עצמה, רק מתועד ללוג.
   try { await resolveCoLoaderFromPdf(fileNumber, saved); }
   catch (e) { console.error(`[gatepassFetcher] יישוב קוד קו-לואדר נכשל עבור ${fileNumber}: ${e.message}`); }
-  shipments.setGatepass(fileNumber, saved);
+  shipments.setGatepass(fileNumber, saved, 'mail');
   return { file: fileNumber, path: saved };
 }
 

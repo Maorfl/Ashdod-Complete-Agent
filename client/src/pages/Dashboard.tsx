@@ -17,7 +17,7 @@ import {
   STATUS_META, STATUS_ORDER, statusKeyOf, statusLabel, MANUAL_STATUSES,
   formatDateHe, formatDuration, timeSeverity, canSend, StatusKey,
   usesNonHaifaStatusDisplay, nonHaifaStatusLabel,
-  isStaleHold, staleHoldReason, importerGapLabel,
+  isStaleHold, staleHoldReason, importerGapLabel, hazardousTitle,
 } from '../status';
 
 export default function Dashboard() {
@@ -289,7 +289,7 @@ export default function Dashboard() {
                   return (
                     <tr key={s.file_number} className={'ship-row' + (s.notes ? ' has-notes' : '') + (s.performer_unknown ? ' performer-unknown' : '')}>
                       <td className="mono file-cell" style={{ ['--c' as any]: meta?.cssVar || 'var(--line)' }}>
-                        {s.file_number}{s.hazardous === 'Yes' && <span title="חומר מסוכן"> ⚠</span>}
+                        {s.file_number}{s.hazardous === 'Yes' && <span title={hazardousTitle(s)}> ⚠</span>}
                       </td>
                       <td className="cust-cell">{s.customer_name || '—'}</td>
                       <td className="mono">{s.fcl_lcl || '—'}</td>

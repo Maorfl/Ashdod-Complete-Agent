@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { api, Importer, ImporterContact } from '../api';
+import { api, Importer } from '../api';
 import { useAgentFilter, matchesAgent } from '../context/AgentFilterContext';
 import ConfirmModal from '../components/ConfirmModal';
 import EmailListEditor from '../components/EmailListEditor';
@@ -36,44 +36,6 @@ const BLANK: Partial<Importer> = {
   department: '', type: 'unknown', dangerous_rule: false,
   cont_general: '', contact_names: '', cont_general_emails: [], cont_dangerous_emails: [], contacts: [], aliases: [],
 };
-
-// עורך אנשי-קשר פשוט (Task 2) — שם חובה, טלפון/מייל אופציונליים. מודל: ImporterContact[].
-function ContactsEditor({ contacts, onChange }: { contacts: ImporterContact[]; onChange: (next: ImporterContact[]) => void }) {
-  const [name, setName] = useState('');
-  const [phone, setPhone] = useState('');
-  const [email, setEmail] = useState('');
-
-  function add() {
-    if (!name.trim()) return;
-    onChange([...contacts, { name: name.trim(), phone: phone.trim() || undefined, email: email.trim() || undefined }]);
-    setName(''); setPhone(''); setEmail('');
-  }
-  function remove(idx: number) {
-    onChange(contacts.filter((_, i) => i !== idx));
-  }
-
-  return (
-    <div className="field">
-      <label>אנשי קשר</label>
-      {contacts.length > 0 && (
-        <div className="chips">
-          {contacts.map((c, i) => (
-            <span className="email-chip" key={c.name + i} title={[c.phone, c.email].filter(Boolean).join(' · ')}>
-              {c.name}
-              <button type="button" className="rm" aria-label={`הסרת ${c.name}`} title="הסרה" onClick={() => remove(i)}>✕</button>
-            </span>
-          ))}
-        </div>
-      )}
-      <div className="add-row" style={{ gap: 6 }}>
-        <input placeholder="שם" value={name} onChange={(e) => setName(e.target.value)} style={{ flex: 2 }} />
-        <input placeholder="טלפון" value={phone} onChange={(e) => setPhone(e.target.value)} style={{ flex: 1 }} />
-        <input placeholder="מייל" value={email} onChange={(e) => setEmail(e.target.value)} style={{ flex: 2 }} />
-        <button type="button" className="btn sm" onClick={add}>+ הוספה</button>
-      </div>
-    </div>
-  );
-}
 
 const DEPTS = [
   { v: '', l: '—' },
@@ -128,6 +90,14 @@ export default function Importers() {
       (i.company_id || '').includes(s) ||
       (i.department || '').includes(s));
   }, [items, q, agent]);
+
+  // שמות כפולים (Task 3, METZERPLAS): נגזר מכל היבואנים (לא רק filtered) כדי שהתג
+  // יישאר עקבי גם כשמסנן הסוכן מציג רק אחד מבין השניים.
+  const duplicateNames = useMemo(() => {
+    const counts: Record<string, number> = {};
+    for (const i of items) counts[i.name] = (counts[i.name] || 0) + 1;
+    return new Set(Object.keys(counts).filter((n) => counts[n] > 1));
+  }, [items]);
 
   function openNew() { setEditing({ ...BLANK } as Importer); setIsNew(true); }
   function openEdit(i: Importer) { setEditing({ ...i }); setIsNew(false); }
@@ -203,7 +173,14 @@ export default function Importers() {
 
               return (
                 <tr key={i._folder}>
-                  <td><b>{i.name}</b>{i.dangerous_rule && <span title="כלל חומר מסוכן"> ⚠</span>}</td>
+                  <td>
+                    <b>{i.name}</b>{i.dangerous_rule && <span title="כלל חומר מסוכן"> ⚠</span>}
+                    {duplicateNames.has(i.name) && (
+                      <span className="type-tag" title="קיים יותר מיבואן אחד בשם זה — מבחין לפי מחלקה" style={{ marginInlineStart: 6 }}>
+                        {i.department ? i.department.toUpperCase() : '—'}
+                      </span>
+                    )}
+                  </td>
                   <td className="mono">{i.company_id || '—'}</td>
                   <td>{i.department ? i.department.toUpperCase() : '—'}</td>
                   <td className="mono" style={{ fontSize: 12, color: 'var(--muted)' }} title={emailsText.length > 30 ? emailsText : undefined}>
@@ -297,10 +274,6 @@ export default function Importers() {
                 <input type="checkbox" style={{ width: 18 }} checked={editing.dangerous_rule} onChange={(e) => set('dangerous_rule', e.target.checked)} />
                 <label style={{ margin: 0 }}>חל כלל חומר מסוכן (Hazardous → סמא)</label>
               </div>
-              <ContactsEditor
-                contacts={editing.contacts || []}
-                onChange={(next) => set('contacts', next)}
-              />
               <div className="field"><label>הערות מיוחדות</label>
                 <textarea rows={3} value={editing.notes} onChange={(e) => set('notes', e.target.value)} /></div>
             </div>

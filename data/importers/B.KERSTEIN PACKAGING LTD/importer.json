@@ -2,17 +2,21 @@
   "name": "B.KERSTEIN PACKAGING LTD",
   "company_id": "",
   "emails": [
-    "maorfl14@gmail.com"
+    "roni@kerstein.co.il",
+    "gabi@kerstein.co.il",
+    "yuval@kerstein.co.il"
   ],
   "address": "",
   "notes": "",
   "department": "cus3",
   "service_rep": "אביהוא עבדי",
-  "type": "unknown",
+  "type": "haifa_cont",
   "dangerous_rule": false,
-  "cont_general": "",
+  "cont_general": "hlcl@goldbond.co.il",
+  "contact_names": "",
   "cont_general_emails": [],
   "cont_dangerous_emails": [],
+  "contacts": [],
   "aliases": [],
   "seen_stations": [
     "2"

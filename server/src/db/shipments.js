@@ -69,6 +69,7 @@ const AGENT_COLUMNS = {
   co_loader_code: 'TEXT',
   continuation: 'TEXT',
   hazardous: 'TEXT',
+  commodity: 'TEXT', // ערך גולמי של עמודת Commodity מהדוח (Task 1) — נשמר בנפרד מ-hazardous (הדגל האפקטיבי) לביקורת
   wg_reshimon_no: 'TEXT',
   type: 'TEXT',
   draft_payload: 'TEXT',
@@ -76,6 +77,7 @@ const AGENT_COLUMNS = {
   first_seen: 'DATETIME',
   last_seen: 'DATETIME',
   gatepass_pdf_path: 'TEXT', // נתיב מקומי ל-PDF שהתקבל מ-do-not-reply עבור התיק (Task 6)
+  gatepass_source: 'TEXT', // 'mail' | 'upload' — מקור ה-PDF שצורף (Task 6, פרובננס)
   auto_sent: 'INTEGER',      // 1 = נשלח אוטומטית (העברה לחיפה) ללא אישור אנושי (Task 6)
   transfer_performer: 'TEXT', // "מבצע העברה לחיפה" — קו-לואדר / משלח לא-כספי / מסוף (classifier.transferPerformer)
   performer_unknown: 'INTEGER', // 1 = מבצע ההעברה אינו ישות מוכרת ב-co_loaders/terminals (Task 8)
@@ -184,6 +186,7 @@ function upsert(rec) {
     site_des: rec.site_des ?? existing?.site_des ?? null,
     fcl_lcl: rec.fcl_lcl ?? existing?.fcl_lcl ?? null,
     hazardous: rec.hazardous ?? existing?.hazardous ?? null,
+    commodity: rec.commodity ?? existing?.commodity ?? null,
     wg_reshimon_no: rec.wg_reshimon_no ?? existing?.wg_reshimon_no ?? null,
     type: rec.type ?? existing?.type ?? null,
     draft_payload: rec.draft_payload !== undefined ? (rec.draft_payload ? JSON.stringify(rec.draft_payload) : null) : existing?.draft_payload ?? null,
@@ -194,14 +197,14 @@ function upsert(rec) {
 
   db.prepare(`INSERT INTO shipments
     (file_number,customer_name,release_date,status,status_updated_at,notes,created_at,agent_name,
-     route,reason,department,co_loader_code,continuation,transfer_performer,performer_unknown,site_des,fcl_lcl,hazardous,wg_reshimon_no,type,draft_payload,agent_sent_at,first_seen,last_seen)
+     route,reason,department,co_loader_code,continuation,transfer_performer,performer_unknown,site_des,fcl_lcl,hazardous,commodity,wg_reshimon_no,type,draft_payload,agent_sent_at,first_seen,last_seen)
     VALUES (@file_number,@customer_name,@release_date,@status,@status_updated_at,@notes,@created_at,@agent_name,
-     @route,@reason,@department,@co_loader_code,@continuation,@transfer_performer,@performer_unknown,@site_des,@fcl_lcl,@hazardous,@wg_reshimon_no,@type,@draft_payload,@agent_sent_at,@first_seen,@last_seen)
+     @route,@reason,@department,@co_loader_code,@continuation,@transfer_performer,@performer_unknown,@site_des,@fcl_lcl,@hazardous,@commodity,@wg_reshimon_no,@type,@draft_payload,@agent_sent_at,@first_seen,@last_seen)
     ON CONFLICT(file_number) DO UPDATE SET
       customer_name=@customer_name,release_date=@release_date,status=@status,status_updated_at=@status_updated_at,
       notes=@notes,agent_name=@agent_name,route=@route,reason=@reason,department=@department,
       co_loader_code=@co_loader_code,continuation=@continuation,transfer_performer=@transfer_performer,
-      performer_unknown=@performer_unknown,site_des=@site_des,fcl_lcl=@fcl_lcl,hazardous=@hazardous,wg_reshimon_no=@wg_reshimon_no,
+      performer_unknown=@performer_unknown,site_des=@site_des,fcl_lcl=@fcl_lcl,hazardous=@hazardous,commodity=@commodity,wg_reshimon_no=@wg_reshimon_no,
       type=@type,draft_payload=@draft_payload,agent_sent_at=@agent_sent_at,last_seen=@last_seen`).run(merged);
 
   if (rec.status !== undefined && rec.status !== existing?.status) {
@@ -231,9 +234,22 @@ function markSent(fileNumber, notes = null, opts = {}) {
 // שמירת נתיב ה-PDF שהתקבל עבור התיק (gatepass מ-do-not-reply / העלאה ידנית) — Task 6.
 // נקודת המעבר היחידה לתור האישורים: אם התיק היה במצב "ממתין ל-PDF", צירוף ה-PDF
 // מעביר אותו אוטומטית ל-pending_approval (אטומי, כולל רישום היסטוריה).
-function setGatepass(fileNumber, pdfPath) {
-  db.prepare('UPDATE shipments SET gatepass_pdf_path=? WHERE file_number=?')
-    .run(pdfPath || null, String(fileNumber));
+// source: 'mail' | 'upload' — מקור ה-PDF (Task 6, מקור/פרובננס); אופציונלי (undefined
+// לא דורס ערך קיים) כדי שקריאות ישנות/פנימיות ללא source לא ינקו את השדה בטעות.
+function setGatepass(fileNumber, pdfPath, source) {
+  if (!pdfPath) {
+    // ניקוי הנתיב מנקה גם את המקור — לא משאירים gatepass_source ישן ליד path=null
+    db.prepare('UPDATE shipments SET gatepass_pdf_path=NULL, gatepass_source=NULL WHERE file_number=?')
+      .run(String(fileNumber));
+  } else if (source !== undefined) {
+    db.prepare('UPDATE shipments SET gatepass_pdf_path=?, gatepass_source=? WHERE file_number=?')
+      .run(pdfPath, source || null, String(fileNumber));
+  } else {
+    // קריאה ישנה/פנימית ללא source: לא דורסים מקור קיים (nullable, ברירת המחדל
+    // הבטוחה כשלא ידוע מי קרא) — משאירים gatepass_source כפי שהוא.
+    db.prepare('UPDATE shipments SET gatepass_pdf_path=? WHERE file_number=?')
+      .run(pdfPath, String(fileNumber));
+  }
   const rec = get(fileNumber);
   if (pdfPath && rec && rec.status === AWAITING_PDF_STATUS) {
     return setStatus(fileNumber, 'pending_approval', 'gatepass התקבל — הועבר לאישור שליחה');

@@ -77,8 +77,10 @@ export interface Shipment {
   site_des?: string | null; // מסוף השחרור (Cust. Stor. Site Des) — קובע את יעד ההגעה בחיפה
   fcl_lcl?: string | null; // FCL/LCL מהדוח — תצוגה בלבד; רק LCL זכאי להעברה לחיפה
   hazardous: string;
+  commodity?: string | null; // ערך גולמי של עמודת Commodity מהדוח — לביקורת מקור התג "חומ"ס"
   type: string;
   gatepass_pdf_path?: string | null;
+  gatepass_source?: 'mail' | 'upload' | null; // מקור ה-PDF שצורף (Task 6)
   auto_sent?: number; // 1 = נשלח אוטומטית (העברה לחיפה) ללא אישור אנושי (Task 6)
   auto_send_excluded?: number; // 1 = חסום קבוע מאוטומציה (תיק שהיה קיים לפני הפעלת חתך-הגיל)
   whitelisted?: boolean; // מחושב בשרת (scope.js): האם הלקוח ברשימת CUS1 — defense in depth

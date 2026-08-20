@@ -24,6 +24,7 @@ const COLS = {
   stationName: 'Customs Station Name',
   haz: 'Hazardous',
   relDate: 'wg dec release date',
+  commodity: 'Commodity',
 };
 
 /**
@@ -93,6 +94,7 @@ function readReport(filePath) {
       customs_station_name: str(r[at.stationName]),
       hazardous: str(r[at.haz]),
       release_date: at.relDate >= 0 ? excelSerialToISO(r[at.relDate]) : null,
+      commodity: at.commodity >= 0 ? str(r[at.commodity]) : '',
     });
   }
   return { records, headerRow: h };

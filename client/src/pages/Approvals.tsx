@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { api, Shipment } from '../api';
 import { useAgentFilter, matchesAgent } from '../context/AgentFilterContext';
-import { requiresGatepass } from '../status';
+import { requiresGatepass, hazardousTitle, gatepassSourceSuffix } from '../status';
 import ConfirmModal from '../components/ConfirmModal';
 import EmailListEditor from '../components/EmailListEditor';
 import { useLiveRefresh } from '../hooks/useLiveRefresh';
@@ -94,12 +94,12 @@ export default function Approvals() {
                 <div>
                   <span className="mono" style={{ fontWeight: 700, fontSize: 15 }}>{s.file_number}</span>
                   <span style={{ color: 'var(--muted)', marginInlineStart: 10 }}>{s.customer_name}</span>
-                  {s.hazardous === 'Yes' && <span style={{ marginInlineStart: 10 }} title="חומר מסוכן">⚠</span>}
+                  {s.hazardous === 'Yes' && <span style={{ marginInlineStart: 10 }} title={hazardousTitle(s)}>⚠</span>}
                 </div>
                 <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
                   {requiresGatepass(s) && (
                     <span className={'gatepass-tag ' + (s.gatepass_pdf_path ? 'ok' : 'pending')}>
-                      {s.gatepass_pdf_path ? '📎 PDF מצורף ✓' : '⚠ טרם התקבל PDF — חובה לשליחה'}
+                      {s.gatepass_pdf_path ? `📎 PDF מצורף ✓${gatepassSourceSuffix(s)}` : '⚠ טרם התקבל PDF — חובה לשליחה'}
                     </span>
                   )}
                   {s.real_recipients && <span className="review-flag" title="אישור ישלח מייל אמיתי לנמען אמיתי — לא לכתובת ה-override">📮 נמענים אמיתיים</span>}

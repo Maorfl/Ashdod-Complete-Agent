@@ -4,7 +4,7 @@
  */
 import { useEffect, useRef, useState } from "react";
 import { api, Shipment, HistoryEntry } from "../api";
-import { statusKeyOf, statusLabel, STATUS_META, MANUAL_STATUSES, formatDateHe, formatDateTimeHe, requiresGatepass } from "../status";
+import { statusKeyOf, statusLabel, STATUS_META, MANUAL_STATUSES, formatDateHe, formatDateTimeHe, requiresGatepass, hazardousTitle, gatepassSourceSuffix } from "../status";
 import { useToast } from "./Toasts";
 import ConfirmModal from "./ConfirmModal";
 import ShipmentNotesModal from "./ShipmentNotesModal";
@@ -46,6 +46,9 @@ export default function FileModal({
     const [savedCc, setSavedCc] = useState<string[] | null>(null);
     const [uploading, setUploading] = useState(false);
     const fileInputRef = useRef<HTMLInputElement | null>(null);
+    const [showReplaceGatepass, setShowReplaceGatepass] = useState(false);
+    const [pendingReplaceFile, setPendingReplaceFile] = useState<File | null>(null);
+    const replaceInputRef = useRef<HTMLInputElement | null>(null);
 
     async function onUploadGatepass(file: File) {
         setUploading(true);
@@ -173,6 +176,7 @@ export default function FileModal({
                     <div>
                         <span className="mono file-no">{item.file_number}</span>
                         <span className="modal-cust">{item.customer_name || "—"}</span>
+                        {item.draft?.needs_review && <span className="review-flag" style={{ marginInlineStart: 10 }}>דורש בדיקת פרטי קשר</span>}
                     </div>
                     <button className="x" onClick={onClose} aria-label="סגירה">
                         ×
@@ -234,7 +238,10 @@ export default function FileModal({
                             </tr>
                             <tr>
                                 <th>חומר מסוכן</th>
-                                <td>{item.hazardous === "Yes" ? "⚠ כן" : "לא"}</td>
+                                <td title={item.hazardous === "Yes" ? hazardousTitle(item) : undefined}>
+                                    {item.hazardous === "Yes" ? "⚠ כן" : "לא"}
+                                    {item.hazardous === "Yes" && item.commodity ? ` (Commodity: ${item.commodity})` : ""}
+                                </td>
                             </tr>
                             {!!item.auto_send_excluded && (
                                 <tr>
@@ -251,7 +258,7 @@ export default function FileModal({
                                     <th>gatepass PDF</th>
                                     <td>
                                         <span className={"gatepass-tag " + (item.gatepass_pdf_path ? "ok" : "pending")}>
-                                            {item.gatepass_pdf_path ? "📎 PDF מצורף ✓" : "⚠ טרם התקבל PDF — חובה לשליחה"}
+                                            {item.gatepass_pdf_path ? `📎 PDF מצורף ✓${gatepassSourceSuffix(item)}` : "⚠ טרם התקבל PDF — חובה לשליחה"}
                                         </span>
                                         {!item.gatepass_pdf_path && (
                                             <div style={{ marginTop: 8 }}>
@@ -270,6 +277,32 @@ export default function FileModal({
                                                 <div className="hint-line" style={{ color: "var(--muted)", fontSize: 12, marginTop: 4 }}>
                                                     לא ניתן לשלוח מייל ללא gatepass PDF. צרפו קובץ PDF ידנית או המתינו לקבלתו.
                                                 </div>
+                                            </div>
+                                        )}
+                                        {item.gatepass_pdf_path && (
+                                            <div style={{ marginTop: 8 }}>
+                                                <input
+                                                    ref={replaceInputRef}
+                                                    type="file"
+                                                    accept="application/pdf"
+                                                    style={{ display: "none" }}
+                                                    aria-label="החלפת gatepass PDF"
+                                                    onChange={(e) => {
+                                                        const f = e.target.files?.[0];
+                                                        if (f) {
+                                                            setPendingReplaceFile(f);
+                                                            setShowReplaceGatepass(true);
+                                                        }
+                                                    }}
+                                                />
+                                                <button
+                                                    type="button"
+                                                    className="btn sm"
+                                                    disabled={uploading}
+                                                    onClick={() => replaceInputRef.current?.click()}
+                                                >
+                                                    החלפת קובץ PDF
+                                                </button>
                                             </div>
                                         )}
                                     </td>
@@ -411,6 +444,28 @@ export default function FileModal({
                         onCancel={() => setShowDeliverConfirm(false)}
                     >
                         לסמן תיק {item.file_number} כנמסר ללקוח?
+                    </ConfirmModal>
+                )}
+
+                {showReplaceGatepass && pendingReplaceFile && (
+                    <ConfirmModal
+                        title={`החלפת gatepass PDF — תיק ${item.file_number}`}
+                        confirmLabel="החלפה"
+                        danger
+                        onConfirm={() => {
+                            const f = pendingReplaceFile;
+                            setShowReplaceGatepass(false);
+                            setPendingReplaceFile(null);
+                            if (replaceInputRef.current) replaceInputRef.current.value = "";
+                            onUploadGatepass(f);
+                        }}
+                        onCancel={() => {
+                            setShowReplaceGatepass(false);
+                            setPendingReplaceFile(null);
+                            if (replaceInputRef.current) replaceInputRef.current.value = "";
+                        }}
+                    >
+                        קובץ PDF כבר מצורף לתיק זה — האם להחליף אותו ב"{pendingReplaceFile.name}"? הקובץ הקודם לא יימחק מהדיסק, רק יוחלף מצביע ה-PDF של התיק.
                     </ConfirmModal>
                 )}
 

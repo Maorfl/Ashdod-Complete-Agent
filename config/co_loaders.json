@@ -1,8 +1,608 @@
 {
   "_comment": "טבלת קודי CO-LOADER. כל כתובות המייל הוחלפו ל-maorfl14@gmail.com (external_email_override). gender: m/f, number: s/p קובעים את הניסוח (טיפולך/טיפולכם/טיפולכן). קודים עם needs_review=true ממתינים לפרטי קשר אמיתיים (OPEN GAP).",
   "co_loaders": {
+    "1": {
+      "name": "EVERGREEN SHIPPING",
+      "kind": "SHIP AGENT",
+      "emails": [],
+      "needs_review": true
+    },
+    "2": {
+      "name": "SAPPAN AGENCIES",
+      "kind": "SHIP AGENT",
+      "emails": [],
+      "needs_review": true
+    },
+    "3": {
+      "name": "ALLALOUF CO",
+      "kind": "SHIP AGENT",
+      "emails": [],
+      "needs_review": true
+    },
+    "4": {
+      "name": "CLIPPER SHIPPING CO",
+      "kind": "SHIP AGENT",
+      "emails": [],
+      "needs_review": true
+    },
+    "5": {
+      "name": "COSCO SHIPPING LINES (ISRAEL)",
+      "kind": "SHIP AGENT",
+      "emails": [],
+      "needs_review": true
+    },
+    "6": {
+      "name": "CARMEL INTER. SHIPPING SERVICES",
+      "kind": "SHIP AGENT",
+      "emails": [],
+      "needs_review": true
+    },
+    "7": {
+      "name": "ASHDOD PORT",
+      "kind": "SHIP AGENT",
+      "emails": [],
+      "needs_review": true
+    },
+    "8": {
+      "name": "SEA WAY LOGISTICS LTD",
+      "kind": "SHIP AGENT",
+      "emails": [],
+      "needs_review": true
+    },
+    "9": {
+      "name": "ISRAEL SCANDINAVIAN MARITIME",
+      "kind": "SHIP AGENT",
+      "emails": [],
+      "needs_review": true
+    },
+    "11": {
+      "name": "AKN shipping israel ltd",
+      "kind": "SHIP AGENT",
+      "emails": [],
+      "needs_review": true
+    },
+    "12": {
+      "name": "LUCY BORCHARD LTD",
+      "kind": "SHIP AGENT",
+      "emails": [],
+      "needs_review": true
+    },
+    "13": {
+      "name": "MANO MARITIME LTD.",
+      "kind": "SHIP AGENT",
+      "emails": [],
+      "needs_review": true
+    },
+    "14": {
+      "name": "N.C.S.C LTD",
+      "kind": "SHIP AGENT",
+      "emails": [],
+      "needs_review": true
+    },
+    "16": {
+      "name": "PAL (EAST-MED) LINE LTD",
+      "kind": "SHIP AGENT",
+      "emails": [],
+      "needs_review": true
+    },
+    "18": {
+      "name": "MSL SHIPPING AGENCY LTD",
+      "kind": "SHIP AGENT",
+      "emails": [],
+      "needs_review": true
+    },
+    "19": {
+      "name": "SIGMAI",
+      "kind": "SHIP AGENT",
+      "emails": [],
+      "needs_review": true
+    },
+    "20": {
+      "name": "BEACON SHIPS AGENCY LTD",
+      "kind": "SHIP AGENT",
+      "emails": [],
+      "needs_review": true
+    },
+    "21": {
+      "name": "ROSENFELD AND SONS",
+      "kind": "SHIP AGENT",
+      "emails": [],
+      "needs_review": true
+    },
+    "22": {
+      "name": "allalouf logistics",
+      "kind": "SHIP AGENT",
+      "emails": [],
+      "needs_review": true
+    },
+    "23": {
+      "name": "MC Cargo and Logistics LTD",
+      "kind": "SHIP AGENT",
+      "emails": [],
+      "needs_review": true
+    },
+    "25": {
+      "name": "ZIM CO. LTD",
+      "kind": "SHIP AGENT",
+      "emails": [],
+      "needs_review": true
+    },
+    "48": {
+      "name": "ASSOCIATED MARITIME AGENCY",
+      "kind": "SHIP AGENT",
+      "emails": [],
+      "needs_review": true
+    },
+    "52": {
+      "name": "Israel Shore excursions experts",
+      "kind": "SHIP AGENT",
+      "emails": [],
+      "needs_review": true
+    },
+    "54": {
+      "name": "Maersk Line limited",
+      "kind": "SHIP AGENT",
+      "emails": [],
+      "needs_review": true
+    },
+    "59": {
+      "name": "LABA",
+      "kind": "SHIP AGENT",
+      "emails": [],
+      "needs_review": true
+    },
+    "61": {
+      "name": "GADOT YAM",
+      "kind": "SHIP AGENT",
+      "emails": [],
+      "needs_review": true
+    },
+    "63": {
+      "name": "MSC (ISRAEL) LTD",
+      "kind": "SHIP AGENT",
+      "emails": [],
+      "needs_review": true
+    },
+    "64": {
+      "name": "KONMART LTD",
+      "kind": "SHIP AGENT",
+      "emails": [],
+      "needs_review": true
+    },
+    "68": {
+      "name": "CORAL MARITIME SERVICES LTD",
+      "kind": "SHIP AGENT",
+      "emails": [],
+      "needs_review": true
+    },
+    "71": {
+      "name": "PARTAM8 LTD",
+      "kind": "SHIP AGENT",
+      "emails": [],
+      "needs_review": true
+    },
+    "73": {
+      "name": "J.SASSOVER LTD",
+      "kind": "SHIP AGENT",
+      "emails": [],
+      "needs_review": true
+    },
+    "74": {
+      "name": "OSHFIR L.T.D",
+      "kind": "SHIP AGENT",
+      "emails": [],
+      "needs_review": true
+    },
+    "82": {
+      "name": "ISRAELI NAVY",
+      "kind": "SHIP AGENT",
+      "emails": [],
+      "needs_review": true
+    },
+    "86": {
+      "name": "SEA GULL MARITIME LTD",
+      "kind": "SHIP AGENT",
+      "emails": [],
+      "needs_review": true
+    },
+    "90": {
+      "name": "DYNAMIC SHIPPING & TRAD",
+      "kind": "SHIP AGENT",
+      "emails": [],
+      "needs_review": true
+    },
+    "97": {
+      "name": "M.A.R TRADING AND SHIPPING LTD.",
+      "kind": "SHIP AGENT",
+      "emails": [],
+      "needs_review": true
+    },
+    "98": {
+      "name": "BLUE ARK SHIPPING LTD",
+      "kind": "SHIP AGENT",
+      "emails": [],
+      "needs_review": true
+    },
+    "113": {
+      "name": "ISLAND PETROLEUM LIMITED",
+      "kind": "SHIP AGENT",
+      "emails": [],
+      "needs_review": true
+    },
+    "114": {
+      "name": "A. MARA SHIPPING LTD",
+      "kind": "SHIP AGENT",
+      "emails": [],
+      "needs_review": true
+    },
+    "115": {
+      "name": "M.F SHIPPING LTD",
+      "kind": "SHIP AGENT",
+      "emails": [],
+      "needs_review": true
+    },
+    "127": {
+      "name": "KAMOR SHIPPING SERVICES LTD",
+      "kind": "SHIP AGENT",
+      "emails": [],
+      "needs_review": true
+    },
+    "133": {
+      "name": "GOLD LINE SHIPPING LTD",
+      "kind": "SHIP AGENT",
+      "emails": [],
+      "needs_review": true
+    },
+    "134": {
+      "name": "INTERGLOBAL SHIPPING 3001 LTD",
+      "kind": "SHIP AGENT",
+      "emails": [],
+      "needs_review": true
+    },
+    "135": {
+      "name": "TIRAN SHIPPING LTD",
+      "kind": "SHIP AGENT",
+      "emails": [],
+      "needs_review": true
+    },
+    "137": {
+      "name": "OCEAN COMPANY LTD",
+      "kind": "SHIP AGENT",
+      "emails": [],
+      "needs_review": true
+    },
+    "138": {
+      "name": "ST&T SEA TRANSPORT&TRADING LTD",
+      "kind": "SHIP AGENT",
+      "emails": [],
+      "needs_review": true
+    },
+    "139": {
+      "name": "CARGO MARINE LTD",
+      "kind": "SHIP AGENT",
+      "emails": [],
+      "needs_review": true
+    },
+    "140": {
+      "name": "MAERSK ISRAEL LTD",
+      "kind": "SHIP AGENT",
+      "emails": [],
+      "needs_review": true
+    },
+    "144": {
+      "name": "DYNAMIC SHIPPING SERVICES(DSS)",
+      "kind": "SHIP AGENT",
+      "emails": [],
+      "needs_review": true
+    },
+    "145": {
+      "name": "A&A SHIPPING LTD",
+      "kind": "SHIP AGENT",
+      "emails": [],
+      "needs_review": true
+    },
+    "151": {
+      "name": "ARGO CORAL MARITIME(ISRAEL) LTD",
+      "kind": "SHIP AGENT",
+      "emails": [],
+      "needs_review": true
+    },
+    "156": {
+      "name": "JACKY BITTON LINE LTD",
+      "kind": "SHIP AGENT",
+      "emails": [],
+      "needs_review": true
+    },
+    "166": {
+      "name": "SILVERSHIP AGENCIES LTD",
+      "kind": "SHIP AGENT",
+      "emails": [],
+      "needs_review": true
+    },
+    "168": {
+      "name": "ORIAN LTD",
+      "kind": "SHIP AGENT",
+      "emails": [],
+      "needs_review": true
+    },
+    "173": {
+      "name": "gal-yam marine works ltd",
+      "kind": "SHIP AGENT",
+      "emails": [],
+      "needs_review": true
+    },
+    "177": {
+      "name": "PACKO SHIPPING LTD",
+      "kind": "SHIP AGENT",
+      "emails": [],
+      "needs_review": true
+    },
+    "178": {
+      "name": "HAIFA MARINE SHIPPING LTD",
+      "kind": "SHIP AGENT",
+      "emails": [],
+      "needs_review": true
+    },
+    "179": {
+      "name": "GREEN SHIPPING LTD",
+      "kind": "SHIP AGENT",
+      "emails": [],
+      "needs_review": true
+    },
+    "180": {
+      "name": "ARKOR SHIPPING LIMITED",
+      "kind": "SHIP AGENT",
+      "emails": [],
+      "needs_review": true
+    },
+    "184": {
+      "name": "R.P.A.PORT INTERNATIONAL LTD.",
+      "kind": "SHIP AGENT",
+      "emails": [],
+      "needs_review": true
+    },
+    "185": {
+      "name": "SEA GATE SHIPPING (2003) LTD",
+      "kind": "SHIP AGENT",
+      "emails": [],
+      "needs_review": true
+    },
+    "190": {
+      "name": "KOTANK",
+      "kind": "SHIP AGENT",
+      "emails": [],
+      "needs_review": true
+    },
+    "191": {
+      "name": "SEVEN SEAS SHIPPING LTD",
+      "kind": "SHIP AGENT",
+      "emails": [],
+      "needs_review": true
+    },
+    "193": {
+      "name": "AF.CI TOVALA",
+      "kind": "SHIP AGENT",
+      "emails": [],
+      "needs_review": true
+    },
+    "194": {
+      "name": "CROWN SHIPPING LTD",
+      "kind": "SHIP AGENT",
+      "emails": [],
+      "needs_review": true
+    },
+    "195": {
+      "name": "ASHTROM INDUSTRIES LTD",
+      "kind": "SHIP AGENT",
+      "emails": [],
+      "needs_review": true
+    },
+    "196": {
+      "name": "M.DANCHOR Ltd",
+      "kind": "SHIP AGENT",
+      "emails": [],
+      "needs_review": true
+    },
+    "197": {
+      "name": "AKKO HAIFA CRUISE LINE",
+      "kind": "SHIP AGENT",
+      "emails": [],
+      "needs_review": true
+    },
+    "198": {
+      "name": "ISRAEL OCEANOGRAPHIC",
+      "kind": "SHIP AGENT",
+      "emails": [],
+      "needs_review": true
+    },
+    "199": {
+      "name": "HADERA PORT",
+      "kind": "SHIP AGENT",
+      "emails": [],
+      "needs_review": true
+    },
+    "201": {
+      "name": "אייביטרנס לוגיסטיקה בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "202": {
+      "name": "אינטרגלובל מטענים בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "203": {
+      "name": "אלבני - שחרור ושילוח בינלאומי בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "204": {
+      "name": "אילת(אוברסיז) בעמ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "205": {
+      "name": "אילת סוכני מכס ותחבורה בעמ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "206": {
+      "name": "אימוטרנספורט אינטרנשיונל בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "207": {
+      "name": "אוקינוס חברה בעמ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "208": {
+      "name": "אורנת תובלה בינלאומית ועמילות מכס ב",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "209": {
+      "name": "אינטק בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "210": {
+      "name": "אינטרליינס בעמ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "211": {
+      "name": "אי.אס.איי. פרייט סרוויסס בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "212": {
+      "name": "אי.די.אס. אינטרנשיונל טרנספורטישין",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "213": {
+      "name": "קרן שבטא ניהול נכסים בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "214": {
+      "name": "אוסימקס סחר בינלאומי בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "215": {
+      "name": "ארדויק חברה בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "216": {
+      "name": "און אקספרס בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "217": {
+      "name": "אוריין ש.מ. בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "218": {
+      "name": "קרגו פתרונות לוגיסטיים בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "219": {
+      "name": "אינטרדל - ג'י. סי. טי. (1986) בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "220": {
+      "name": "אינטרנסקו לינס בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "221": {
+      "name": "אבי - רם שירותי מכס ושילוח בינלאומי",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "222": {
+      "name": "אלדד בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "223": {
+      "name": "אלפא תובלה בין לאומית בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "224": {
+      "name": "אמבסדור שירותי שילוח בינלאומיים בע\"",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "225": {
+      "name": "אול סיז בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "226": {
+      "name": "אי.טי.סי. חב ישראלית לטרנספורמטורים",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "227": {
+      "name": "אומגה אוברסיז חברה לתובלה בינלאומית",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "229": {
+      "name": "מיכאל ראובן מאי אולמן",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "230": {
+      "name": "א.מ. אייר קרגו (1990) בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "231": {
+      "name": "אמקס בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
     "232": {
-      "name": "אלדן מטעני 0002 בע\"מ",
+      "name": "אלדן מטעני אלפיים בע\"מ",
       "name_en": "ELDAN CARGO",
       "contact": "אתי",
       "gender": "f",
@@ -11,10 +611,35 @@
         "etil@Eldan-Cargo.Com",
         "operation@eldan-cargo.com"
       ],
-      "phrasing": "אתי, אודה לטיפולך בהעברה לחיפה בבקשה אישורך תודה (:"
+      "phrasing": "אתי, אודה לטיפולך בהעברה לחיפה בבקשה אישורך תודה (:",
+      "kind": "FORWARDER"
+    },
+    "233": {
+      "name": "אדיב- עמילות, הובלה בינלאומית בעמ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "234": {
+      "name": "א.ס.י.ת חברה לשילוח בינלאומי אויר ו",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "235": {
+      "name": "א.ר.י. - שרותי תובלה בינלאומיים בע\"",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "236": {
+      "name": "אביר - חברה לשילוח בינלאומי בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
     },
     "237": {
-      "name": "אבירם",
+      "name": "אבי-רם קרגו 1990 בע\"מ",
       "name_en": "AVIRAM",
       "contact": "סופיה / עומרי",
       "gender": "m",
@@ -25,10 +650,11 @@
         "omri@aviram.co.il"
       ],
       "phrasing": "צוות אבירם, אודה לטיפולכם בהעברה לחיפה בבקשה אישורכם",
-      "notes": "237 לפי נוהל, נמצא גם כ-ops@/omri@"
+      "notes": "237 לפי נוהל, נמצא גם כ-ops@/omri@",
+      "kind": "FORWARDER"
     },
     "238": {
-      "name": "אושפיר",
+      "name": "אושפיר סוכנות מכס ותעבורה יבוא וייצ",
       "name_en": "OSHFIR",
       "contact": "מריה / רומן / קייט",
       "gender": "m",
@@ -38,15 +664,887 @@
         "RomanJ@oshfir.co.il"
       ],
       "phrasing": "צוות אושפיר, אודה לטיפולכם בהעברה לחיפה בבקשה אישורכם",
-      "notes": "12x בניתוח"
+      "notes": "12x בניתוח",
+      "kind": "FORWARDER"
+    },
+    "239": {
+      "name": "לשקו בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "240": {
+      "name": "בן בסת את ארבל בעמ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "241": {
+      "name": "אחים ביבאס בעמ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "242": {
+      "name": "ברינקס ישראל בעמ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "243": {
+      "name": "בוימר את מודל הובלות בינלאומיות בע\"",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "244": {
+      "name": "ג.י.ט. בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "245": {
+      "name": "ג'נפרייט בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "247": {
+      "name": "גלובספיד בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "248": {
+      "name": "גלובוס אריזות ומשלוחים בינלאומים בע",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "249": {
+      "name": "גלובל אוקסימיינד בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "250": {
+      "name": "גברון סחר בינלאומי בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "251": {
+      "name": "ישעיהו שמואל גריצר",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "252": {
+      "name": "ג'קי ביטון ליין בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "253": {
+      "name": "ג'י אנד בי - ניטול ושינוע",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "254": {
+      "name": "דואק עזרא ובנו",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "256": {
+      "name": "ניולוג בעמ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "257": {
+      "name": "דוד יחזקאל ובניו בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "258": {
+      "name": "דורון קפלן בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "259": {
+      "name": "דנרם סוכנויות בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "261": {
+      "name": "וורלדוייד טרנספורט פורווארדס אנד ג'",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "262": {
+      "name": "ויקטור סלמה בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "263": {
+      "name": "זט קרגו בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "265": {
+      "name": "א. חסידוף (1991) בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "266": {
+      "name": "חיים נתנאל בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "267": {
+      "name": "כספי סוכני מכס ושילוח בינלאומי בעמ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "268": {
+      "name": "טי.די.וי. שירותי שילוח בינלאומיים ב",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "269": {
+      "name": "שרות להובלה טרנסלויד בעמ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "270": {
+      "name": "טרנסדור - שילוח בינלאומי בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "271": {
+      "name": "טרנס כלל, ני. וי. )ישראל( 8791 בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "272": {
+      "name": "טרנס אטלס ליינס בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "275": {
+      "name": "טיין ליידנר שרותי מכס",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "276": {
+      "name": "ימית אלבני שרותים לוגיסטיים בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "277": {
+      "name": "יורוטרנס - משלחים בינלאומיים בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "278": {
+      "name": "יתיר שרותי יבוא יצוא סוכנות מכס בע\"",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "279": {
+      "name": "יש-ליין שרותי יבוא ויצוא בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "280": {
+      "name": "יעד שרותי יבוא יצוא ומכס בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "281": {
+      "name": "יסמין חברה לשילוח בינלאומי בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "282": {
+      "name": "יוסף ה פרידמן בעמ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "284": {
+      "name": "תי אף סי - תואם שילוח ועמילות מכס ב",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "285": {
+      "name": "כסלו - שירותי מכס בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "286": {
+      "name": "פלקון שירותי מטען ותובלה בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "287": {
+      "name": "ריומר שיפינג בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "288": {
+      "name": "לויד ים התיכון (ב.ב) בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "289": {
+      "name": "לפיד לוגיסטיקה בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "290": {
+      "name": "מזי קרגו בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "291": {
+      "name": "מורברסל-שירותים בינלאומיים בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "292": {
+      "name": "מחסני קרור בנמל תל אביב בעמ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "294": {
+      "name": "מיעד שילוח בינלאומי בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "295": {
+      "name": "מלי ליין בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "296": {
+      "name": "מ.ב.ט. מאיר בן טוב חברה בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "297": {
+      "name": "מנטפילד (1983) בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "298": {
+      "name": "טל-אל מפעלי תובלה בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "299": {
+      "name": "מעין לוגיסטיקה (1977) בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "300": {
+      "name": "מעגן זילברג- סוכני מכס (1989) בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "301": {
+      "name": "טרנסוורלד לוגיסטיקה בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "302": {
+      "name": "פרידנזון אייר אנד אושין בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "303": {
+      "name": "מרה סוכנויות בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "304": {
+      "name": "ח. מ. עולמי שירותי מכס ושילוח בין ל",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "305": {
+      "name": "נ.ט. אינטרנציונל טרנספורט בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "306": {
+      "name": "נפטוניה בעמ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
     },
     "307": {
-      "name": "DSV",
+      "name": "די. אס. וי. אייר אנד סי בע\"מ",
       "name_en": "DSV",
       "contact": "אתי",
       "gender": "f",
       "number": "s",
-      "emails": []
+      "emails": [],
+      "kind": "FORWARDER"
+    },
+    "308": {
+      "name": "סיוונית שילוח בינלאומי בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "309": {
+      "name": "י ססובר בעמ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "311": {
+      "name": "סלאל אינטרנשיונל בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "312": {
+      "name": "סנפיר עמילות מכס והשקעות בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "313": {
+      "name": "עמיל-טל שותפות לשחרור מכס",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "314": {
+      "name": "עמילות מכס ותחבורה עמית בעמ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "315": {
+      "name": "עתיד עמילות מכס ושילוח בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "316": {
+      "name": "עוגן אשדוד- סוכנות מכס ושרותים בעמ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "317": {
+      "name": "י. פולינובסקי בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "318": {
+      "name": "פלטרנספורט בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "319": {
+      "name": "פריץ קומפניס ישראל טי. בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "320": {
+      "name": "פאלוף חברה ארץ ישראלית למשלוחים והח",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "321": {
+      "name": "פסיפיק סחר בינלאומי בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "322": {
+      "name": "פ.י.ת. חב למחסני ערובה וספנות",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "323": {
+      "name": "די אייץ אל שילוח גלובלי ישראל בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "324": {
+      "name": "ב.פלסקוב-סוכנות מכס וטרנספורט בינלא",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "325": {
+      "name": "פרידור ליינס בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "326": {
+      "name": "ציאור בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "327": {
+      "name": "קבוצת ואייר בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "328": {
+      "name": "קרגוטרנס מרכז לתובלת חוץ בע'מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "329": {
+      "name": "קונטיננט בעמ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "330": {
+      "name": "קרגו אמרפורד בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "331": {
+      "name": "רון-אל שילוח בינ\"ל ועמילות מכס בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "332": {
+      "name": "רוגב בעמ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "333": {
+      "name": "רבשיר בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "335": {
+      "name": "רות קרגו בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "336": {
+      "name": "רמירז המזרח התיכון בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "337": {
+      "name": "חברה ישראלית לשילוח בינלאומי בעמ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "338": {
+      "name": "שבא-שרותי מטען בינלאומיים בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "339": {
+      "name": "שחר שרותי מכס ותובלה בינלאומית בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "340": {
+      "name": "שחרור (1984) בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "341": {
+      "name": "אברהם שמרלינג בעמ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "342": {
+      "name": "שקד שרותי מכס ותעבורה 1983 בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "343": {
+      "name": "ש.נ.י. שילוח בינלאומי ש.ש. בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "346": {
+      "name": "תבל שירותי יבוא ויצוא בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "347": {
+      "name": "אתגר שרותי תובלה בין-לאומית בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "348": {
+      "name": "או. סי. אי. מטענים בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "349": {
+      "name": "מ. הולצמן 1945 (2005) בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "350": {
+      "name": "וריטס סוכני מכס ושילוח בינלאומי בע\"",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "351": {
+      "name": "ויה איגל פרייט בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "352": {
+      "name": "סוכנות שמרלינג בעמ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "353": {
+      "name": "קרן פרייט סחר בינלאומי בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "354": {
+      "name": "שיגור אקספרס ערד",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "355": {
+      "name": "קריאף גרופ בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "356": {
+      "name": "אבי - עד שרותי מכס ושלוח בילנאומי ב",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "357": {
+      "name": "שירותי האחדה משותפים (ג'יי.סי.אס) ב",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "358": {
+      "name": "מוריס א רפאל בעמ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "360": {
+      "name": "אל על נתיבי אויר לישראל בעמ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "361": {
+      "name": "אם. אס. ליין בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "362": {
+      "name": "נוגה שילוח בינלאומי בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "363": {
+      "name": "גאמא שיפינג (ישראל) בע\"מ ביום 11.08",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "364": {
+      "name": "מיסטר קרגו בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "365": {
+      "name": "יוניטג בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "368": {
+      "name": "שרותי לוגיסטיקה למזרח התיכון בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "369": {
+      "name": "עמית אוברסיז (1994) בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "370": {
+      "name": "אפ. קרגו משלחים בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "371": {
+      "name": "בן שושן סוכני מכס ותחבורה 1990 (ישר",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "373": {
+      "name": "יונייטד שיפינג סי. אנד. אר. בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "374": {
+      "name": "אי.אפ.אל. שילוח המאה ה-21 (1999) בע",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "375": {
+      "name": "ר.פ.א - פורט בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "376": {
+      "name": "רחל רוטשטיין בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "377": {
+      "name": "א.א. ספנות ולוגיסטיקה בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "379": {
+      "name": "א.מ. טרנס ליין בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "380": {
+      "name": "קלברסון (ישראל) בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "381": {
+      "name": "קריאף אלבטרוס בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "382": {
+      "name": "אר.ג'י.אס. תובלה סחר ושילוח (1994)",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "383": {
+      "name": "אלישר שרותי מכס ותחבורה בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "384": {
+      "name": "עמיחי 3000 בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "385": {
+      "name": "טרנס גלובוס בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "386": {
+      "name": "אחים מלמד (תובלה בינלאומית) בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "400": {
+      "name": "וי. איי. - משלחים בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "401": {
+      "name": "עד-גד שילוח בינלאומי בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "402": {
+      "name": "מור אנד מור קרגו לוגיסטיקס בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "403": {
+      "name": "נתיב סחר (נ.ס.) ושילוח בינלאומי בע\"",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "404": {
+      "name": "בנ-אל סוכני מכס ושילוח בינלאומי בע\"",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "405": {
+      "name": "יצחק אטיאס",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "406": {
+      "name": "סיגמאי סחר ולוגיסטיקה בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "407": {
+      "name": "איזילי שרותי לוגיסטיקה בינלאומיים (",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "408": {
+      "name": "א.ק.ד קדימה יעוץ והשקעות בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "409": {
+      "name": "דבליו איי.אס.אל לוגיסטיקה בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "410": {
+      "name": "שור לוגיסטיקה בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "411": {
+      "name": "אינלנדברידג' בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "412": {
+      "name": "גיל נחמני",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "413": {
+      "name": "סקאי שירותי שילוח בינלאומי ועמילות",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "414": {
+      "name": "אופקים עמילות מכס ושילוח בינלאומי ב",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
     },
     "415": {
       "emails": [
@@ -54,10 +1552,389 @@
       ],
       "name": "טוטל קרגו (טי.סי.אל) בע\"מ",
       "name_en": "TOTAL CARGO (TCL)",
-      "contact": "צוות טוטל קרגו"
+      "contact": "צוות טוטל קרגו",
+      "kind": "FORWARDER"
+    },
+    "416": {
+      "name": "מלכה-עמית בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "417": {
+      "name": "אפי חברה לעמילות מכס ושילוח בין-לאו",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "418": {
+      "name": "בל-מאר ספנות בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "419": {
+      "name": "טי.אמ.אל. וורלדוייד לוגיסטיקה בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "420": {
+      "name": "אי.פי.אל. (איי) אינטרנשיונל בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "421": {
+      "name": "נטרה ספנות בעמ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "422": {
+      "name": "עופר אטדגי שירותים בינלאומיים בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "423": {
+      "name": "תי.אל.אי. - תואם לוגיסטיקה בינלאומי",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "424": {
+      "name": "גיל בן חורין",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "425": {
+      "name": "יעדים לוגיסטיים בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "426": {
+      "name": "איגל שיפינג (א.מ.י.) בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "427": {
+      "name": "פסיפיק אטלנטיק ליין (ישראל) בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "429": {
+      "name": "טי.אם.אל.אס בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "430": {
+      "name": "רובי טרנס גרופ בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "431": {
+      "name": "אוריאל אהרן גולדשמידט",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "432": {
+      "name": "יעד אוויר וים שרותי מכס ושילוח בינל",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "433": {
+      "name": "גולד ליין לוגיסטיקה מתקדמת בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "434": {
+      "name": "אייבי-כסלו הובלה ושילוח שותפות מוגב",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "435": {
+      "name": "חיה בר",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "436": {
+      "name": "או.סי ליינס בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "437": {
+      "name": "רוזנטל לוגיסטיקה בינלאומית בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "438": {
+      "name": "אילן כהן",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "439": {
+      "name": "דרור מועלם",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "440": {
+      "name": "מקס א.ג. כהן (1995) בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "441": {
+      "name": "קרגופל בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "442": {
+      "name": "נתיב קרגו בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "443": {
+      "name": "תים תובלה בינלאומית בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "444": {
+      "name": "גל גד שרותים בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "445": {
+      "name": "או.פי.אס.אי (שינוע בינלאומי) בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "446": {
+      "name": "רום טופ אויאיישן בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "447": {
+      "name": "יצחק וינטרשטיין",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "448": {
+      "name": "איון לוגיסטיקה ושילוח בינלאומי בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "449": {
+      "name": "קונקט לוגיסטיקה וסחר בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "450": {
+      "name": "או.פי.אס.אי (אס.סי.אס) בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "451": {
+      "name": "וי.איי.אס.אם. לוגיסטיקה בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "452": {
+      "name": "צבי זהר",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "453": {
+      "name": "אריאל שילוח בינלאומי בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "454": {
+      "name": "לוג - אין ספנות ולוגיסטיקה בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "455": {
+      "name": "אשכול לוגיסטיקה בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "456": {
+      "name": "אורי זהרור",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "457": {
+      "name": "שבתאי כהן-נעמי",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "459": {
+      "name": "גולדן הובלה בינלאומית בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "460": {
+      "name": "פראגון לוגיסטיקה בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "462": {
+      "name": "אול ווייז תובלה בינ\"ל בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "463": {
+      "name": "אורי טופ עמילות מכס ושירותים לוגיסט",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "464": {
+      "name": "פאקו ספנות בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "466": {
+      "name": "אפסילון סחר ולוגיסטיקה בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "467": {
+      "name": "אם טי אי קרגו בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "468": {
+      "name": "רוזי כהן",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "469": {
+      "name": "אלי ליין - שילוח בינלאומי (2011) בע",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "470": {
+      "name": "פלטרנספורט מאז 1947 בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "471": {
+      "name": "קלנר קרגו ישראל בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "472": {
+      "name": "טרנסכלל פיין ארטס בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "473": {
+      "name": "הוק קרגו בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "474": {
+      "name": "א.ב מסטר קרגו בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "475": {
+      "name": "משק רפאל בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "476": {
+      "name": "יעקב הוארד",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "477": {
+      "name": "טים שרותי מכס בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "478": {
+      "name": "נח ניב עמילות מכס בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "479": {
+      "name": "אייל סלע לוגיסטיקה בינלאומית בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "480": {
+      "name": "תבל לוגיסטיקה בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "481": {
+      "name": "אבי - עד שרותים לוגיסטיים בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "482": {
+      "name": "א.א.פ. עמילות מכס בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
     },
     "484": {
-      "name": "ישראל קארגו\\ICL",
+      "name": "יוסף יהב",
       "name_en": "ISL CARGO / ILCARGO",
       "contact": "סנדרה",
       "gender": "f",
@@ -67,10 +1944,605 @@
         "sandra@ilcargo.com"
       ],
       "phrasing": "סנדרה, אודה לטיפולך בהעברה לחיפה בבקשה אישורך",
-      "notes": "נמצא גם כ-ישראל קארגו בדוח Focus"
+      "notes": "נמצא גם כ-ישראל קארגו בדוח Focus",
+      "kind": "FORWARDER"
+    },
+    "485": {
+      "name": "נ.א.ס.א. לוגיסטיקה בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "486": {
+      "name": "טוטל קר לוג'יסטיקס בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "487": {
+      "name": "בראשית - לוגיסטיקה בינלאומית בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "488": {
+      "name": "תמורה ייעוץ לוגיסטי בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "489": {
+      "name": "קרגו לינק אינטרנשיונל אל.פי",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "490": {
+      "name": "אבנר מזרחי סוכני מכס בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "491": {
+      "name": "מפי לוג ישראל בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "492": {
+      "name": "מנחם מנדל קפלן",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "493": {
+      "name": "אברהם ג'אנה",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "494": {
+      "name": "ארז ביטון",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "495": {
+      "name": "או.סי.ליינס אוויר בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "496": {
+      "name": "פלטינום קרגו (אליעזר כהן) בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "498": {
+      "name": "אורשר שילוח בינלאומי בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "499": {
+      "name": "אול וויז גייטפורט בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "500": {
+      "name": "גולד - ליין ספנות בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "501": {
+      "name": "הדס.שילת בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "502": {
+      "name": "טס - אל בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "503": {
+      "name": "מורדכי ניר אלישע",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "504": {
+      "name": "ברגו שילוח בינלאומי בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "505": {
+      "name": "יוניק פרייט בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "506": {
+      "name": "מרתון קרגו בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "507": {
+      "name": "גי.או.אייץ אינטרנשיונל בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "508": {
+      "name": "קפלן לוגיסטיקה בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "509": {
+      "name": "איי.בי.אל לוג'יסטיקס בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "510": {
+      "name": "גואה לוגיסטיקס בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "511": {
+      "name": "גילרון שרותי מכס ושילוח בינלאומי בע",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "512": {
+      "name": "מורוויז פתרונות לוגיסטים בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "513": {
+      "name": "אולטרנס שרותים לוגסטיים בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "514": {
+      "name": "נח ניב עמילות ושילוח בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "515": {
+      "name": "שחף אוויר וים בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "516": {
+      "name": "פלאי סמא לוגיסטיקס בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "518": {
+      "name": "7 סי - פתרונות לוגיסטים בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "519": {
+      "name": "לוטרה - שילוח בינלאומי בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "520": {
+      "name": "רלומוב בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "521": {
+      "name": "סיגל משה",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "522": {
+      "name": "יעקב בן שושן",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "523": {
+      "name": "פלאנט שילוח ולוגיסטיקה בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "524": {
+      "name": "די אייץ' אל (ישראל) בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "525": {
+      "name": "אף.סי. (פליינג קרגו) אקספרס בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "526": {
+      "name": "אקטיב שילוח ולוגיסטיקה בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "527": {
+      "name": "גלובפלייט אקספרס ישראל בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "528": {
+      "name": "א.מ.לוג לוגיסטיקה ושירותים בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "529": {
+      "name": "אקסלנט שילוח בינלאומי בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "530": {
+      "name": "קומפס קרגו בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "531": {
+      "name": "געש וורלדווייד בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "532": {
+      "name": "א.ח. אלשייך לוגיסטיקה בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "533": {
+      "name": "טומינדו בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "534": {
+      "name": "עובדיה גולן",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "535": {
+      "name": "טי.די.ווי קרגו בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "536": {
+      "name": "ע.גולן שילוח ולוגיסטיקה בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "537": {
+      "name": "גולף לוגיסטיקה בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "538": {
+      "name": "איילוג - שירותי מכס ולוגיסטיקה בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "539": {
+      "name": "געש אר אנד די בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "540": {
+      "name": "ואסים אבו שקארה",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "541": {
+      "name": "שיא אייר שיפינג בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "542": {
+      "name": "פרייט ליינר בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "543": {
+      "name": "די אס וי - אי-קומרס בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "544": {
+      "name": "הורייזן ספנות בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "545": {
+      "name": "אייטרנס לוג'יסטיקס בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "546": {
+      "name": "טימנט בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "547": {
+      "name": "אלאלוף לוגיסטיקה בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "548": {
+      "name": "אף.סי.(פליינג קרגו) תובלה קריטית בע",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "549": {
+      "name": "טי.אס.אם שירותים בינלאומיים בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "550": {
+      "name": "בתיה רוטנשטיין",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "551": {
+      "name": "אי-קרגו לוגיסטיקה בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "552": {
+      "name": "מגה קרגו בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "553": {
+      "name": "אורית ברכר- שילוח מטענים ולוגיסטיקה",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "554": {
+      "name": "אוריין לוגיסטיקה בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "555": {
+      "name": "סימבה לוג בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "556": {
+      "name": "אפרים שמואלי (1992) בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "557": {
+      "name": "משרד הביטחון/אגף הכספים (אכ\"ס)",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "558": {
+      "name": "קמור לוגיסטיקה בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "559": {
+      "name": "עדי אטיאס",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "560": {
+      "name": "אילן ברונשטיין",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "561": {
+      "name": "חברת דואר ישראל בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "562": {
+      "name": "דוד גד ארמה",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "563": {
+      "name": "מרום צ'שלה",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "564": {
+      "name": "ג'וי עמית",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "565": {
+      "name": "יונתן בן עדי",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "566": {
+      "name": "ראובן אוחנה",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "567": {
+      "name": "עמרו ביאדסה",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "589": {
+      "name": "א.א.ספנות בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "600": {
+      "name": "אייבי טרנס ספנות בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "616": {
+      "name": "סרי עמילות מכס ושילוח בין לאומי בע\"",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "617": {
+      "name": "פריים קרגו לוגיסטיק בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "620": {
+      "name": "שיפוניקו לוגיסטיקה בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "621": {
+      "name": "פאסט לוגיסטיקס אקספרס בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "622": {
+      "name": "טרנס אטלס סחר בינלאומי (1983) בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "623": {
+      "name": "נדב שירותי מכס תקינה ושילוח בינלאומ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "624": {
+      "name": "אן.אס.אי לוגיסטיקה בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "625": {
+      "name": "אקספו ליינס לוגיסטיקס בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "626": {
+      "name": "אלפא אל.ג'י. בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "627": {
+      "name": "אורנר פתרונות יבוא בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "628": {
+      "name": "אייר קרגו גי אס איי בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "629": {
+      "name": "אימפורטה ב.ח.י בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "631": {
+      "name": "ברייט לוגיסטיקס בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "632": {
+      "name": "אז'ור-ווייט בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "633": {
+      "name": "מאור ליין בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "634": {
+      "name": "זהר שירותי מטענים בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
     },
     "635": {
-      "name": "EASY CONSOL",
+      "name": "איזי קונסול בע\"מ",
       "name_en": "EASY CONSOL",
       "contact": "אופק / ניסים",
       "gender": "m",
@@ -80,10 +2552,41 @@
       ],
       "needs_review": true,
       "phrasing": "אופק וניסים, אודה לטיפולכם בהעברה לחיפה",
-      "notes": "נמצא בדוח Focus — כ-4 תיקים"
+      "notes": "נמצא בדוח Focus — כ-4 תיקים",
+      "kind": "FORWARDER"
+    },
+    "636": {
+      "name": "איתרוויז שילוח בינלאומי בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "637": {
+      "name": "גינדי פתרונות שילוח חכמים בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "638": {
+      "name": "פאל (איסט-מד) לוג'יסטיקס בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "639": {
+      "name": "ספידי לוג'יסטיקס בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "640": {
+      "name": "אדירליינס בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
     },
     "641": {
-      "name": "אושן לינק",
+      "name": "אושן לינק בע\"מ",
       "name_en": "OCEAN LINK",
       "contact": "מאלי / אתי / לירן",
       "gender": "f",
@@ -92,10 +2595,203 @@
         "import@ocean-link.co.il"
       ],
       "phrasing": "צוות אושן לינק, אודה לטיפולכן בהעברה לחיפה בבקשה אישורכן (:",
-      "notes": "נפוץ ביותר — 114x בניתוח"
+      "notes": "נפוץ ביותר — 114x בניתוח",
+      "kind": "FORWARDER"
+    },
+    "642": {
+      "name": "סי.אל.טי לוגיסטיקה והפצה לתעופה בע\"",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "643": {
+      "name": "דורקור ליין בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "644": {
+      "name": "י.מ ניו וואיס סחר בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "645": {
+      "name": "גי אל סי - טי אל וי בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "646": {
+      "name": "די.אל.ג'יי לוגיסטיקה בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "647": {
+      "name": "הוט טיים קריטיקל ישראל בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "648": {
+      "name": "עמילין שירותי מכס ושילוח בינלאומי ב",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "649": {
+      "name": "היי טנק לוגיסטיקה בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "650": {
+      "name": "טפקום דסה בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "651": {
+      "name": "ארבליס סחר בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "652": {
+      "name": "ברסן גלובל לוג'יסטיק בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "653": {
+      "name": "ישראל מסרי אוטומיציה",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "654": {
+      "name": "לוגפרייט גרופ בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "655": {
+      "name": "יודין השקעות בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "656": {
+      "name": "ראמא שילוח בינלאומי בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "657": {
+      "name": "ה.כ.שיפינג בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "658": {
+      "name": "אור שילוח בינלאומי בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "659": {
+      "name": "פאל (איסט-מד) ליין בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "660": {
+      "name": "איישיפ פורוורדינג בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "661": {
+      "name": "איי.בי.אל. סקו ישראל בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "662": {
+      "name": "נירא שילוח בינלאומי ופתרונות לוגיסט",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "663": {
+      "name": "סמאא מגדל שירותי מכס ולוגיסטיקה בע\"",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "664": {
+      "name": "אם סי קרגו אנד לוגיסטיקס בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "665": {
+      "name": "קרגו ייעוץ לוגיסטי בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "666": {
+      "name": "פריץ לוגיסטיקה ושילוח בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "667": {
+      "name": "כרמל ליין בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "668": {
+      "name": "ח.ב טריפאל בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "669": {
+      "name": "אקו וורלדוויד (ישראל) בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "670": {
+      "name": "י.ר. דבוש קרגו בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "671": {
+      "name": "לוג'יסטרייד בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "672": {
+      "name": "קיוביק טכנולוגיות שרשרת אספקה בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "673": {
+      "name": "ברינץ שילוח בינלאומי בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
     },
     "674": {
-      "name": "CONSOLA",
+      "name": "קונסולה לוגיסטיקה בע\"מ",
       "name_en": "CONSOLA",
       "contact": "עידו",
       "gender": "m",
@@ -105,25 +2801,1930 @@
       ],
       "needs_review": true,
       "phrasing": "עידו, אודה לטיפולך בהעברה לחיפה",
-      "notes": "נמצא בדוח Focus — תיק אחד"
+      "notes": "נמצא בדוח Focus — תיק אחד",
+      "kind": "FORWARDER"
+    },
+    "675": {
+      "name": "מגדלור ישראל עמילות מכס ושילוח בינל",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "676": {
+      "name": "אול פורוארד גלובל בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "677": {
+      "name": "מרין שיפ פאסט בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "678": {
+      "name": "אפריקה אנד מור בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "679": {
+      "name": "ע.ס. גולדן לוגיסטיק בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "680": {
+      "name": "פלקס לוגיסטיקה ישראל בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "681": {
+      "name": "סוכנות ימית ישראלית סקנדיבית בעמ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "682": {
+      "name": "יוניקרגו בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "683": {
+      "name": "אטלנטה שילוח בינלאומי בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "684": {
+      "name": "גולד קרגו בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "685": {
+      "name": "ברייטלוג בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "686": {
+      "name": "אליזבט בן-ישי (אי בי איי) לוגיסטיקה",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "687": {
+      "name": "טופ שילוח וסחר א.ש. בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "688": {
+      "name": "לוגיסטי פוינט שילוח בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "689": {
+      "name": "סטורק אנד קרגו פרטנרס בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "690": {
+      "name": "סבינו דל בנה ישראל בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "691": {
+      "name": "נור - ים סוכנות לאוניות בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "692": {
+      "name": "קרגו מאן בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "693": {
+      "name": "ספי יפרח בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "694": {
+      "name": "שיפ טו יו בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "695": {
+      "name": "י.מ.א אוויר וים בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "696": {
+      "name": "או. אר. או. סי. אייר בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "697": {
+      "name": "בי.אייץ'.אם קרגו לוג'יסטיקס בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "698": {
+      "name": "קוטנק בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "699": {
+      "name": "ליצ'י שירותי לוגיסטיקה בינלאומיים ב",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "700": {
+      "name": "מיכאל מוגרבי",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "701": {
+      "name": "מרדכי מור",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "702": {
+      "name": "יעקב מור",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "703": {
+      "name": "חגי מורל",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "704": {
+      "name": "ירון מירון",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "705": {
+      "name": "עזריאל מירקין",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "706": {
+      "name": "גלית מרדכי",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "707": {
+      "name": "דובי מרדכי",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "708": {
+      "name": "מרדכי דוד",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "709": {
+      "name": "רפאל מרון",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "710": {
+      "name": "אברהם נאור",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "711": {
+      "name": "יעקב נגלר",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "712": {
+      "name": "דניאל נוי",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "713": {
+      "name": "רפאל נחמני",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "714": {
+      "name": "דורון נתנאל",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "715": {
+      "name": "אפרים סחייק",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "716": {
+      "name": "יצחק סחייק",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "717": {
+      "name": "רונן סחייק",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "718": {
+      "name": "ראובן סלומון",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "719": {
+      "name": "גד ססובר",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "720": {
+      "name": "סנטיגו עבאדי",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "721": {
+      "name": "נביל מטאנס",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "722": {
+      "name": "דניאל פדרובסקי",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "723": {
+      "name": "יעקב פולג",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "724": {
+      "name": "אברהם עמי פילי",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "725": {
+      "name": "ברוך פינטוב",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "726": {
+      "name": "אברהם פינסי ביריאן",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "727": {
+      "name": "עינת פלד",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "728": {
+      "name": "אבידן פלד",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "729": {
+      "name": "אריה פלץ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "730": {
+      "name": "יוחנן פלץ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "731": {
+      "name": "חיים פקגוז",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "732": {
+      "name": "אלינער פרידן",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "733": {
+      "name": "מרדכי פרידמן",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "734": {
+      "name": "גור ארי צוק",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "735": {
+      "name": "משה צרפתי",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "736": {
+      "name": "אריה קנה",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "737": {
+      "name": "יעקב קנטר",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "738": {
+      "name": "אהוד קרונפלד",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "739": {
+      "name": "ראובן קריאף",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "740": {
+      "name": "ליאור רובינשטיין",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "741": {
+      "name": "דוד רוזברוך",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "742": {
+      "name": "בצלאל רוזנשטרוך",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "743": {
+      "name": "מרדכי רוטברד",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "744": {
+      "name": "יחיאל רון",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "745": {
+      "name": "זאב רונן",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "746": {
+      "name": "גד בנימין זאב רייך",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "747": {
+      "name": "שאול רמון",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "748": {
+      "name": "דב ברנרד רפפורט",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "749": {
+      "name": "משה רצאבי",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "750": {
+      "name": "קלי שוקרון",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "751": {
+      "name": "דרור שחר",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "752": {
+      "name": "אינטר - מייל 103 בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "753": {
+      "name": "רם שחר",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "754": {
+      "name": "ליאורה שטרק",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "755": {
+      "name": "יחיאל אביגדור שמרלינג",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "756": {
+      "name": "שמעון חיים שמוא שמרלינג",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "757": {
+      "name": "אמנון שמש",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "758": {
+      "name": "יוסף שמש",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "759": {
+      "name": "אמיר שני",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "760": {
+      "name": "עמנואל שניידר",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "761": {
+      "name": "שלמה שרון",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "762": {
+      "name": "מישל שריקי",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "763": {
+      "name": "רות לאה ששון",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "764": {
+      "name": "אפרת אבני",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "765": {
+      "name": "אילנה ארבל",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "766": {
+      "name": "משה אשכנזי",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "767": {
+      "name": "ישראל-אבילחם בוקובסה",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "768": {
+      "name": "רפי בורביע",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "769": {
+      "name": "יוסף בכר",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "770": {
+      "name": "יורי בלן",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "771": {
+      "name": "עדי בן חורין מימון",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "772": {
+      "name": "שרה בן ישי",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "773": {
+      "name": "קרן מנדיל",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "774": {
+      "name": "גיל ברק",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "775": {
+      "name": "נסים ברשאן",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "776": {
+      "name": "אריה גבאי",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "777": {
+      "name": "מוטי גדז'",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "778": {
+      "name": "אבי גורביץ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "779": {
+      "name": "מלכה גריידי",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "780": {
+      "name": "צביקה גרינברג",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "781": {
+      "name": "רינה גרנות",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "782": {
+      "name": "ליאוניד דזנט",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "783": {
+      "name": "אלון דנינו",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "784": {
+      "name": "אבישי ויויורקה",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "785": {
+      "name": "אילן אלי חסיד",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "786": {
+      "name": "זרי זילברשטיין",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "787": {
+      "name": "מאיה טרסוב",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "788": {
+      "name": "דורית ולאד",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "789": {
+      "name": "רפאל כהן",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "790": {
+      "name": "ענת כליף",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "791": {
+      "name": "שמואל לבנון",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "792": {
+      "name": "דני לברון ליבוביץ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "793": {
+      "name": "ירון רבינוביץ-לוי",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "794": {
+      "name": "טובה ליפשיץ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "795": {
+      "name": "ירמיהו מור",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "796": {
+      "name": "רות מטלון",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "797": {
+      "name": "סנדי מרגוליס",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "798": {
+      "name": "רנה שאלתיאל סבירסקי",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "799": {
+      "name": "מנחם נחשון",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "800": {
+      "name": "שרון משה סופרין",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "801": {
+      "name": "חיים גל ענבי",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "802": {
+      "name": "סגלית ערמון",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "803": {
+      "name": "לואיס רוברטו פירוינסקי",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "804": {
+      "name": "רחל רוטשטין",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "805": {
+      "name": "אברהם שבח",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "806": {
+      "name": "שמואל שורץ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "807": {
+      "name": "חיים שחר",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "808": {
+      "name": "זאב תלם",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "809": {
+      "name": "ריקרדו פורטינסקי",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "810": {
+      "name": "אליהו גזיאל",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "811": {
+      "name": "ישראל מילר",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "812": {
+      "name": "אלחנן דנקנר",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "813": {
+      "name": "רותי בן אקסס",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "814": {
+      "name": "ענת מהלל",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "815": {
+      "name": "מרדכי גלבוע",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "816": {
+      "name": "משה ענבר",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "817": {
+      "name": "עמירם רגב",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "818": {
+      "name": "מרטין אמזלג",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "819": {
+      "name": "תמיר צברי",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "820": {
+      "name": "חיים בר ציון",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "821": {
+      "name": "יוסף כהן",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "822": {
+      "name": "נתיבי אקספרס שילוח בינלאומי בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "823": {
+      "name": "קשרי מטען בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "824": {
+      "name": "שני שירותי מטען בינלאומיים (ש.כ.) ב",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "825": {
+      "name": "אמיל אזולאי",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "826": {
+      "name": "פדקס אקספרס ישראל אינטרנשיונאל בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "827": {
+      "name": "סיגל בנימין רביבו",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "828": {
+      "name": "ריקי זוהר",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "829": {
+      "name": "געש אקספרס (2019) בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "830": {
+      "name": "ענבל גרינברג-כהן",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "831": {
+      "name": "אורי יעקב ישראלי",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "832": {
+      "name": "מלכה כהן-ענבר",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "833": {
+      "name": "שושנה עשרוני",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "834": {
+      "name": "בפי סמרה",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "835": {
+      "name": "אילן רביבו",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "836": {
+      "name": "איריס ריין",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "837": {
+      "name": "עפר שקד",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "838": {
+      "name": "משה מאסיל",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "839": {
+      "name": "ויקטוריה שיך-קלנטירסקי",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "840": {
+      "name": "ג'וייס פנחס",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "841": {
+      "name": "גיא עדן דניאל דביר",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "842": {
+      "name": "עופר חיים עמרני",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "843": {
+      "name": "יחדיו - שילוח בינלאומי ועמילות מכס",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "844": {
+      "name": "אב-דור משלחים בינלאומיים ויועצים בע",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "845": {
+      "name": "א.א. המרכז לשלוח בינלאומי בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "846": {
+      "name": "איימקס שילוח ושווק בינלאומי בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "847": {
+      "name": "א. יוניברס טרנזיט בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "848": {
+      "name": "יוניברס ליין תובלה ושילוח בינלאומיי",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "849": {
+      "name": "גל-גד משלחים (1999) בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "850": {
+      "name": "ברשאן- שילוח בינלאומי בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "851": {
+      "name": "טל ש.ח. סוכנויות בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
     },
     "852": {
-      "name": "JOINT TRANSPORT",
+      "name": "תובלה משולבת שרותים בינלאומיים בע\"מ",
       "name_en": "JOINT TRANSPORT",
       "contact": "אייל",
       "gender": "m",
       "number": "s",
       "emails": [],
       "notes": "נמצא בדוח Focus — תיק אחד",
+      "needs_review": true,
+      "kind": "FORWARDER"
+    },
+    "853": {
+      "name": "דוד אשראף",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "854": {
+      "name": "יצחק אורן ביבי",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "855": {
+      "name": "יורם בן חיים",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "856": {
+      "name": "אורן שאול בן יוסף",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "857": {
+      "name": "ישראל בר און",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "858": {
+      "name": "דבורה ברק",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "859": {
+      "name": "מאמון דבדוב",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "860": {
+      "name": "עזריאל עזי דגן",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "861": {
+      "name": "ענת לוי",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "862": {
+      "name": "יונת זנד",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "863": {
+      "name": "יהודית חזן ברגל",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "864": {
+      "name": "דרור יצחק חזקיה",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "865": {
+      "name": "כוכבה לוי",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "866": {
+      "name": "אפרים טל",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "867": {
+      "name": "יריב יונה",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "868": {
+      "name": "דליה ממן",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "869": {
+      "name": "אבנר מזרחי",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "870": {
+      "name": "ז'ק סלמה",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "871": {
+      "name": "יוסף עתמה",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "872": {
+      "name": "גבריאל פודור",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "873": {
+      "name": "אהרן פרנקל",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "874": {
+      "name": "ענבל זוהרה צרויה",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "875": {
+      "name": "סמי קרא",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "876": {
+      "name": "שי רוטברד",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "877": {
+      "name": "נורית רייך",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "878": {
+      "name": "יהודה שאשא-כהן",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "879": {
+      "name": "אלי כהן",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "880": {
+      "name": "סלים הינדילה",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "881": {
+      "name": "ערן קטן",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "882": {
+      "name": "מיטל גינזברג-ברדה",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "883": {
+      "name": "איתן יקר",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "884": {
+      "name": "יהודה ברדס",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "886": {
+      "name": "מוטי אליאס",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "887": {
+      "name": "ישעיהו בלומנר",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "888": {
+      "name": "אלון משה בנדט",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "889": {
+      "name": "יצחק בר יעקב",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "890": {
+      "name": "ערן בשן",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "891": {
+      "name": "יעקב גוטסמן",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "892": {
+      "name": "בנימין צבי גולדברג",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "893": {
+      "name": "ישראל יגאל גולדר",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "894": {
+      "name": "מיכל גינדי",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "895": {
+      "name": "בלינדה גרין-מחלב",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "896": {
+      "name": "ישראלה דוידוב",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "897": {
+      "name": "שירלי דניאלי",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "898": {
+      "name": "אסף ויינבוים",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "899": {
+      "name": "ערן חיים חביה",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "900": {
+      "name": "צבי יעקבי",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "901": {
+      "name": "שלומית מרדכי",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "902": {
+      "name": "אייל סלע",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "903": {
+      "name": "יריב פוזנר",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "904": {
+      "name": "אלברט שלום",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "905": {
+      "name": "אורנה קסלר",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "906": {
+      "name": "טינתין שמר",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "907": {
+      "name": "יוסף שלום",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "908": {
+      "name": "אילת מרום",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "909": {
+      "name": "רפאל את רון סוכני מכס בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "910": {
+      "name": "טנקו אינטרנשיונל (97) בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "911": {
+      "name": "מעיין אוברסיז בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "912": {
+      "name": "גבי ארמה",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "913": {
+      "name": "אמנון אבהר",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "914": {
+      "name": "משה חזקיה",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "915": {
+      "name": "יובל דואק",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "916": {
+      "name": "אירית קריאף",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "917": {
+      "name": "פסיפיק גלובל ישראל בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "918": {
+      "name": "יעל גילת נוי",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "919": {
+      "name": "אמיר אביהוא לוי",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "920": {
+      "name": "מקסים צ'רפנוב",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "921": {
+      "name": "סיגל רוזנסקי",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "922": {
+      "name": "נמרוד מגידוב",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "923": {
+      "name": "אבי-עד לוגיסטיקה בינלאומית 2000 בע\"",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "925": {
+      "name": "אתי חזן",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "926": {
+      "name": "אורית ברכר נמר",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "927": {
+      "name": "מרה סמולבורד",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "928": {
+      "name": "רחל גולדין",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "929": {
+      "name": "חיים ישראל ליאון",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "930": {
+      "name": "רונן מנשה סימגי",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "931": {
+      "name": "גלעד נורמנד",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "932": {
+      "name": "אורית בכר",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "933": {
+      "name": "שושנה כהן",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "934": {
+      "name": "ג'קי אטדגי",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "935": {
+      "name": "ירמיהו לגיסמו מאטוס",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "936": {
+      "name": "סי אן לוג'יסטיקס ישראל בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "937": {
+      "name": "דלתא פסיפיק אינטרנשיונל לוגיסטיקה ס",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "938": {
+      "name": "אלי ליין- שילוח בינלאומי בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "939": {
+      "name": "געש - שירותי מכס ושילוח בינלאומי בע",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "940": {
+      "name": "סופרין עמילות מכס ושילוח בינלאומי ב",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "941": {
+      "name": "המשחררים-מלי ליין בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "942": {
+      "name": "דורון קצב",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "943": {
+      "name": "שאולי עקיס",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "944": {
+      "name": "אהרן אלכסנדר הרצוג",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "945": {
+      "name": "חיים שקורי",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "946": {
+      "name": "אדם בר לב",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "947": {
+      "name": "פלסקוב לוגיסטיקה בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "948": {
+      "name": "ש.ח.מ. שרותי מכס תחבורה ותובלה בינל",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "949": {
+      "name": "ג'יאולוג'יסטיקס בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "950": {
+      "name": "טרגט - פתרונות לוגיסטיים בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "951": {
+      "name": "שי שירותים לוגיסטיים (אס.אל.אס) בע\"",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "952": {
+      "name": "אס.טי.אנד טי.הובלה וסחר ימי בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "953": {
+      "name": "עופר אטדגי - שרותי מכס בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "954": {
+      "name": "אב-דור אקספרס ליין בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "955": {
+      "name": "פרידנזון שרותים לוגיסטים בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "956": {
+      "name": "אסיה ג.מ. פסיפיק בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "957": {
+      "name": "יוניברס לוגיסטיקה בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
       "needs_review": true
     },
     "958": {
-      "name": "ישראל קארגו",
+      "name": "ישראל קרגו לוגיסטיקס (אי סי אל) בע\"",
       "name_en": "ILCargo",
       "contact": "סנדרה",
       "gender": "f",
       "number": "s",
-      "emails": []
+      "emails": [],
+      "kind": "FORWARDER"
+    },
+    "959": {
+      "name": "סוניגו אריזות הובלות ומשלוחים בינלא",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "960": {
+      "name": "טרנסליין (2002) בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "961": {
+      "name": "אי.אס.אל. שרותי לוגיסטיקה ושילוח בי",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "962": {
+      "name": "סי וויי לוגיסטיקס בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "963": {
+      "name": "היי-סיז שיפינג קומפני בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "964": {
+      "name": "ג'קי ליין לוגיסטיקה בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "966": {
+      "name": "מארסק שירותים לוגיסטיים ישראל בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "967": {
+      "name": "קורייר נטוורק ישראל בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "968": {
+      "name": "אביב שרותים לוגיסטיים בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "969": {
+      "name": "דלתא נובל לוגיסטיקה בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "970": {
+      "name": "מסד עמילות מכס ותחבורה בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "971": {
+      "name": "אורנג' ליין תערוכות בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "972": {
+      "name": "טובר תובלה בינלאומית (2002) בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "973": {
+      "name": "הלנס שילוח בינלאומי ועמילות מכס בע\"",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "974": {
+      "name": "קוראל שירותי-ים בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "975": {
+      "name": "נובל מריטיים בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "976": {
+      "name": "גלובל קורייר אקספרס בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "977": {
+      "name": "א. מרה שיפינג בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "978": {
+      "name": "אולטימט ביזניס לוגיסטיק בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "979": {
+      "name": "טראק ליין בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "980": {
+      "name": "המזרח התיכון פתרונות לוגיסטיים בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "981": {
+      "name": "כל הנתיבים שרותים לוגיסטיים בינלאומ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "982": {
+      "name": "טליה זילברג כרמון",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "983": {
+      "name": "איירגייט (ישראל) בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "984": {
+      "name": "לימור בן עמי",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "985": {
+      "name": "גלובל שילוח ולוגיסטיקה - שותפות מוג",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "986": {
+      "name": "אילת גייטפורט נגה (1982) בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "987": {
+      "name": "אולקרגו לוג'יסטיק סרביסס בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "988": {
+      "name": "מולטי טרנס בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "989": {
+      "name": "אורדן קרגו - אלינער פרידן בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "990": {
+      "name": "ואייר אייר סי מובינג בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "991": {
+      "name": "ר.ז. לוגיסטיקה בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "992": {
+      "name": "פרימה לוגיסטיקה בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "993": {
+      "name": "קרגו ליין בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "994": {
+      "name": "וורלד לוג'יסטיקס איי. אל. בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "995": {
+      "name": "ג'נסיס שילוח ולוגיסטיקה בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "996": {
+      "name": "ג'י אר גלוב שירותי שילוח וניהול בע\"",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
     },
     "997": {
       "name": "קבוצת וריטס לוגיסטיקה בע\"מ",
@@ -134,7 +4735,20 @@
       "emails": [
         "veritas-ashdod@veritas.co.il"
       ],
-      "phrasing": "יוסי, אודה לטיפולך בהעברה לחיפה בבקשה אישורך"
+      "phrasing": "יוסי, אודה לטיפולך בהעברה לחיפה בבקשה אישורך",
+      "kind": "FORWARDER"
+    },
+    "998": {
+      "name": "סיקו ישראל בע\"מ",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
+    },
+    "999": {
+      "name": "לפיד סוכני מכס ותחבורה",
+      "kind": "FORWARDER",
+      "emails": [],
+      "needs_review": true
     },
     "15373": {
       "name": "ספרטה קארגו",

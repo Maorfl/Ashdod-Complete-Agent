@@ -17,7 +17,7 @@ const fs = require('fs');
 const configModule = require('../config');
 const { config, REPORT_PATH } = configModule;
 const { readReport } = require('../report/reader');
-const { classify, transferPerformer, isHaifaTransfer, requiresGatepass } = require('../report/classifier');
+const { classify, transferPerformer, isHaifaTransfer, requiresGatepass, isHazardous } = require('../report/classifier');
 const { composeRelease } = require('../email/composer');
 const importersDb = require('../db/importers');
 const shipments = require('../db/shipments');
@@ -348,7 +348,7 @@ async function commit() {
   const summary = {
     total: records.length, out_of_scope: 0, no_op: 0, queued: 0, awaiting_pdf: 0, pdf_preloaded: 0, alerts: 0,
     tracked_released: 0, skipped_tracked: 0, auto_sent: 0, dry_run: 0, awaiting_gatepass: 0, errors: 0,
-    importers_created: 0, re_classified: 0, outcome_changed: 0,
+    importers_created: 0, re_classified: 0, outcome_changed: 0, dangerous: 0,
   };
 
   // סריקה מקדימה של הודעות ה-gatepass (Task 1, 2026-07-14): נשלפת פעם אחת, עצלנית —
@@ -374,7 +374,11 @@ async function commit() {
       // כלל scope קבוע — LCL + רשימת ההעברה לחיפה נכנסים לצנרת (כל שלוש המחלקות)
       if (!inScope(rec)) { summary.out_of_scope += 1; continue; }
 
-      let importer = importersDb.findByName(rec.customer_name);
+      // Task 1 — ספירת חומ"ס לכל רשומה בתחום ה-scope (ללא תלות במסלול), כדי שאפס
+      // חומ"ס לאורך סריקה שלמה יהיה נראה מיידית ב-GET /api/version/watcher.
+      if (isHazardous(rec)) summary.dangerous += 1;
+
+      let importer = importersDb.findByName(rec.customer_name, rec.service_rep);
       // יבואן לא מוכר (לא מדויק ולא alias) — יוצרים רשומה אוטומטית (Task 2), במחלקה
       // שנגזרת מ-service_rep, כדי שהתיק לעולם לא ייעלם מאחורי department:null וכדי
       // שיהיה מקום מיידי להשלים אליו מיילים/אנשי-קשר. type:'unknown' עד השלמה ידנית —
@@ -460,7 +464,11 @@ async function commit() {
             performer_unknown: performerUnknown,
             site_des: rec.site_des || null,
             fcl_lcl: rec.fcl_lcl || null,
-            hazardous: rec.hazardous,
+            // נשמר הדגל האפקטיבי (Hazardous OR Commodity=Dangerous), לא הגלם — כדי
+            // שה-UI (שמשווה hazardous === 'Yes') לא יציג "לא" לתיק שכן מנותב כמסוכן.
+            // הערך הגולמי של Commodity נשמר בנפרד לביקורת (commodity).
+            hazardous: isHazardous(rec) ? 'Yes' : 'No',
+            commodity: rec.commodity || null,
             wg_reshimon_no: rec.wg_reshimon_no || null,
             type: importer?.type || null,
             agent_name: importer?.service_rep || rec.service_rep || null,
@@ -509,7 +517,8 @@ async function commit() {
           performer_unknown: performerUnknown,
           site_des: rec.site_des || null,
           fcl_lcl: rec.fcl_lcl || null,
-          hazardous: rec.hazardous,
+          hazardous: isHazardous(rec) ? 'Yes' : 'No',
+          commodity: rec.commodity || null,
           draft_payload: { decision },
         });
         summary.alerts += 1;
@@ -531,7 +540,8 @@ async function commit() {
         performer_unknown: performerUnknown,
         site_des: rec.site_des || null,
         fcl_lcl: rec.fcl_lcl || null,
-        hazardous: rec.hazardous,
+        hazardous: isHazardous(rec) ? 'Yes' : 'No',
+        commodity: rec.commodity || null,
         wg_reshimon_no: rec.wg_reshimon_no || null,
         type: importer?.type || null,
         agent_name: importer?.service_rep || rec.service_rep || null,

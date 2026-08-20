@@ -164,6 +164,31 @@ export function needsAttentionReason(s: Pick<Shipment, 'status' | 'reason' | 'dr
   return cat ? NEEDS_ATTENTION_LABEL[cat] : null;
 }
 
+/**
+ * gatepassSourceSuffix — טקסט קטן ליד תג "PDF מצורף" (Task 6, פרובננס): מבחין בין
+ * PDF שהגיע אוטומטית מ-do-not-reply לבין קובץ שהועלה ידנית, כדי שהמאשר ידע לפני
+ * אישור שליחה. תיקים ישנים (מלפני הוספת gatepass_source) מחזירים מחרוזת ריקה —
+ * אינם רגרסיה, פשוט אין מידע פרובננס עבורם.
+ */
+export function gatepassSourceSuffix(s: Pick<Shipment, 'gatepass_source'>): string {
+  if (s.gatepass_source === 'upload') return ' (הועלה ידנית)';
+  if (s.gatepass_source === 'mail') return ' (מהמייל)';
+  return '';
+}
+
+/**
+ * hazardousTitle — טקסט ה-tooltip על תג ה-⚠ חומ"ס (Task 1): שני אותות עצמאיים
+ * (Hazardous=Yes / Commodity=Dangerous) יכולים לגרום לתג — הטקסט מציין איזה מהם
+ * בפועל הפעיל אותו, כדי שהמפעיל לא יצטרך לפתוח את הדוח כדי לדעת. hazardous השמור
+ * הוא כבר הדגל האפקטיבי (isHazardous בשרת) ולא הערך הגולמי מהדוח.
+ */
+export function hazardousTitle(s: Pick<Shipment, 'hazardous' | 'commodity'>): string {
+  const parts: string[] = [];
+  if (s.hazardous === 'Yes') parts.push('Hazardous');
+  if (String(s.commodity || '').toLowerCase() === 'dangerous') parts.push('Commodity: Dangerous');
+  return parts.length ? `חומר מסוכן (${parts.join(', ')})` : 'חומר מסוכן';
+}
+
 /* ---------- זמן ---------- */
 export function hoursSince(iso?: string | null): number | null {
   if (!iso) return null;

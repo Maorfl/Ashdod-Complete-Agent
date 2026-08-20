@@ -38,7 +38,7 @@ function main() {
   for (const rec of records) {
     let decision, mail;
     try {
-      const importer = imp.findByName(rec.customer_name);
+      const importer = imp.findByName(rec.customer_name, rec.service_rep);
       decision = classify(rec, importer);
       routes[decision.route] = (routes[decision.route] || 0) + 1;
       if (decision.reason) reasons[decision.reason] = (reasons[decision.reason] || 0) + 1;
@@ -89,7 +89,7 @@ function main() {
   console.log('  raw:', records.length, '| LCL:', cLcl, '| +נציג:', cRep, '| +19 לקוחות (inScope):', scoped.length);
   const scopedRoutes = {};
   for (const r of scoped) {
-    const d = classify(r, imp.findByName(r.customer_name));
+    const d = classify(r, imp.findByName(r.customer_name, r.service_rep));
     scopedRoutes[d.route] = (scopedRoutes[d.route] || 0) + 1;
   }
   console.log('  ניתוב בתוך scope:', JSON.stringify(scopedRoutes));

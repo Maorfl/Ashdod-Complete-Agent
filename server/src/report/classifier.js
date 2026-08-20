@@ -54,8 +54,17 @@ function isCaspiForwarder(forwarder) {
   return config.caspi_forwarder_names.some((n) => forwarder.includes(n));
 }
 
+// חומ"ס: Hazardous=Yes (או וריאציה) *או* Commodity=Dangerous — כל אחד מהם מספיק.
+// עמודת Commodity חדשה בדוח ועשויה להיעדר בדוחות ישנים (reader.js מחזיר '' כברירת
+// מחדל במקרה זה — לא נחשב מסוכן). Hazardous נשאר תמיד — Focus עשוי להתחיל למלא
+// אותו מחדש בכל רגע; OR של שני האותות בטוח יותר מהסתמכות על אחד בלבד.
 function isHazardous(rec) {
-  return /^yes$/i.test(rec.hazardous) || /dangerous/i.test(rec.hazardous) || /מסוכן/.test(rec.hazardous);
+  return (
+    /^yes$/i.test(rec.hazardous) ||
+    /dangerous/i.test(rec.hazardous) ||
+    /מסוכן/.test(rec.hazardous) ||
+    /^dangerous$/i.test(rec.commodity || '')
+  );
 }
 
 // "נמל אשדוד"/"נמל הדרום" = הנמל עצמו (לא מסוף) — שחרור ישיר בנמל אינו "העברה לחיפה".

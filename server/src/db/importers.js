@@ -35,15 +35,56 @@ function readByFolder(folder) {
   return { _folder: folder, ...data };
 }
 
-// איתור יבואן לפי שם מדויק או alias (לשימוש המסווג)
-function findByName(name) {
+// מיפוי וריאנטים של שם-נציג -> מחלקה קנונית (Task 3, METZERPLAS): עותק מכוון של
+// client/src/context/AgentFilterContext.tsx's NAME_TO_DEPT — שני הצדדים צריכים
+// לזהות את אותם וריאנטים איות (אביהו/אביהוא עבדי/עבאדי, דורון רימה/רימא), אחרת
+// findByName עלול שלא לזהות רישום קיים כי הדוח הביא וריאציה שונה מהמאוחסנת.
+// לא ניתן לשימוש חוזר ישירות (client/server, ESM/CJS נפרדים) — סנכרון ידני בכוונה.
+const REP_NAME_TO_DEPT = {
+  'משה רוסו': 'cus1',
+  'דורון רימה': 'cus2',
+  'דורון רימא': 'cus2',
+  'אביהוא עבדי': 'cus3',
+  'אביהו עבדי': 'cus3',
+  'אביהוא עבאדי': 'cus3',
+  'אביהו עבאדי': 'cus3',
+};
+function repNorm(s) {
+  return String(s || '').replace(/["'׳״]/g, '').replace(/\s+/g, ' ').trim();
+}
+function repToDeptVariant(rep) {
+  return REP_NAME_TO_DEPT[repNorm(rep)] || null;
+}
+
+/**
+ * findByName — איתור יבואן לפי שם מדויק או alias (לשימוש המסווג). כברירת מחדל
+ * מתנהג כפי שתמיד התנהג: שם יחיד -> אותה תוצאה, בלי תלות ב-serviceRep.
+ *
+ * serviceRep הוא ארגומנט disambiguation כללי (Task 3) — נדרש רק כששני יבואנים
+ * ויותר חולקים אותו name (למשל METZERPLAS INDUSTRIES LTD תחת CUS2 ו-CUS3):
+ *   - 0 התאמות -> null.
+ *   - התאמה יחידה -> מוחזרת תמיד, גם אם serviceRep לא הועבר/לא תואם — כדי לא
+ *     לשנות התנהגות עבור שאר היבואנים (רוב המכריע, ללא כפילויות שם).
+ *   - כמה התאמות -> ממופות למחלקה (repToDeptVariant, סלחני לוריאציות איות) ומושווות
+ *     למחלקת serviceRep; אם אין התאמה חד-משמעית (0 או יותר מהתאמה אחת) -> null,
+ *     במקום לבחור הראשון בשקט (הבאג המקורי) — הקורא נופל בחזרה לנתיב "לא נמצא"
+ *     הקיים שלו (למשל ensureImporter/alert ב-reportWatcher).
+ */
+function findByName(name, serviceRep) {
   if (!name) return null;
   const target = String(name).trim().toLowerCase();
+  const matches = [];
   for (const imp of list()) {
-    if (imp.name && imp.name.trim().toLowerCase() === target) return imp;
-    if (Array.isArray(imp.aliases) && imp.aliases.some((a) => String(a).trim().toLowerCase() === target)) return imp;
+    if (imp.name && imp.name.trim().toLowerCase() === target) { matches.push(imp); continue; }
+    if (Array.isArray(imp.aliases) && imp.aliases.some((a) => String(a).trim().toLowerCase() === target)) matches.push(imp);
   }
-  return null;
+  if (matches.length === 0) return null;
+  if (matches.length === 1) return matches[0];
+
+  const wantDept = repToDeptVariant(serviceRep);
+  if (!wantDept) return null;
+  const hits = matches.filter((imp) => repToDeptVariant(imp.service_rep) === wantDept);
+  return hits.length === 1 ? hits[0] : null;
 }
 
 /**
