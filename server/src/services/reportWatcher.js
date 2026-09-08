@@ -19,6 +19,7 @@ const { config, REPORT_PATH } = configModule;
 const { readReport } = require('../report/reader');
 const { classify, transferPerformer, isHaifaTransfer, requiresGatepass, isHazardous } = require('../report/classifier');
 const { composeRelease } = require('../email/composer');
+const grammar = require('../email/grammar');
 const importersDb = require('../db/importers');
 const shipments = require('../db/shipments');
 const graph = require('./graphMail');
@@ -401,6 +402,10 @@ async function commit() {
       // Task 8 — "מבצע העברה לחיפה" ואם הוא ישות מוכרת ב-co_loaders/terminals
       const perf = transferPerformer(rec);
       const performerUnknown = perf && !contacts.isKnown(perf) ? 1 : 0;
+      // ערך התצוגה בדשבורד: השם העברי הרשום (במקום השם האנגלי מהדוח, "OCEAN LINK"),
+      // ובלי הסיומת התאגידית ("אושן לינק בע\"מ" -> "אושן לינק"). תצוגה בלבד —
+      // חיפוש הנמענים ובדיקת performerUnknown למעלה ממשיכים לעבוד על perf הגולמי.
+      const perfDisplay = perf ? grammar.displayName(contacts.displayNameFor(perf)) : perf;
       const dept = departmentFor(rec, importer);
 
       const existing = shipments.get(rec.file_number);
@@ -460,7 +465,7 @@ async function commit() {
             department: dept,
             co_loader_code: rec.co_loader_code || null,
             continuation: decision.continuation?.name || null,
-            transfer_performer: perf || null,
+            transfer_performer: perfDisplay || null,
             performer_unknown: performerUnknown,
             site_des: rec.site_des || null,
             fcl_lcl: rec.fcl_lcl || null,
@@ -469,6 +474,7 @@ async function commit() {
             // הערך הגולמי של Commodity נשמר בנפרד לביקורת (commodity).
             hazardous: isHazardous(rec) ? 'Yes' : 'No',
             commodity: rec.commodity || null,
+            customer_reference: rec.customer_reference || null,
             wg_reshimon_no: rec.wg_reshimon_no || null,
             type: importer?.type || null,
             agent_name: importer?.service_rep || rec.service_rep || null,
@@ -513,12 +519,13 @@ async function commit() {
           reason: decision.reason,
           release_date: rec.release_date || null,
           department: dept,
-          transfer_performer: perf || null,
+          transfer_performer: perfDisplay || null,
           performer_unknown: performerUnknown,
           site_des: rec.site_des || null,
           fcl_lcl: rec.fcl_lcl || null,
           hazardous: isHazardous(rec) ? 'Yes' : 'No',
           commodity: rec.commodity || null,
+            customer_reference: rec.customer_reference || null,
           draft_payload: { decision },
         });
         summary.alerts += 1;
@@ -536,12 +543,13 @@ async function commit() {
         department: dept,
         co_loader_code: rec.co_loader_code || null,
         continuation: decision.continuation?.name || null,
-        transfer_performer: perf || null,
+        transfer_performer: perfDisplay || null,
         performer_unknown: performerUnknown,
         site_des: rec.site_des || null,
         fcl_lcl: rec.fcl_lcl || null,
         hazardous: isHazardous(rec) ? 'Yes' : 'No',
         commodity: rec.commodity || null,
+            customer_reference: rec.customer_reference || null,
         wg_reshimon_no: rec.wg_reshimon_no || null,
         type: importer?.type || null,
         agent_name: importer?.service_rep || rec.service_rep || null,

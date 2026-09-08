@@ -25,7 +25,15 @@ const COLS = {
   haz: 'Hazardous',
   relDate: 'wg dec release date',
   commodity: 'Commodity',
+  customerRef: 'Customer Reference',
 };
+
+// עמודות שחייבות להיקרא כטקסט מעוצב ולא כערך גולמי (raw:false לתא בלבד).
+// Customer Reference הוא מספר הזמנה של הלקוח ועשוי להיראות מספרי ("4530884834,4530884836");
+// ב-raw:true‏ SheetJS מפרש את הפסיק כמפריד אלפים וממיר למספר שמאבד דיוק מעבר ל-IEEE-754
+// (‎45308848344530890000) — מספר הזמנה משובש בנושא מייל ללקוח גרוע מהיעדרו.
+// לא הופכים את כל הגיליון ל-raw:false כי excelSerialToISO תלוי בתאריך הסריאלי המספרי.
+const TEXT_COLS = new Set(['customerRef']);
 
 /**
  * המרת תאריך סריאלי של Excel ל-ISO (yyyy-mm-dd). דטרמיניסטי, עמיד לערכים
@@ -48,6 +56,11 @@ function str(v) {
   return v === null || v === undefined ? '' : String(v).trim();
 }
 
+// כמו str אך ללא trim — לשדות שחייבים להישמר תו-בתו כפי שהתקבלו (Customer Reference)
+function rawStr(v) {
+  return v === null || v === undefined ? '' : String(v);
+}
+
 /**
  * טוען את שורות הדוח. תומך ב-.xlsx (SheetJS ישירות) וב-.csv המקודד Windows-1255
  * (עברית) — מפענחים את הבייטים ב-iconv-lite ואז מפרסרים כמחרוזת, אחרת ה-CSV
@@ -63,18 +76,29 @@ function loadSheetRows(filePath) {
     wb = XLSX.readFile(filePath);
   }
   const ws = wb.Sheets[wb.SheetNames[0]];
-  return XLSX.utils.sheet_to_json(ws, { header: 1, raw: true, defval: '' });
+  return {
+    rows: XLSX.utils.sheet_to_json(ws, { header: 1, raw: true, defval: '' }),
+    // מעבר טקסט שני על אותו גיליון — משמש רק לעמודות ב-TEXT_COLS (ראו ההערה שם).
+    textRows: XLSX.utils.sheet_to_json(ws, { header: 1, raw: false, defval: '' }),
+  };
 }
 
 function readReport(filePath) {
-  const rows = loadSheetRows(filePath);
+  const { rows, textRows } = loadSheetRows(filePath);
   const h = findHeaderRow(rows);
   const header = rows[h].map((c) => String(c).trim());
   const at = {};
   for (const [key, label] of Object.entries(COLS)) at[key] = header.indexOf(label);
 
   const records = [];
-  for (const r of rows.slice(h + 1)) {
+  for (let i = h + 1; i < rows.length; i++) {
+    const r = rows[i];
+    // קריאת תא של עמודת-טקסט (TEXT_COLS) מהמעבר הטקסטואלי; שאר העמודות נשארות גולמיות.
+    const cell = (key) => {
+      const idx = at[key];
+      if (idx < 0) return undefined;
+      return TEXT_COLS.has(key) ? (textRows[i] || [])[idx] : r[idx];
+    };
     const fileNumber = str(r[at.file]);
     // רק מספר תיק מספרי — פוסל שורות סיכום/פוטר כמו ["Total","366 Files"]
     if (!/^\d+$/.test(fileNumber)) continue;
@@ -95,6 +119,9 @@ function readReport(filePath) {
       hazardous: str(r[at.haz]),
       release_date: at.relDate >= 0 ? excelSerialToISO(r[at.relDate]) : null,
       commodity: at.commodity >= 0 ? str(r[at.commodity]) : '',
+      // מספר הזמנה של הלקוח — נשמר מילה-במילה כפי שהוא בדוח (ללא ניקוי/פיצול/נרמול).
+      // העמודה חסרה בדוחות ישנים (indexOf === -1) ואז מתקבל '' — לא קריסה.
+      customer_reference: at.customerRef >= 0 ? rawStr(cell('customerRef')) : '',
     });
   }
   return { records, headerRow: h };

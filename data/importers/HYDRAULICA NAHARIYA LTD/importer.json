@@ -1,8 +1,9 @@
 {
-  "name": "RUDOLF MEIR LTD",
-  "company_id": "510056880",
+  "name": "HYDRAULICA NAHARIYA LTD",
+  "company_id": "512502501",
   "emails": [
-    "micha@rudolf-mayer.co.il"
+    "accounting@nhyd.co.il",
+    "info@nhyd.co.il"
   ],
   "address": "",
   "notes": "",
@@ -18,11 +19,6 @@
   "cont_dangerous_emails": [],
   "contacts": [],
   "aliases": [],
-  "seen_stations": [
-    "4"
-  ],
-  "files": [
-    "6179261",
-    "6179824"
-  ]
+  "seen_stations": [],
+  "files": []
 }

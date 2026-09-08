@@ -1,25 +1,19 @@
 {
-  "name": "ORANTEK GATHOR",
+  "name": "M. FISHMAN MARKETING AND TRADE",
   "company_id": "",
-  "emails": [
-    "gal@orantechg.com"
-  ],
+  "emails": [],
   "address": "",
   "notes": "",
   "department": "cus1",
   "service_rep": "משה רוסו",
-  "type": "haifa_self",
+  "type": "unknown",
   "dangerous_rule": false,
   "cont_general": "",
-  "contact_names": "גל",
+  "contact_names": "",
   "cont_general_emails": [],
   "cont_dangerous_emails": [],
   "contacts": [],
   "aliases": [],
-  "seen_stations": [
-    "1"
-  ],
-  "files": [
-    "6179624"
-  ]
+  "seen_stations": [],
+  "files": []
 }

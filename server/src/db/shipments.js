@@ -70,6 +70,7 @@ const AGENT_COLUMNS = {
   continuation: 'TEXT',
   hazardous: 'TEXT',
   commodity: 'TEXT', // ערך גולמי של עמודת Commodity מהדוח (Task 1) — נשמר בנפרד מ-hazardous (הדגל האפקטיבי) לביקורת
+  customer_reference: 'TEXT', // Customer Reference מהדוח — מספר הזמנת הלקוח, נכנס לנושא מייל ההעברה
   wg_reshimon_no: 'TEXT',
   type: 'TEXT',
   draft_payload: 'TEXT',
@@ -187,6 +188,7 @@ function upsert(rec) {
     fcl_lcl: rec.fcl_lcl ?? existing?.fcl_lcl ?? null,
     hazardous: rec.hazardous ?? existing?.hazardous ?? null,
     commodity: rec.commodity ?? existing?.commodity ?? null,
+    customer_reference: rec.customer_reference ?? existing?.customer_reference ?? null,
     wg_reshimon_no: rec.wg_reshimon_no ?? existing?.wg_reshimon_no ?? null,
     type: rec.type ?? existing?.type ?? null,
     draft_payload: rec.draft_payload !== undefined ? (rec.draft_payload ? JSON.stringify(rec.draft_payload) : null) : existing?.draft_payload ?? null,
@@ -197,14 +199,14 @@ function upsert(rec) {
 
   db.prepare(`INSERT INTO shipments
     (file_number,customer_name,release_date,status,status_updated_at,notes,created_at,agent_name,
-     route,reason,department,co_loader_code,continuation,transfer_performer,performer_unknown,site_des,fcl_lcl,hazardous,commodity,wg_reshimon_no,type,draft_payload,agent_sent_at,first_seen,last_seen)
+     route,reason,department,co_loader_code,continuation,transfer_performer,performer_unknown,site_des,fcl_lcl,hazardous,commodity,customer_reference,wg_reshimon_no,type,draft_payload,agent_sent_at,first_seen,last_seen)
     VALUES (@file_number,@customer_name,@release_date,@status,@status_updated_at,@notes,@created_at,@agent_name,
-     @route,@reason,@department,@co_loader_code,@continuation,@transfer_performer,@performer_unknown,@site_des,@fcl_lcl,@hazardous,@commodity,@wg_reshimon_no,@type,@draft_payload,@agent_sent_at,@first_seen,@last_seen)
+     @route,@reason,@department,@co_loader_code,@continuation,@transfer_performer,@performer_unknown,@site_des,@fcl_lcl,@hazardous,@commodity,@customer_reference,@wg_reshimon_no,@type,@draft_payload,@agent_sent_at,@first_seen,@last_seen)
     ON CONFLICT(file_number) DO UPDATE SET
       customer_name=@customer_name,release_date=@release_date,status=@status,status_updated_at=@status_updated_at,
       notes=@notes,agent_name=@agent_name,route=@route,reason=@reason,department=@department,
       co_loader_code=@co_loader_code,continuation=@continuation,transfer_performer=@transfer_performer,
-      performer_unknown=@performer_unknown,site_des=@site_des,fcl_lcl=@fcl_lcl,hazardous=@hazardous,commodity=@commodity,wg_reshimon_no=@wg_reshimon_no,
+      performer_unknown=@performer_unknown,site_des=@site_des,fcl_lcl=@fcl_lcl,hazardous=@hazardous,commodity=@commodity,customer_reference=@customer_reference,wg_reshimon_no=@wg_reshimon_no,
       type=@type,draft_payload=@draft_payload,agent_sent_at=@agent_sent_at,last_seen=@last_seen`).run(merged);
 
   if (rec.status !== undefined && rec.status !== existing?.status) {

@@ -55,6 +55,24 @@ function findByName(name) {
   return null;
 }
 
+/**
+ * displayNameFor — שם לתצוגה של "מבצע ההעברה" בדשבורד: מעדיף תמיד את השם העברי
+ * הרשום ב-co_loaders.json/terminals.json על פני מה שהגיע בדוח (שם אנגלי כמו
+ * "OCEAN LINK"). אם הישות אינה מוכרת, או שאין לה שם עברי — מוחזר השם שהתקבל
+ * כפי שהוא, כדי שלעולם לא נרוקן תא שמציג משהו היום.
+ *
+ * תצוגה בלבד: אינו משנה את חיפוש הנמענים (emailsFor/findByName ממשיכים לקבל את
+ * השם מהדוח ולהתאים לפי שם עברי *או* אנגלי), ואינו נכתב חזרה לקונפיג.
+ */
+const HEBREW_RE = /[֐-׿]/;
+function displayNameFor(name) {
+  const raw = String(name == null ? '' : name).trim();
+  if (!raw) return raw;
+  const hit = findByName(raw);
+  const candidate = hit && hit.kind === 'co_loader' ? hit.entry.name : hit ? hit.key : null;
+  return candidate && HEBREW_RE.test(candidate) ? candidate : raw;
+}
+
 function isKnown(name) { return !!findByName(name); }
 
 // כתובות המייל האמיתיות של ישות לפי שם (לרשימת הנמענים בהעברה) — [] אם אינה מוכרת
@@ -77,5 +95,5 @@ function writeTerminals(terminalsObj) {
 
 module.exports = {
   coLoaders, terminals, getCoLoaderByCode, getTerminal,
-  findByName, isKnown, emailsFor, writeCoLoaders, writeTerminals,
+  findByName, isKnown, emailsFor, displayNameFor, writeCoLoaders, writeTerminals,
 };

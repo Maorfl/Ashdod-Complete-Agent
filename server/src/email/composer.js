@@ -95,7 +95,13 @@ function composeRelease(rec, decision, importer) {
   const hn = 'p';
 
   // נושא לפי הנוהל: "{לקוח} \ {תיק} – העברה לחיפה"
-  const transferSubject = `${rec.customer_name} \\ ${rec.file_number} – העברה לחיפה`;
+  // מספר ההזמנה של הלקוח (Customer Reference) נכנס כמקטע נוסף מיד אחרי מספר התיק.
+  // הערך נכנס תו-בתו כפי שהוא בדוח (ללא trim/נרמול/פיצול); רק הבדיקה אם השדה
+  // ריק נעשית על עותק מקוצץ. ללא הזמנה — הנושא זהה בדיוק לקודם (ללא מפריד/רווח מיותר).
+  const refSegment = String(rec.customer_reference == null ? '' : rec.customer_reference).trim()
+    ? ` \\ ${rec.customer_reference}`
+    : '';
+  const transferSubject = `${rec.customer_name} \\ ${rec.file_number}${refSegment} – העברה לחיפה`;
 
   // שורת שחרור — הליבה קבועה; סיומת חומ"ס רק כשרלוונטי, בלי לשבור את הליטרל
   const releaseLine = cont.hazardous ? 'משלוח שוחרר באשדוד (מטען מסוכן)' : 'משלוח שוחרר באשדוד';
@@ -109,14 +115,14 @@ function composeRelease(rec, decision, importer) {
   const selfName = (importer && importer.contact_names) || rec.customer_name;
   const continuationLine = isSelf
     ? `${selfName}, משלוח יגיע ל${haifaName}`
-    : `צוות ${cont.name || 'מוביל ההמשך'}, משלוח יגיע ל${haifaName}`;
+    : `${g.teamAddress(cont.name, 'מוביל ההמשך')}, משלוח יגיע ל${haifaName}`;
   const availabilityLine = isSelf ? 'נעדכן בזמינות.' : 'המשך שלכם. נעדכן בזמינות.';
 
   // ריווח כפול גם כאן — בכוונה (ראו הערת JOIN למעלה): גובר על הפורמט הצפוף
   // שאומת בעבר ביט-אחר-ביט מול הנוהל הכתוב. לא רגרסיה.
   const body = [
     releaseLine,
-    `צוות ${handlerName}, ${g.thanks(hg, hn)} בהעברה לחיפה`,
+    `${g.teamAddress(handlerName, 'המסוף')}, ${g.thanks(hg, hn)} בהעברה לחיפה`,
     g.approval(hg, hn),
     continuationLine,
     availabilityLine,
