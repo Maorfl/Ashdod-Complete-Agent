@@ -219,3 +219,100 @@ export interface ContactEntry {
   needs_review?: boolean;
   [k: string]: unknown;
 }
+
+/* ---------- מסלול (מכון התקנים) — מחולל קבצי ייבוא ---------- */
+
+export type MaslulCellStatus = 'verified' | 'guess' | 'blocked' | 'skip';
+
+export interface MaslulGuess {
+  from: string;
+  description: string;
+  proposed: string;
+  removedTokens: string[];
+  lengthTrimmed: boolean;
+}
+
+export interface MaslulRow {
+  source_line: number;
+  sku: string;
+  item_no: string;
+  description?: string;
+  page?: number;
+  crop?: string;
+  A: string | null; B: string | null; C: string | null;
+  D: number | null; E: number | null; F: number | null; G: number | null;
+  status: Record<string, MaslulCellStatus>;
+  notes: string[];
+  blocked: boolean;
+  guess?: MaslulGuess;
+  raw?: { itemLine?: string; qtyLine?: string };
+}
+
+export interface MaslulError { code: string; message: string; sku?: string; overridable?: boolean }
+
+export interface MaslulReview {
+  job_id: string;
+  pair_id?: string;
+  supplier?: string;
+  invoice_no?: string | null;
+  template?: string;
+  rows: MaslulRow[];
+  excluded: { sku: string; item_no: string; description: string; rule: string; pattern: string }[];
+  checksums?: {
+    rows: { sku: string; item_no: string; ok: boolean; issues: MaslulError[] }[];
+    // אימותי הסכומים בוטלו — השדות נשמרים בחוזה אך תמיד null (ראו server/src/maslul/checksums.js)
+    totals: {
+      sumCases: number | null; sumValue: number | null; totalCases: number | null; totalValue: number | null;
+      casesOk: boolean | null; valueOk: boolean | null; readable: boolean;
+      disabled?: boolean; errors: MaslulError[];
+    };
+  };
+  errors: MaslulError[];
+  blocked: boolean;
+  blocked_rows?: number;
+  guesses: ({ sku: string } & MaslulGuess)[];
+  pages?: { page: number; blank: boolean }[];
+}
+
+export interface MaslulJob {
+  job_id: string;
+  created_at: string;
+  status: 'analyzing' | 'reviewing' | 'blocked' | 'generated' | 'error';
+  stage?: string;
+  stage_detail?: string | null;
+  invoice_name?: string;
+  invoice_no?: string | null;
+  supplier?: string;
+  template_name?: string;
+  rows?: number;
+  excluded?: number;
+  guesses?: number;
+  output?: string;
+  error?: string;
+  review?: MaslulReview;
+}
+
+export const maslul = {
+  upload: async (invoice: File): Promise<{ job_id: string }> => {
+    const fd = new FormData();
+    fd.append('invoice', invoice);
+    const res = await fetch(BASE + '/maslul/jobs', { method: 'POST', body: fd });
+    if (!res.ok) {
+      const e = await res.json().catch(() => ({ error: res.statusText }));
+      throw new Error(e.error || 'העלאת החשבון נכשלה');
+    }
+    return res.json();
+  },
+  jobs: () => req<MaslulJob[]>('/maslul/jobs'),
+  job: (id: string) => req<MaslulJob>('/maslul/jobs/' + encodeURIComponent(id)),
+  generate: (id: string, decisions: unknown) =>
+    req<{ ok: boolean; output?: string; rows?: number; promoted?: { sku: string; model: string }[]; errors?: MaslulError[] }>(
+      '/maslul/jobs/' + encodeURIComponent(id) + '/generate',
+      { method: 'POST', body: JSON.stringify(decisions) },
+    ),
+  deleteJob: (id: string) => req<{ ok: boolean }>('/maslul/jobs/' + encodeURIComponent(id), { method: 'DELETE' }),
+  clearJobs: () => req<{ ok: boolean; deleted: number }>('/maslul/jobs', { method: 'DELETE' }),
+  outputUrl: (id: string) => BASE + '/maslul/jobs/' + encodeURIComponent(id) + '/output',
+  cropUrl: (id: string, row: number) => BASE + '/maslul/jobs/' + encodeURIComponent(id) + '/crops/' + row,
+  profile: () => req<{ sku_table: Record<string, { model: string | null; status: string; approved_at?: string }> }>('/maslul/profiles/unilever'),
+};

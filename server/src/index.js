@@ -30,6 +30,7 @@ app.use('/api/sent-emails', require('./routes/sentEmails'));
 app.use('/api', require('./routes/contacts')); // /api/terminals + /api/co-loaders
 app.use('/api/version', require('./routes/version'));
 app.use('/api/automation', require('./routes/automation'));
+app.use('/api/maslul', require('./routes/maslul')); // מחולל קבצי ייבוא למסלול (מכון התקנים)
 
 app.get('/api/health', (req, res) => res.json({ ok: true, time: new Date().toISOString() }));
 

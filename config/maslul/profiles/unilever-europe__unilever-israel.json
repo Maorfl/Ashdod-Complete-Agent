@@ -1,0 +1,158 @@
+{
+  "pair_id": "unilever-europe__unilever-israel",
+  "importer": {
+    "name": "יוניליוור ישראל טיפוח אישי וביתי בע\"מ",
+    "company_id": "510516578"
+  },
+  "supplier": {
+    "name": "Unilever Europe BV",
+    "match": [
+      "unilever europe bv"
+    ]
+  },
+  "invoice_parser": "unilever_europe_v1",
+  "bootstrap": {
+    "approved_request": "10118471",
+    "source_invoice": "7113487000",
+    "exact_invoice_match": true,
+    "learned_at": "2026-08-25"
+  },
+  "template": {
+    "expected": "default"
+  },
+  "exclusions": [
+    {
+      "id": "ml50",
+      "type": "regex_on_description",
+      "pattern": "(?<!\\d)50ML",
+      "status": "verified",
+      "note": "הביטוי כפי שהוגדר במפרט. בפועל ה-lookbehind חוסם כל ספרה לפני 50ML, ולכן 150ML/250ML/1250ML אינם מוחרגים ורק 50ML עצמאי (RO 50ML / RO50ML) מוחרג. כל החרגה מוצגת למשתמש במסך הסקירה."
+    }
+  ],
+  "columns": {
+    "A": {
+      "type": "hs_map",
+      "map": {
+        "33072000": "3307200000/4"
+      },
+      "on_unknown": "block",
+      "status": "verified"
+    },
+    "B": {
+      "type": "sku_table",
+      "on_unknown": "guess_unilever_v1"
+    },
+    "C": {
+      "type": "constant",
+      "value": "מנפיקי אירוסול",
+      "status": "verified"
+    },
+    "D": {
+      "type": "invoice_qty",
+      "field": "qty_in_zun",
+      "status": "verified"
+    },
+    "E": {
+      "type": "same_as",
+      "col": "D",
+      "status": "verified"
+    },
+    "F": {
+      "type": "same_as",
+      "col": "D",
+      "status": "verified"
+    },
+    "G": {
+      "type": "skip",
+      "reason": "לא חובה – אישור לקוח"
+    }
+  },
+  "sku_table": {
+    "65223277": {
+      "model": null,
+      "status": "excluded",
+      "note": "מוחרג (50ML)"
+    },
+    "65223592": {
+      "model": "RFM AP 150ML ICED LEMON SAGE",
+      "status": "verified"
+    },
+    "65223596": {
+      "model": "RFM AP 150ML MENTHOLBLUELAVENDER",
+      "status": "verified"
+    },
+    "65223602": {
+      "model": "RFW AP 150ML EUCALYPTSCOCONTWTR",
+      "status": "verified",
+      "note": "אישור משתמש"
+    },
+    "65223606": {
+      "model": "RFW AP 150ML FROZEN ACAI JASMINE",
+      "status": "verified"
+    },
+    "65227897": {
+      "model": "DFW AP 150ML TALCO DAPHNE",
+      "status": "verified"
+    },
+    "65228009": {
+      "model": "DFW AP 150ML CCNT JSMN FLWR",
+      "status": "verified",
+      "note": "הכי לא ודאי — 27 תווים לפי המפרט; קבצי הייחוס 04/05 מכילים גרסה בת 37 תווים שחורגת מגבול ה-35 של התבנית",
+      "approved_at": "2026-09-15T09:05:55.011Z",
+      "approved_from_invoice": "7113482802"
+    },
+    "65228382": {
+      "model": "DFW AP150ML PEAR ALOEVERA",
+      "status": "verified"
+    },
+    "65289781": {
+      "model": "DFM AP 150ML CLEAN COMFORT",
+      "status": "verified"
+    },
+    "65432433": {
+      "model": "RFW AP150ML INVSBL ON BLK WHT CL",
+      "status": "verified",
+      "approved_at": "2026-09-15T09:05:55.011Z",
+      "approved_from_invoice": "7113482802"
+    },
+    "65436712": {
+      "model": null,
+      "status": "excluded",
+      "note": "מוחרג (50ML)"
+    },
+    "65546404": {
+      "model": "AXE AP 150ML BLACK CMR MOP UP WAVE1",
+      "status": "verified",
+      "approved_at": "2026-09-15T09:05:55.011Z",
+      "approved_from_invoice": "7113482802"
+    },
+    "65592512": {
+      "model": "AXE AP 150ML DARK TEMP",
+      "status": "verified",
+      "approved_at": "2026-09-15T09:55:32.570Z",
+      "approved_from_invoice": "7113479328"
+    },
+    "65622046": {
+      "model": "AXE AP 150ML APOLLO CMR",
+      "status": "verified",
+      "approved_at": "2026-09-15T09:05:55.011Z",
+      "approved_from_invoice": "7113482802"
+    },
+    "65622047": {
+      "model": "AXE BS 150ML ANARCHY FOR HER CMR",
+      "status": "verified"
+    },
+    "65634622": {
+      "model": "AXE BS 150ML BLACK IL CMR MOP UP",
+      "status": "guess"
+    },
+    "65634626": {
+      "model": "AXE BS 150ML ICE CHILL CMR MOP UP",
+      "status": "guess"
+    },
+    "65664183": {
+      "model": "RFM AP 150ML SPORT COOL",
+      "status": "guess"
+    }
+  }
+}

@@ -11,7 +11,8 @@
     "recompose-gatepass-coloader": "node src/recompose-gatepass-coloader.js",
     "reset-shipments": "node src/reset-shipments.js",
     "release-cus1-ready": "node src/release-cus1-ready.js",
-    "build-importers": "node ../scripts/build-importers-from-xlsx.js"
+    "build-importers": "node ../scripts/build-importers-from-xlsx.js",
+    "test:maslul": "node src/test-maslul.js"
   },
   "dependencies": {
     "better-sqlite3": "^11.8.1",

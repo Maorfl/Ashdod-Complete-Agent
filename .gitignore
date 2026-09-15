@@ -12,3 +12,6 @@ data/importers/**/*.pdf
 data/attachments/
 data/logs/
 .claude/settings.local.json
+data/maslul/jobs/
+# נתוני אימון של tesseract — מורדים אוטומטית בזמן ריצה
+*.traineddata

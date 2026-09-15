@@ -494,3 +494,46 @@ td.mono, .mono { font-family: var(--mono); }
   margin-bottom: 0;
 }
 
+
+/* ---------- מחלקות + מחולל מסלול ---------- */
+
+/* פריט ניווט מושבת (CUS2/CUS3) — לא NavLink, לא לחיץ, לא נראה לחיץ */
+.nav .nav-disabled {
+  display: flex; align-items: center; gap: 10px;
+  color: #56687d; padding: 10px 12px; border-radius: var(--radius-sm);
+  font-weight: 600; font-size: 14px; cursor: not-allowed; opacity: .55;
+}
+.nav .nav-disabled:hover { background: transparent; }
+.nav .nav-disabled .ic { width: 18px; text-align: center; opacity: .7; }
+
+.dept-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 14px; }
+.dept-card { display: block; text-decoration: none; color: inherit; transition: border-color .12s, transform .12s; }
+.dept-card:hover { border-color: var(--accent); transform: translateY(-1px); }
+.dept-card-title { font-weight: 700; font-size: 15px; margin-bottom: 4px; }
+.dept-card-meta { color: var(--muted); font-size: 12px; }
+.dept-card-desc { margin: 8px 0; font-size: 13px; }
+.dept-card-cta { margin-top: 10px; color: var(--accent); font-weight: 700; font-size: 13px; }
+
+.ms-badge { font-size: 13px; margin-inline-start: 4px; }
+.ms-table td { vertical-align: top; }
+.ms-row-blocked { background: #fdf0f0; }
+.ms-src { background: var(--bg-2); }
+.ms-src img { max-width: 100%; border: 1px solid var(--line); border-radius: var(--radius-sm); margin-bottom: 6px; }
+.ms-raw { font-size: 11px; color: var(--muted); word-break: break-all; }
+.ms-notes { margin: 6px 0 0; padding-inline-start: 18px; font-size: 12px; color: #8a5a16; }
+
+.ms-checks { display: flex; flex-direction: column; gap: 4px; margin-bottom: 12px; font-size: 13px; font-weight: 600; }
+.ms-checks .ok { color: #1f7a4d; }
+.ms-checks .bad { color: #b02a2a; }
+
+.ms-blocked { border-inline-start: 4px solid #b02a2a; }
+.ms-blocked ul { margin: 8px 0 0; padding-inline-start: 18px; font-size: 13px; }
+
+.ms-excluded { margin-top: 12px; }
+.ms-excluded ul { margin: 8px 0 0; padding-inline-start: 18px; font-size: 13px; color: var(--muted); }
+
+.ms-guess { border-top: 1px solid var(--line); padding: 10px 0; font-size: 13px; }
+.ms-guess-row { display: flex; align-items: center; gap: 8px; margin-top: 6px; }
+.ms-guess-row input { flex: 1; font-family: ui-monospace, Menlo, Consolas, monospace; }
+.ms-guess-row input.invalid { border-color: #b02a2a; background: #fdf0f0; }
+.ms-guess-row .bad { color: #b02a2a; font-weight: 700; }

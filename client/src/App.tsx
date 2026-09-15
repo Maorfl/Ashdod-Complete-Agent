@@ -7,6 +7,8 @@ import Approvals from "./pages/Approvals";
 import SentEmails from "./pages/SentEmails";
 import TerminalsForwarders from "./pages/TerminalsForwarders";
 import Automation from "./pages/Automation";
+import DepartmentCus1 from "./pages/DepartmentCus1";
+import MaslulUnilever from "./pages/MaslulUnilever";
 import PasswordGate from "./components/PasswordGate";
 import { AgentFilterProvider, useAgentFilter, AGENTS } from "./context/AgentFilterContext";
 import { ToastProvider } from "./components/Toasts";
@@ -75,6 +77,8 @@ function Shell() {
                     <Route path="/approvals" element={<Approvals />} />
                     <Route path="/automation" element={<PasswordGate title="אוטומציה"><Automation /></PasswordGate>} />
                     <Route path="/sent-emails" element={<SentEmails />} />
+                    <Route path="/departments/cus1" element={<DepartmentCus1 />} />
+                    <Route path="/departments/cus1/unilever" element={<MaslulUnilever />} />
                     <Route path="/terminals-forwarders" element={<PasswordGate><TerminalsForwarders /></PasswordGate>} />
                 </Routes>
             </main>
@@ -94,6 +98,17 @@ function Shell() {
                 <NavLink to="/sent-emails" className={nav}>
                     <span className="ic">✉</span> מיילים שנשלחו
                 </NavLink>
+                <div className="grp">מחלקות</div>
+                <NavLink to="/departments/cus1" className={nav}>
+                    <span className="ic">▩</span> CUS1
+                </NavLink>
+                {/* CUS2/CUS3 עדיין ללא תוכן — מוצגים מושבתים (לא NavLink, לא ניתנים ללחיצה) */}
+                <span className="nav-disabled" aria-disabled="true" title="בקרוב">
+                    <span className="ic">▩</span> CUS2
+                </span>
+                <span className="nav-disabled" aria-disabled="true" title="בקרוב">
+                    <span className="ic">▩</span> CUS3
+                </span>
                 <div className="grp">הנהלה</div>
                 <NavLink to="/automation" className={nav}>
                     <span className="ic">⚙</span> אוטומציה

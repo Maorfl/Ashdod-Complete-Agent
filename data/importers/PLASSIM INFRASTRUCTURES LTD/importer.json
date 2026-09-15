@@ -13,10 +13,9 @@
   "dangerous_rule": false,
   "cont_general": "גולד בונד ",
   "contact_names": "",
-  "cont_general_emails": [
-    "hlcl@goldbond.co.il"
-  ],
+  "cont_general_emails": [],
   "cont_dangerous_emails": [],
+  "contacts": [],
   "aliases": [],
   "seen_stations": [
     "1",
