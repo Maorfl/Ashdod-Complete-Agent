@@ -1,0 +1,82 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap">
+  <style>
+    body { margin: 0; font-family: 'Assistant', system-ui, sans-serif; background: #eceff3; direction: rtl; }
+    a { color: #B07A2E; } a:hover { color: #8c6124; }
+  </style>
+</helmet>
+<div style="padding: 28px; background: #eceff3;">
+
+  <div style="font-size: 11px; font-weight: 700; letter-spacing: .06em; color: #8a94a3; margin-bottom: 4px;">כיוון ב — שורה אחת</div>
+  <div style="font-size: 12.5px; color: #5d6b7d; margin-bottom: 16px; line-height: 1.6;">גובה זהה לכפתורים שלידו, הכל נשאר בשורה אחת. פחות נוכחות מאזור גרירה — מתאים אם המסך צריך להישאר צפוף.</div>
+
+  <div style="background: #ffffff; border: 1px solid #d3dae3; border-radius: 10px; box-shadow: 0 1px 2px rgba(15,42,63,.06), 0 8px 24px rgba(15,42,63,.07); padding: 20px; margin-bottom: 20px;">
+
+    <div style="display: flex; gap: 12px; align-items: flex-end; flex-wrap: wrap;">
+
+      <div style="flex-grow: 1; min-width: 280px;">
+        <label style="display: block; font-size: 13px; font-weight: 700; color: #16384f; margin: 0 0 6px;">חשבון ספק (PDF) — חובה</label>
+        <div style="display: flex; align-items: stretch; border: 1px solid #d3dae3; border-radius: 7px; background: #ffffff; overflow: hidden;">
+          <div style="display: flex; align-items: center; gap: 7px; padding: 9px 14px; background: #f3f6f9; border-inline-end: 1px solid #d3dae3; font-size: 14px; font-weight: 700; color: #16384f; white-space: nowrap;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <path d="M7 10l5-5 5 5"></path>
+              <path d="M12 5v12"></path>
+            </svg>
+            בחירת קובץ
+          </div>
+          <div style="display: flex; align-items: center; padding: 9px 12px; font-size: 14px; color: #8a94a3; flex-grow: 1;">לא נבחר קובץ</div>
+        </div>
+      </div>
+
+      <button style="border: 1px solid #cfa25e; background: #d3ae78; color: #2a1c08; padding: 9px 16px; border-radius: 7px; font-weight: 700; font-size: 14px; font-family: 'Assistant', system-ui, sans-serif; box-shadow: 0 1px 2px rgba(176,122,46,.25); display: inline-flex; align-items: center; gap: 6px; opacity: .5;">נתח חשבון</button>
+      <button style="border: 1px solid #d3dae3; background: #ffffff; color: #16384f; padding: 9px 16px; border-radius: 7px; font-weight: 700; font-size: 14px; font-family: 'Assistant', system-ui, sans-serif; display: inline-flex; align-items: center; gap: 6px; opacity: .5;">ניקוי</button>
+
+    </div>
+  </div>
+
+  <div style="font-size: 11px; font-weight: 700; letter-spacing: .06em; color: #8a94a3; margin-bottom: 10px;">אחרי בחירת קובץ</div>
+
+  <div style="background: #ffffff; border: 1px solid #d3dae3; border-radius: 10px; box-shadow: 0 1px 2px rgba(15,42,63,.06), 0 8px 24px rgba(15,42,63,.07); padding: 20px;">
+
+    <div style="display: flex; gap: 12px; align-items: flex-end; flex-wrap: wrap;">
+
+      <div style="flex-grow: 1; min-width: 280px;">
+        <label style="display: block; font-size: 13px; font-weight: 700; color: #16384f; margin: 0 0 6px;">חשבון ספק (PDF) — חובה</label>
+        <div style="display: flex; align-items: stretch; border: 1px solid #d3dae3; border-radius: 7px; background: #ffffff; overflow: hidden;">
+          <div style="display: flex; align-items: center; gap: 7px; padding: 9px 14px; background: #f3f6f9; border-inline-end: 1px solid #d3dae3; font-size: 14px; font-weight: 700; color: #16384f; white-space: nowrap;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <path d="M7 10l5-5 5 5"></path>
+              <path d="M12 5v12"></path>
+            </svg>
+            החלפה
+          </div>
+          <div style="display: flex; align-items: center; gap: 8px; padding: 9px 12px; flex-grow: 1; min-width: 0;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#B07A2E" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0;">
+              <path d="M20 6 9 17l-5-5"></path>
+            </svg>
+            <span style="font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 13px; font-weight: 500; color: #15212e; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">INV178.pdf</span>
+            <span style="font-size: 12.5px; color: #5d6b7d; flex-shrink: 0;">1.2MB</span>
+          </div>
+        </div>
+      </div>
+
+      <button style="border: 1px solid #cfa25e; background: #d3ae78; color: #2a1c08; padding: 9px 16px; border-radius: 7px; font-weight: 700; font-size: 14px; font-family: 'Assistant', system-ui, sans-serif; box-shadow: 0 1px 2px rgba(176,122,46,.25); display: inline-flex; align-items: center; gap: 6px;">נתח חשבון</button>
+      <button style="border: 1px solid #d3dae3; background: #ffffff; color: #16384f; padding: 9px 16px; border-radius: 7px; font-weight: 700; font-size: 14px; font-family: 'Assistant', system-ui, sans-serif; display: inline-flex; align-items: center; gap: 6px;">ניקוי</button>
+
+    </div>
+  </div>
+
+</div>
+</x-dc>
+</body>
+</html>

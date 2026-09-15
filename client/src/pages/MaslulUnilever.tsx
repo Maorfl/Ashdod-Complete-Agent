@@ -24,6 +24,13 @@ function badge(status?: string) {
   return <span className="ms-badge" title="לא נכתב">—</span>;
 }
 
+/** גודל קובץ קריא — KB/MB, ספרה עשרונית אחת */
+function fmtSize(bytes: number) {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${Math.round(bytes / 1024)}KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)}MB`;
+}
+
 /** ערכי טקסט מוצגים במרכאות כדי שרווחים יהיו גלויים (מפרט §8) */
 function q(v: unknown) {
   return v === null || v === undefined || v === '' ? '—' : `"${v}"`;
@@ -41,6 +48,7 @@ export default function MaslulUnilever() {
   const [confirmGen, setConfirmGen] = useState(false);
   const [confirmClearHistory, setConfirmClearHistory] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
+  const [dragging, setDragging] = useState(false);
   const [history, setHistory] = useState<MaslulJob[]>([]);
   const [openRow, setOpenRow] = useState<number | null>(null);
   const [showExcluded, setShowExcluded] = useState(false);
@@ -83,6 +91,26 @@ export default function MaslulUnilever() {
       setBusy(false);
       toast(e.message, 'error');
     }
+  }
+
+  /**
+   * בחירת קובץ — נקודה אחת לבורר הקבצים ולגרירה כאחד.
+   * סינון ה-PDF כאן הוא נוחות בלבד; האימות המחייב (חתימת %PDF- + סיומת) נעשה בשרת.
+   */
+  function pickFile(f: File | null) {
+    if (f && !/\.pdf$/i.test(f.name)) {
+      toast('ניתן לצרף קובץ PDF בלבד', 'error');
+      return;
+    }
+    setInvoice(f);
+    if (!f && invoiceRef.current) invoiceRef.current.value = '';
+  }
+
+  function onDrop(e: React.DragEvent) {
+    e.preventDefault();
+    setDragging(false);
+    if (busy) return;
+    pickFile(e.dataTransfer.files?.[0] || null);
   }
 
   /** ניקוי — מאפס את המסך ואת הקבצים שנבחרו. אינו מוחק ריצות מההיסטוריה. */
@@ -166,12 +194,74 @@ export default function MaslulUnilever() {
 
       {/* 1 — העלאה */}
       <div className="card">
-        <div className="toolbar" style={{ flexWrap: 'wrap', gap: 12 }}>
-          <div className="field" style={{ minWidth: 280 }}>
-            <label>חשבון ספק (PDF) — חובה</label>
-            <input ref={invoiceRef} type="file" accept="application/pdf" disabled={busy}
-              onChange={(e) => setInvoice(e.target.files?.[0] || null)} />
+        <label className="ms-up-label" htmlFor="maslul-invoice">חשבון ספק (PDF) — חובה</label>
+
+        {/* ה-input עצמו מוסתר אך נשאר ב-DOM: שומר על בורר הקבצים והנגישות המקוריים */}
+        <input
+          ref={invoiceRef}
+          id="maslul-invoice"
+          className="ms-up-input"
+          type="file"
+          accept="application/pdf"
+          disabled={busy}
+          onChange={(e) => pickFile(e.target.files?.[0] || null)}
+        />
+
+        {!invoice ? (
+          <div
+            className={'ms-dropzone' + (dragging ? ' dragging' : '') + (busy ? ' disabled' : '')}
+            role="button"
+            tabIndex={busy ? -1 : 0}
+            onClick={() => !busy && invoiceRef.current?.click()}
+            onKeyDown={(e) => {
+              if (busy) return;
+              if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); invoiceRef.current?.click(); }
+            }}
+            onDragOver={(e) => { e.preventDefault(); if (!busy) setDragging(true); }}
+            onDragLeave={() => setDragging(false)}
+            onDrop={onDrop}
+          >
+            <svg className="ms-dz-icon" width="24" height="24" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+              <path d="M14 2v6h6" />
+              <path d="M12 18v-6" />
+              <path d="M9 15l3-3 3 3" />
+            </svg>
+            <div className="ms-dz-text">
+              {dragging ? (
+                <div className="ms-dz-title">שחררו כדי לצרף</div>
+              ) : (
+                <>
+                  <div className="ms-dz-title">גררו לכאן חשבון ספק, או <span className="ms-dz-link">בחרו קובץ</span></div>
+                  <div className="ms-dz-sub">PDF בלבד · עד 25MB</div>
+                </>
+              )}
+            </div>
           </div>
+        ) : (
+          <div className="ms-file-row">
+            <div className="ms-file-icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                <path d="M14 2v6h6" />
+              </svg>
+            </div>
+            <div className="ms-file-meta">
+              <div className="ms-file-name mono">{invoice.name}</div>
+              <div className="ms-file-size">{fmtSize(invoice.size)}</div>
+            </div>
+            <button className="btn icon ms-file-remove" onClick={() => pickFile(null)} disabled={busy} title="הסרת הקובץ" aria-label="הסרת הקובץ">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M18 6 6 18" /><path d="m6 6 12 12" />
+              </svg>
+            </button>
+          </div>
+        )}
+
+        <div className="toolbar" style={{ flexWrap: 'wrap', gap: 12, marginTop: 18, marginBottom: 0 }}>
           <button className="btn primary" onClick={analyze} disabled={busy || !invoice}>
             {busy && job?.status === 'analyzing' ? 'מנתח…' : 'נתח חשבון'}
           </button>

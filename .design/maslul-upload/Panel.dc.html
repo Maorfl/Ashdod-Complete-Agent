@@ -1,0 +1,75 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap">
+  <style>
+    body { margin: 0; font-family: 'Assistant', system-ui, sans-serif; background: #eceff3; direction: rtl; }
+    a { color: #B07A2E; } a:hover { color: #8c6124; }
+  </style>
+</helmet>
+<div style="padding: 28px; background: #eceff3;">
+
+  <div style="font-size: 11px; font-weight: 700; letter-spacing: .06em; color: #8a94a3; margin-bottom: 4px;">כיוון ג — כרטיס פתיחה</div>
+  <div style="font-size: 12.5px; color: #5d6b7d; margin-bottom: 16px; line-height: 1.6;">ההעלאה היא הפעולה היחידה במסך ריק, אז היא מקבלת את מלוא הרוחב. אחרי הניתוח הכרטיס מתכווץ לשורת סיכום ומפנה מקום לטבלה.</div>
+
+  <div style="background: #ffffff; border: 1px solid #d3dae3; border-radius: 10px; box-shadow: 0 1px 2px rgba(15,42,63,.06), 0 8px 24px rgba(15,42,63,.07); padding: 32px 24px; margin-bottom: 20px; text-align: center;">
+
+    <div style="width: 52px; height: 52px; border-radius: 12px; background: #f4e8d6; display: flex; align-items: center; justify-content: center; margin: 0 auto 14px;">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#B07A2E" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+        <path d="M14 2v6h6"></path>
+        <path d="M12 18v-6"></path>
+        <path d="M9 15l3-3 3 3"></path>
+      </svg>
+    </div>
+
+    <div style="font-size: 17px; font-weight: 800; color: #15212e; margin-bottom: 5px;">העלאת חשבון ספק</div>
+    <div style="font-size: 13.5px; color: #5d6b7d; margin-bottom: 20px; line-height: 1.6;">גררו לכאן קובץ PDF, או בחרו מהמחשב · עד 25MB</div>
+
+    <div style="display: flex; gap: 12px; align-items: center; justify-content: center; flex-wrap: wrap;">
+      <button style="border: 1px solid #cfa25e; background: #d3ae78; color: #2a1c08; padding: 9px 16px; border-radius: 7px; font-weight: 700; font-size: 14px; font-family: 'Assistant', system-ui, sans-serif; box-shadow: 0 1px 2px rgba(176,122,46,.25); display: inline-flex; align-items: center; gap: 6px;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+          <path d="M7 10l5-5 5 5"></path>
+          <path d="M12 5v12"></path>
+        </svg>
+        בחירת קובץ
+      </button>
+    </div>
+
+  </div>
+
+  <div style="font-size: 11px; font-weight: 700; letter-spacing: .06em; color: #8a94a3; margin-bottom: 10px;">אחרי בחירת קובץ — מתכווץ לשורה</div>
+
+  <div style="background: #ffffff; border: 1px solid #d3dae3; border-radius: 10px; box-shadow: 0 1px 2px rgba(15,42,63,.06), 0 8px 24px rgba(15,42,63,.07); padding: 16px 20px;">
+
+    <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+
+      <div style="width: 36px; height: 36px; border-radius: 7px; background: #f4e8d6; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#B07A2E" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+          <path d="M14 2v6h6"></path>
+        </svg>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1; min-width: 0;">
+        <div style="font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 13px; font-weight: 500; color: #15212e; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">INV178.pdf</div>
+        <div style="font-size: 12.5px; color: #5d6b7d;">1.2MB · חשבון ספק</div>
+      </div>
+
+      <button style="border: 1px solid #cfa25e; background: #d3ae78; color: #2a1c08; padding: 9px 16px; border-radius: 7px; font-weight: 700; font-size: 14px; font-family: 'Assistant', system-ui, sans-serif; box-shadow: 0 1px 2px rgba(176,122,46,.25); display: inline-flex; align-items: center; gap: 6px; flex-shrink: 0;">נתח חשבון</button>
+      <button style="border: 1px solid #d3dae3; background: #ffffff; color: #16384f; padding: 9px 16px; border-radius: 7px; font-weight: 700; font-size: 14px; font-family: 'Assistant', system-ui, sans-serif; display: inline-flex; align-items: center; gap: 6px; flex-shrink: 0;">ניקוי</button>
+
+    </div>
+  </div>
+
+</div>
+</x-dc>
+</body>
+</html>
